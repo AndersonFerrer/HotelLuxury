@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Contacta con Luxury Hotel. Estamos aquí para ayudarte con cualquier consulta, reserva o información adicional sobre nuestros servicios."
+    />
+    <meta
+      name="keywords"
+      content="contacto hotel de lujo, reservas hotel, información hotel, ubicación hotel"
+    />
+    <title>Contacto - Luxury Hotel</title>
+    <link rel="stylesheet" href="./styles/contact.css" />
+    <link rel="stylesheet" href="./styles/styles.css" />
+    <link rel="stylesheet" href="./styles/footer.css" />
+    <link rel="stylesheet" href="./styles/navbar.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <div id="navbar-root"></div>
+
+    <!-- Contenido principal -->
+    <main class="contact-page">
+      <div class="contact-container">
+        <div class="section-header text-center">
+          <h1 class="page-title">Contacto</h1>
+          <p class="section-subtitle">
+            Estamos aquí para ayudarte. Ponte en contacto con nosotros para
+            cualquier consulta, reserva o información adicional sobre nuestros
+            servicios.
+          </p>
+        </div>
+
+        <div class="contact-grid">
+          <!-- Formulario de contacto -->
+          <div class="contact-form-container">
+            <h2 class="contact-section-title">Envíanos un mensaje</h2>
+
+            <form id="contactForm" class="contact-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="name" class="form-label">Nombre Completo</label>
+                  <input type="text" id="name" class="form-input" required />
+                </div>
+                <div class="form-group">
+                  <label for="email" class="form-label"
+                    >Correo Electrónico</label
+                  >
+                  <input type="email" id="email" class="form-input" required />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="subject" class="form-label">Asunto</label>
+                <input type="text" id="subject" class="form-input" required />
+              </div>
+
+              <div class="form-group">
+                <label for="message" class="form-label">Mensaje</label>
+                <textarea
+                  id="message"
+                  class="form-textarea"
+                  rows="5"
+                  required
+                ></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-full">
+                Enviar Mensaje
+              </button>
+            </form>
+          </div>
+
+          <!-- Información de contacto -->
+          <div class="contact-info-container">
+            <div class="contact-info-card">
+              <h2 class="contact-section-title">Información de Contacto</h2>
+
+              <div class="contact-info-list">
+                <div class="contact-info-item">
+                  <i class="fas fa-map-marker-alt contact-info-icon"></i>
+                  <div class="contact-info-content">
+                    <h3 class="contact-info-title">Dirección</h3>
+                    <p class="contact-info-text">
+                      Av. Principal 123, Ciudad, País
+                    </p>
+                  </div>
+                </div>
+
+                <div class="contact-info-item">
+                  <i class="fas fa-phone contact-info-icon"></i>
+                  <div class="contact-info-content">
+                    <h3 class="contact-info-title">Teléfono</h3>
+                    <p class="contact-info-text">+1 234 567 890</p>
+                    <p class="contact-info-text">+1 234 567 891</p>
+                  </div>
+                </div>
+
+                <div class="contact-info-item">
+                  <i class="fas fa-envelope contact-info-icon"></i>
+                  <div class="contact-info-content">
+                    <h3 class="contact-info-title">Correo Electrónico</h3>
+                    <p class="contact-info-text">info@luxuryhotel.com</p>
+                    <p class="contact-info-text">reservas@luxuryhotel.com</p>
+                  </div>
+                </div>
+
+                <div class="contact-info-item">
+                  <i class="fas fa-clock contact-info-icon"></i>
+                  <div class="contact-info-content">
+                    <h3 class="contact-info-title">Horario de Atención</h3>
+                    <p class="contact-info-text">Lunes a Domingo: 24 horas</p>
+                    <p class="contact-info-text">
+                      Recepción: Disponible todo el día
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="social-media-container">
+                <h3 class="contact-info-title">Síguenos en Redes Sociales</h3>
+                <div class="social-media-links">
+                  <a href="#" class="social-media-link">
+                    <i class="fab fa-facebook-f"></i>
+                  </a>
+                  <a href="#" class="social-media-link">
+                    <i class="fab fa-instagram"></i>
+                  </a>
+                  <a href="#" class="social-media-link">
+                    <i class="fab fa-twitter"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mapa -->
+            <div class="map-container">
+              <h2 class="contact-section-title">Ubicación</h2>
+
+              <div class="map-frame">
+                <img
+                  src="https://cdn.pixabay.com/photo/2020/01/10/16/58/maps-4755698_1280.jpg"
+                  alt="Mapa del hotel"
+                  loading="lazy"
+                  class="map-image"
+                />
+                <div class="map-overlay">
+                  <div class="map-card">
+                    <p class="map-title">Luxury Hotel</p>
+                    <p class="map-address">Av. Principal 123, Ciudad</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="map-link-container">
+                <a
+                  href="https://www.google.com/maps/place/Sahara+Vip/@-9.1333718,-78.5368788,14.7z/data=!4m14!1m7!3m6!1s0x91ab85c1464b4aab:0xd19ed3540f83710c!2sUniversidad+Tecnol%C3%B3gica+Del+Per%C3%BA!8m2!3d-9.1286238!4d-78.5342351!16s%2Fg%2F11fjzw6wgh!3m5!1s0x91ab85154976da15:0xbc4fce5c528966e4!8m2!3d-9.1523916!4d-78.50385!16s%2Fg%2F11lh4yvv4g?entry=ttu&g_ep=EgoyMDI1MDUyMS4wIKXMDSoASAFQAw%3D%3D"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="map-link"
+                >
+                  Ver en Google Maps
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-root"></div>
+    <script src="./load-component.js"></script>
+    <script src="./scripts/contact.js"></script>
+  </body>
+</html>

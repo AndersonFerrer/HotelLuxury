@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Inicia sesión o regístrate en Luxury Hotel para gestionar tus reservas y disfrutar de beneficios exclusivos."
+    />
+    <meta
+      name="keywords"
+      content="login hotel de lujo, registro hotel, cuenta usuario, luxury hotel"
+    />
+    <title>Iniciar Sesión - Luxury Hotel</title>
+    <link rel="stylesheet" href="./styles/auth.css" />
+    <link rel="stylesheet" href="./styles/styles.css" />
+    <link rel="stylesheet" href="./styles/footer.css" />
+    <link rel="stylesheet" href="./styles/navbar.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <div id="navbar-root"></div>
+
+    <!-- Contenido principal -->
+    <main class="auth-page">
+      <div class="auth-container">
+        <div class="auth-header text-center">
+          <h1 class="page-title">Bienvenido</h1>
+          <p class="auth-subtitle">
+            Inicia sesión o regístrate para gestionar tus reservas
+          </p>
+        </div>
+
+        <div class="auth-card">
+          <div class="tabs">
+            <div class="tabs-header">
+              <button class="tab-trigger active" data-tab="login">
+                Iniciar Sesión
+              </button>
+              <button class="tab-trigger" data-tab="register">
+                Registrarse
+              </button>
+            </div>
+
+            <div class="tab-content active" id="login-tab">
+              <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                  <label for="login-email" class="form-label"
+                    >Correo Electrónico</label
+                  >
+                  <input
+                    type="email"
+                    id="login-email"
+                    class="form-input"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="login-password" class="form-label"
+                    >Contraseña</label
+                  >
+                  <div class="password-input-container">
+                    <input
+                      type="password"
+                      id="login-password"
+                      class="form-input"
+                      required
+                    />
+                    <button
+                      type="button"
+                      class="password-toggle"
+                      aria-label="Mostrar contraseña"
+                    >
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-options">
+                  <div class="remember-me">
+                    <input type="checkbox" id="remember-me" class="checkbox" />
+                    <label for="remember-me" class="checkbox-label"
+                      >Recordarme</label
+                    >
+                  </div>
+                  <a href="/forgot-password" class="forgot-password"
+                    >¿Olvidaste tu contraseña?</a
+                  >
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                  Iniciar Sesión
+                </button>
+              </form>
+            </div>
+
+            <div class="tab-content" id="register-tab">
+              <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                  <label for="register-name" class="form-label"
+                    >Nombre Completo</label
+                  >
+                  <input
+                    type="text"
+                    id="register-name"
+                    class="form-input"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="register-email" class="form-label"
+                    >Correo Electrónico</label
+                  >
+                  <input
+                    type="email"
+                    id="register-email"
+                    class="form-input"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="register-password" class="form-label"
+                    >Contraseña</label
+                  >
+                  <div class="password-input-container">
+                    <input
+                      type="password"
+                      id="register-password"
+                      class="form-input"
+                      required
+                    />
+                    <button
+                      type="button"
+                      class="password-toggle"
+                      aria-label="Mostrar contraseña"
+                    >
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="terms-container">
+                  <input type="checkbox" id="terms" class="checkbox" required />
+                  <label for="terms" class="checkbox-label">
+                    Acepto los
+                    <a href="/terms" class="terms-link"
+                      >términos y condiciones</a
+                    >
+                  </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                  Registrarse
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-root"></div>
+    <script src="./load-component.js"></script>
+    <script src="./scripts/auth.js"></script>
+  </body>
+</html>

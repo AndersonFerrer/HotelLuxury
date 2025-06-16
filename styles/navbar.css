@@ -1,0 +1,172 @@
+/* Estilos del navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 5rem;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.desktop-nav {
+  display: none;
+}
+
+.desktop-cta {
+  display: none;
+}
+
+.mobile-menu-btn {
+  display: block;
+}
+
+.mobile-menu-btn button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
+}
+
+.mobile-menu {
+  display: none;
+  background-color: white;
+  border-top: 1px solid #eee;
+  padding: 1rem 0;
+}
+
+.mobile-menu.active {
+  display: block;
+}
+
+.mobile-menu-links {
+  padding: 0.5rem 1rem;
+}
+
+.mobile-link {
+  display: block;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  color: #333;
+  border-radius: 0.25rem;
+}
+
+.mobile-link:hover {
+  color: var(--primary-color);
+  background-color: #f5f5f5;
+}
+
+.mobile-cta {
+  padding: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.mobile-btn-outline {
+  display: block;
+  text-align: center;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  background-color: #f5f5f5;
+}
+
+.mobile-btn-primary {
+  display: block;
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  color: white;
+  background-color: var(--primary-color);
+}
+
+.mobile-btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Media Queries */
+
+@media (min-width: 1024px) {
+  .navbar-container {
+    padding: 0 1.5rem;
+  }
+
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .nav-link {
+    position: relative;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    padding-bottom: 0.25rem;
+  }
+
+  .nav-link:hover {
+    color: var(--primary-color);
+  }
+
+  /* Animación de subrayado con keyframes */
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--primary-color);
+    transform: scaleX(0);
+    visibility: hidden;
+    transform-origin: left;
+  }
+
+  .nav-link:hover::after {
+    animation: underlineAnimation 0.5s forwards;
+    visibility: visible;
+  }
+
+  @keyframes underlineAnimation {
+    0% {
+      transform: scaleX(0);
+    }
+    100% {
+      transform: scaleX(1);
+    }
+  }
+
+  .desktop-cta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .mobile-menu-btn {
+    display: none;
+  }
+}

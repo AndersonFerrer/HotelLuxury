@@ -1,0 +1,626 @@
+/* Reset y estilos base */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+}
+
+/* Contenedor principal */
+.room-detail-container {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.room-content-wrapper {
+  padding-top: 8rem;
+  padding-bottom: 3rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  max-width: 80rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 100%;
+  gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .room-content-wrapper {
+    grid-template-columns: 66.666% 33.333%;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Contenido principal */
+.room-main-content {
+  grid-column: 1;
+}
+
+.room-title {
+  font-size: 2rem !important;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+}
+
+/* Galería de habitación */
+.room-gallery {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.room-gallery-main {
+  grid-column: span 4;
+  grid-row: span 2;
+  height: 20rem;
+}
+
+.room-gallery-thumb {
+  height: 10rem;
+}
+
+.room-gallery img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.room-gallery img:hover {
+  transform: scale(1.05);
+}
+
+/* Sección de descripción */
+.room-description-section {
+  margin-top: 2rem;
+}
+
+.section-heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+.room-description {
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+}
+
+/* Grid de características */
+.room-features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .room-features-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.feature-card {
+  background-color: #f9fafb;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.feature-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #d4af37;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.feature-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: block;
+}
+
+/* Lista de características */
+.room-features-list {
+  display: grid;
+  grid-template-columns: 100%;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .room-features-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+}
+
+.feature-check-icon {
+  font-size: 1.25rem;
+  color: #d4af37;
+  margin-right: 0.5rem;
+}
+
+.feature-item-text {
+  color: #4b5563;
+}
+
+/* Políticas */
+.policies-container {
+  background-color: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.policies-grid {
+  display: grid;
+  grid-template-columns: 100%;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .policies-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.policy-title {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.policy-text {
+  color: #4b5563;
+  margin-bottom: 0.25rem;
+}
+
+/* Sidebar de reserva */
+.booking-sidebar {
+  grid-column: 1;
+}
+
+@media (min-width: 1024px) {
+  .booking-sidebar {
+    grid-column: 2;
+  }
+}
+
+.booking-card {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f3f4f6;
+  position: sticky;
+  top: 8rem;
+}
+
+.price-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.price-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #d4af37;
+}
+
+.price-per-night {
+  color: #6b7280;
+}
+
+/* Lightbox */
+.lightbox-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.lightbox-modal.active {
+  display: flex;
+}
+
+.lightbox-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-close-btn:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.lightbox-image-container {
+  position: relative;
+  height: 80vh;
+  width: 100%;
+  max-width: 56rem;
+}
+
+.lightbox-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.lightbox-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-nav-btn:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.prev-btn {
+  left: 1rem;
+}
+
+.next-btn {
+  right: 1rem;
+}
+
+/* Estilos para el formulario de reserva (se añadirán desde booking-form.js) */
+.booking-form-container {
+  margin-top: 1rem;
+}
+
+.date-picker-container {
+  display: none;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 0.25rem;
+  border: 1px solid #e5e7eb;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+.calendar-day {
+  padding: 0.5rem;
+  text-align: center;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.calendar-day:hover:not(.disabled) {
+  background-color: #f3f4f6;
+}
+
+.calendar-day.selected {
+  background-color: #d4af37;
+  color: white;
+}
+
+.calendar-day.disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.price-summary {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.total-row {
+  font-weight: bold;
+  font-size: 1.125rem;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.book-btn {
+  width: 100%;
+  margin-top: 1.5rem;
+  background-color: #d4af37;
+  color: white;
+  padding: 1.5rem;
+  font-size: 1.125rem;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.book-btn:hover {
+  background-color: #b8971f;
+}
+
+.disclaimer-text {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 1rem;
+}
+/* Estilos para la galería */
+.room-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.room-gallery-main {
+  grid-column: span 4;
+  grid-row: span 2;
+  height: 20rem;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.room-gallery-thumb {
+  height: 10rem;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.room-gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.room-gallery-img:hover {
+  transform: scale(1.05);
+}
+
+/* Estilos para el formulario de reserva */
+.booking-form {
+  width: 100%;
+}
+
+.form-space {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.date-range-btn {
+  width: 100%;
+  padding: 0.5rem;
+  text-align: left;
+  font-weight: normal;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.date-range-btn:hover {
+  background-color: #f9fafb;
+}
+
+.calendar-icon {
+  color: #d4af37;
+  margin-right: 0.5rem;
+  font-size: 1rem;
+}
+
+.date-picker-container {
+  position: absolute;
+  width: 100%;
+  max-width: 600px;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  display: none;
+}
+
+.date-picker-container.visible {
+  display: block;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.current-month {
+  font-weight: 500;
+  font-size: 1.125rem;
+}
+
+.month-nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+.calendar-day-header {
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: #6b7280;
+  padding: 0.25rem;
+}
+
+.calendar-day {
+  padding: 0.5rem;
+  text-align: center;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.calendar-day:hover:not(.disabled) {
+  background-color: #f3f4f6;
+}
+
+.calendar-day.selected {
+  background-color: #d4af37;
+  color: white;
+}
+
+.calendar-day.disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.guests-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.guest-select {
+  width: 100%;
+}
+
+.guest-select-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: white;
+}
+
+.guest-select-input:hover {
+  background-color: #f9fafb;
+}
+
+.price-summary {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.price-label {
+  color: #6b7280;
+}
+
+.price-value {
+  font-weight: 500;
+}
+
+.total-row {
+  font-weight: bold;
+  font-size: 1.125rem;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.book-btn {
+  width: 100%;
+  margin-top: 1.5rem;
+  background-color: #d4af37;
+  color: white;
+  padding: 1rem;
+  font-size: 1.125rem;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.book-btn:hover {
+  background-color: #b8971f;
+}
+
+.disclaimer-text {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 1rem;
+}

@@ -1,0 +1,512 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+body,
+html {
+  overflow-x: hidden;
+  background-color: #f0f1ec;
+}
+
+ul {
+  list-style: none;
+}
+
+section {
+  padding: 2rem 9%;
+}
+
+.barra-nav a {
+  color: #15907c;
+}
+
+.barra-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding: 10px;
+  color: #15907c;
+  z-index: 1000;
+  background-color: #f0f1ec;
+}
+
+.logo img {
+  width: 140px;
+}
+
+.links-nav {
+  display: flex;
+  align-items: center;
+}
+
+.links-nav li {
+  margin: 0 30px;
+}
+
+.links-nav a {
+  color: #15907c;
+  font-weight: 500;
+  transition: color 0.5s ease;
+}
+
+.links-nav a:hover {
+  color: #33cab1;
+}
+
+.menu-toggle {
+  display: none;
+}
+
+.btn-menu {
+  position: absolute;
+  top: 15px;
+  bottom: 20px;
+  right: 30px;
+  width: 40px;
+  cursor: pointer;
+  display: none;
+  z-index: 1001;
+}
+
+.btn-menu img {
+  width: 100%;
+}
+
+header {
+  width: 100vw;
+  height: 100vh;
+  background-image: linear-gradient(
+    rgba(21, 144, 124, 0.5),
+    rgba(240, 241, 236, 1)
+  );
+  background-position: bottom;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+.carrusel {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.carrusel-item {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: carrusel-animacion 15s infinite;
+}
+
+.carrusel-item:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.carrusel-item:nth-child(2) {
+  animation-delay: 5s;
+}
+
+.carrusel-item:nth-child(3) {
+  animation-delay: 10s;
+}
+
+@keyframes carrusel-animacion {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.carrusel .contenido-encabezado {
+  text-align: center;
+  padding: 0 20px;
+  animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contenido-encabezado {
+  margin-top: 150px;
+  margin-bottom: 150px;
+  text-align: center;
+}
+
+.contenido-encabezado h1 {
+  font-size: 7vmin;
+  color: #333;
+  text-shadow: 0.4rem 0.4rem 0 rgba(21, 144, 124, 0.5);
+  margin-top: 50px;
+}
+
+.contenido-encabezado h2 {
+  font-size: 4vmin;
+  color: #0d5f51;
+  margin-top: 50px;
+  padding: 1rem 0;
+}
+
+.btn {
+  padding: 8px 15px;
+  background: #15907c;
+  border-radius: 30px;
+  color: white;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.seccion-especialidades {
+  padding: 2rem 5%;
+  min-height: 100vh;
+}
+
+.especialidades {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  padding: 1rem 0;
+}
+
+.titulo-especialidades {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.titulo-especialidades h2 {
+  font-size: 7vmin;
+  color: #333;
+  padding: 0.5rem 0;
+  text-shadow: 0.2rem 0.2rem 0 rgba(21, 144, 124, 0.3);
+  padding-top: 4rem;
+}
+
+.especialidades .iconos {
+  background: #fff;
+  border: 0.2rem solid #15907c;
+  box-shadow: 0.5rem 0.5rem 0 rgba(21, 144, 124, 0.2);
+  border-radius: 0.5rem;
+  text-align: center;
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.especialidades .iconos i {
+  font-size: 3rem;
+  color: #0d5f51;
+  padding-bottom: 0.7rem;
+}
+
+.especialidades .iconos h3 {
+  font-size: 4vmin;
+  color: #333;
+  padding: 0.5rem 0;
+  text-shadow: 0.2rem 0.2rem 0 rgba(21, 144, 124, 0.3);
+}
+
+.especialidades .iconos p {
+  color: #777;
+}
+
+.servicios {
+  background-color: #15907c;
+  padding: 3rem 5%;
+  min-height: 100vh;
+}
+
+.servicios .contenedor-servicios {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 5rem;
+  padding: 1rem 0;
+}
+
+.servicios .contenedor-servicios .servicio-item {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.titulo-servicios {
+  text-align: center;
+  padding-bottom: 2rem;
+  text-shadow: 0.2rem 0.2rem 0 rgba(0, 0, 0, 0.3);
+  color: #f0f1ec;
+  font-size: 7vmin;
+}
+
+.servicios .contenedor-servicios .servicio-item i {
+  color: #0d5f51;
+  font-size: 3rem;
+}
+
+.servicios .contenedor-servicios .servicio-item h3 {
+  color: #333;
+  font-size: 4vmin;
+  padding: 1rem 0;
+}
+
+.servicios .contenedor-servicios .servicio-item p {
+  color: #777;
+}
+
+.criticas {
+  padding: 3rem 5%;
+  background-color: #f0f1ec; /* Fondo claro para contraste */
+}
+
+/* Grid de reseñas - Versión corregida */
+.contenedor-criticas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 1rem 0;
+}
+
+/* Tarjeta de reseña - Rediseñada */
+.critica-item {
+  background: #fff;
+  border: 2px solid #15907c;
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  overflow: visible; /* Cambiado de 'hidden' a 'visible' */
+  margin-top: 4rem; /* Espacio para el fondo decorativo */
+  box-shadow: 0 5px 15px rgba(21, 144, 124, 0.1);
+}
+
+/* Imagen del cliente */
+.critica-item img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #fff;
+  margin: -70px auto 1rem; /* Empuja la imagen hacia arriba */
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+.critica-item h3 {
+  padding-top: 30px;
+  color: #15907c; /* Cambiado de blanco (#fff) a verde oscuro */
+  font-size: 1.8rem;
+  margin: 0.5rem 0;
+  position: relative;
+  z-index: 3; /* Asegura que esté sobre otros elementos */
+  text-shadow: none; /* Elimina sombra si existía */
+}
+
+.estrellas {
+  color: #0d5f51; /* Dorado para estrellas */
+  margin-bottom: 1rem;
+}
+
+.texto {
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.6;
+  padding: 0 1rem;
+}
+
+/* Fondo decorativo - Versión simplificada */
+.critica-item::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: #15907c;
+  border-radius: 10px 10px 0 0;
+  z-index: 1;
+}
+
+.titulo-criticas {
+  font-size: 7vmin;
+  color: #333;
+  padding: 0.5rem 0;
+  text-shadow: 0.2rem 0.2rem 0 rgba(21, 144, 124, 0.3);
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+  text-align: center;
+}
+
+.piePagina {
+  background-color: #15907c;
+  color: #fff;
+  text-align: center;
+  padding: 20px 0;
+  margin-top: auto;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer-section {
+  margin: 10px 20px;
+}
+
+.footer-section h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.footer-section p {
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.footer-bottom {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@media only screen and (max-width: 850px) {
+  .btn-menu {
+    display: block;
+  }
+
+  .links-nav {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    background: #f0f1ec;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: max-height 0.3s ease;
+  }
+
+  .links-nav li {
+    margin: 20px 0;
+  }
+
+  .links-nav a {
+    font-size: 1.2rem;
+  }
+
+  .menu-toggle:checked ~ .links-nav {
+    display: flex;
+    max-height: 300px;
+    border-bottom-left-radius: 20%;
+    border-bottom-right-radius: 20%;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .links-nav li {
+    margin: 15px 0;
+  }
+
+  .carrusel-item {
+    background-position: 60% center;
+  }
+  .contenido-encabezado h1 {
+    font-size: 8vmin;
+  }
+  .contenido-encabezado h2 {
+    font-size: 4vmin;
+  }
+}
+
+@media (max-width: 768px) {
+  .especialidades {
+    grid-template-columns: 1fr;
+  }
+
+  .iconos {
+    padding: 1rem;
+  }
+
+  .iconos p {
+    font-size: 0.9rem;
+  }
+
+  .contenedor-servicios {
+    grid-template-columns: 1fr;
+  }
+
+  .servicio-item {
+    padding: 1rem;
+  }
+
+  .contenedor-criticas {
+    grid-template-columns: 1fr;
+  }
+
+  .critica-item {
+    padding: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .critica-item img {
+    width: 80px;
+    height: 80px;
+    margin-top: -50px;
+  }
+}

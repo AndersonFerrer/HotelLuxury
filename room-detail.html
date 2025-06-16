@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle de Habitación</title>
+    <link rel="stylesheet" href="./styles/room-detail.css" />
+    <link rel="stylesheet" href="./styles/styles.css" />
+    <link rel="stylesheet" href="./styles/footer.css" />
+    <link rel="stylesheet" href="./styles/navbar.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div id="navbar-root"></div>
+
+    <div class="room-detail-container">
+      <div class="room-content-wrapper">
+        <!-- Room Details -->
+        <div class="room-main-content">
+          <h1 id="room-name" class="room-title">Suite Presidencial</h1>
+
+          <div id="room-gallery" class="room-gallery"></div>
+
+          <div class="room-description-section">
+            <h2 class="section-heading">Descripción</h2>
+            <p id="room-description" class="room-description">
+              Disfrute de nuestra lujosa habitación diseñada para ofrecerle la
+              máxima comodidad y elegancia durante su estancia.
+            </p>
+
+            <div class="room-features-grid">
+              <div class="feature-card">
+                <i class="fas fa-bed feature-icon"></i>
+                <span id="bed-type" class="feature-text">1 Cama King</span>
+              </div>
+              <div class="feature-card">
+                <i class="fas fa-users feature-icon"></i>
+                <span id="room-capacity" class="feature-text"
+                  >2-4 Personas</span
+                >
+              </div>
+              <div class="feature-card">
+                <i class="fas fa-vector-square feature-icon"></i>
+                <span id="room-size" class="feature-text">75 m²</span>
+              </div>
+              <div class="feature-card">
+                <i class="fas fa-wifi feature-icon"></i>
+                <span class="feature-text">WiFi Gratis</span>
+              </div>
+            </div>
+
+            <h2 class="section-heading">Características</h2>
+            <div id="room-features" class="room-features-list">
+              <!-- Features will be added by JavaScript -->
+            </div>
+
+            <h2 class="section-heading">Políticas</h2>
+            <div class="policies-container">
+              <div class="policies-grid">
+                <div class="policy-item">
+                  <h3 class="policy-title">Check-in / Check-out</h3>
+                  <p class="policy-text">Check-in: 15:00 - 00:00</p>
+                  <p class="policy-text">Check-out: hasta las 12:00</p>
+                </div>
+                <div class="policy-item">
+                  <h3 class="policy-title">Cancelación</h3>
+                  <p class="policy-text">
+                    Cancelación gratuita hasta 48 horas antes de la llegada.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Booking Form -->
+        <div class="booking-sidebar">
+          <div class="booking-card">
+            <div class="price-display">
+              <span id="room-price" class="price-amount">$450</span>
+              <span class="price-per-night">por noche</span>
+            </div>
+
+            <div id="booking-form" class="booking-form-container"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="footer-root"></div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox-modal" class="lightbox-modal">
+      <button id="close-lightbox" class="lightbox-close-btn">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <div class="lightbox-image-container">
+        <img id="lightbox-image" src="" alt="" class="lightbox-image" />
+      </div>
+
+      <button id="prev-image" class="lightbox-nav-btn prev-btn">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <button id="next-image" class="lightbox-nav-btn next-btn">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <script src="load-component.js"></script>
+    <script src="scripts/booking-form.js"></script>
+    <script src="scripts/room-gallery.js"></script>
+    <script>
+      // Load room data based on URL
+      document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get("id") || "presidential";
+
+        const roomData = getRoomData(roomId);
+        updateRoomDetails(roomData);
+
+        // Initialize gallery with room images
+        initRoomGallery(roomData.images);
+
+        // Initialize booking form
+        initBookingForm(roomId, roomData.price);
+      });
+
+      function getRoomData(roomId) {
+        const rooms = {
+          presidential: {
+            name: "Suite Presidencial",
+            description:
+              "Disfrute de nuestra lujosa habitación diseñada para ofrecerle la máxima comodidad y elegancia durante su estancia. Con vistas impresionantes y todas las comodidades que pueda necesitar, esta habitación es perfecta para viajeros exigentes que buscan una experiencia excepcional.",
+            price: 450,
+            capacity: "2-4",
+            size: "75",
+            bedType: "1 Cama King",
+            features: [
+              "WiFi Gratis",
+              "Desayuno incluido",
+              "Aire acondicionado",
+              "TV de pantalla plana",
+              "Minibar",
+              "Caja fuerte",
+              "Baño privado",
+              "Jacuzzi",
+              "Sala de estar separada",
+              "Servicio de mayordomo",
+              "Terraza privada",
+            ],
+            images: [
+              "https://cdn.pixabay.com/photo/2024/05/01/15/13/inside-8732506_1280.png",
+              "https://cdn.pixabay.com/photo/2023/05/19/14/33/bathroom-8004699_1280.jpg",
+              "https://cdn.pixabay.com/photo/2023/05/19/14/33/bathroom-8004699_1280.jpg",
+              "https://cdn.pixabay.com/photo/2023/05/19/14/33/bathroom-8004699_1280.jpg",
+            ],
+          },
+          deluxe: {
+            name: "Suite Deluxe",
+            description:
+              "Una habitación espaciosa y elegante con todas las comodidades modernas para una estancia relajante. Perfecta para parejas o pequeños grupos que buscan un poco más de lujo durante su viaje.",
+            price: 250,
+            capacity: "2-3",
+            size: "50",
+            bedType: "1 Cama King",
+            features: [
+              "WiFi Gratis",
+              "Desayuno incluido",
+              "Aire acondicionado",
+              "TV de pantalla plana",
+              "Minibar",
+              "Caja fuerte",
+              "Baño privado",
+              "Jacuzzi",
+              "Sala de estar separada",
+            ],
+            images: [
+              "https://cdn.pixabay.com/photo/2023/05/19/14/33/bathroom-8004699_1280.jpg",
+              "https://cdn.pixabay.com/photo/2023/05/19/14/33/bathroom-8004699_1280.jpg",
+              "https://cdn.pixabay.com/photo/2023/05/19/14/33/bathroom-8004699_1280.jpg",
+              "https://cdn.pixabay.com/photo/2023/05/19/14/33/bathroom-8004699_1280.jpg",
+            ],
+          },
+          standard: {
+            name: "Habitación Estándar",
+            description:
+              "Una habitación cómoda y bien equipada para aquellos que buscan un alojamiento práctico sin renunciar a la calidad. Ideal para estancias cortas o viajeros que pasan la mayor parte del tiempo explorando.",
+            price: 120,
+            capacity: "2",
+            size: "35",
+            bedType: "1 Cama King",
+            features: [
+              "WiFi Gratis",
+              "Desayuno incluido",
+              "Aire acondicionado",
+              "TV de pantalla plana",
+              "Minibar",
+              "Caja fuerte",
+              "Baño privado",
+            ],
+            images: [
+              "https://cdn.pixabay.com/photo/2023/05/19/14/33/bathroom-8004699_1280.jpg",
+              "https://cdn.pixabay.com/photo/2023/05/19/14/33/bathroom-8004699_1280.jpg",
+              "https://cdn.pixabay.com/photo/2023/05/19/14/33/bathroom-8004699_1280.jpg",
+              "https://cdn.pixabay.com/photo/2023/05/19/14/33/bathroom-8004699_1280.jpg",
+            ],
+          },
+        };
+
+        return rooms[roomId] || rooms.presidential;
+      }
+
+      function updateRoomDetails(roomData) {
+        document.getElementById("room-name").textContent = roomData.name;
+        document.getElementById("room-description").textContent =
+          roomData.description;
+        document.getElementById("room-price").textContent =
+          "$" + roomData.price;
+        document.getElementById("bed-type").textContent = roomData.bedType;
+        document.getElementById("room-capacity").textContent =
+          roomData.capacity + " Personas";
+        document.getElementById("room-size").textContent =
+          roomData.size + " m²";
+
+        const featuresContainer = document.getElementById("room-features");
+        featuresContainer.innerHTML = "";
+        roomData.features.forEach((feature) => {
+          const featureElement = document.createElement("div");
+          featureElement.className = "flex items-center";
+          featureElement.innerHTML = `
+          <i class="fas fa-check text-[#d4af37] mr-2"></i>
+          <span class="text-gray-600">${feature}</span>
+        `;
+          featuresContainer.appendChild(featureElement);
+        });
+      }
+    </script>
+  </body>
+</html>
