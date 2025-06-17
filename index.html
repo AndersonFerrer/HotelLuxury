@@ -249,5 +249,48 @@
     <div id="footer-root"></div>
     <!-- Al final del body -->
     <script src="./load-component.js" defer></script>
+    <script>
+      let habitaciones = [];
+
+      document.addEventListener("DOMContentLoaded", function () {
+        cargarHabitaciones();
+      });
+
+      async function cargarHabitaciones() {
+        try {
+          const response = await fetch("php/obtenerHabitaciones.php");
+
+          // Verifica si la respuesta fue exitosa
+          if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+          }
+
+          // Verifica que el contenido sea JSON
+          const contentType = response.headers.get("Content-Type");
+          if (!contentType || !contentType.includes("application/json")) {
+            const text = await response.text();
+            console.error(
+              "Respuesta no es JSON válida. Contenido recibido:",
+              text
+            );
+            throw new TypeError("La respuesta no es JSON");
+          }
+
+          const data = await response.json();
+          console.log(data);
+
+          if (data.success) {
+            habitaciones = data.data;
+            console.log("Habitaciones cargadas:", habitaciones);
+            // Aquí puedes llamar una función para renderizar las habitaciones
+            // mostrarHabitaciones(habitaciones);
+          } else {
+            console.error("Error del servidor:", data.error);
+          }
+        } catch (error) {
+          console.error("Ocurrió un error al cargar habitaciones:", error);
+        }
+      }
+    </script>
   </body>
 </html>
