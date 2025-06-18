@@ -93,77 +93,7 @@
           </p>
         </div>
 
-        <div class="room-cards">
-          <div class="room-card">
-            <div class="room-image">
-              <img
-                src="https://images.mirai.com/INFOROOMS/100376307/2lvOjWQowKt0dyxNFJ23/2lvOjWQowKt0dyxNFJ23_original.jpg"
-                alt="Suite Presidencial"
-                loading="lazy"
-              />
-            </div>
-            <div class="room-details">
-              <h3 class="room-title">Habitación Estándar</h3>
-              <p class="room-description">
-                Espaciosa habitación con todas las comodidades esenciales para
-                una estancia confortable.
-              </p>
-              <div class="room-footer">
-                <span class="room-price">$120 / noche</span>
-                <a href="room-detail.html?id=standard" class="btn btn-outline"
-                  >Ver Detalles</a
-                >
-              </div>
-            </div>
-          </div>
-
-          <div class="room-card">
-            <div class="room-image">
-              <img
-                src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="Habitación Estándar"
-                loading="lazy"
-              />
-            </div>
-            <div class="room-details">
-              <h3 class="room-title">Suite Deluxe</h3>
-              <p class="room-description">
-                Elegante suite con sala de estar separada y vistas panorámicas a
-                la ciudad.
-              </p>
-              <div class="room-footer">
-                <span class="room-price">$250 / noche</span>
-                <a href="room-detail.html?id=deluxe" class="btn btn-outline"
-                  >Ver Detalles</a
-                >
-              </div>
-            </div>
-          </div>
-
-          <div class="room-card">
-            <div class="room-image">
-              <img
-                src="https://plus.unsplash.com/premium_photo-1678297270523-8775c817d0b3?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                alt="Suite Deluxe"
-                loading="lazy"
-              />
-            </div>
-            <div class="room-details">
-              <h3 class="room-title">Suite Presidencial</h3>
-              <p class="room-description">
-                Nuestra suite más exclusiva con servicios premium y máximo lujo.
-              </p>
-              <div class="room-footer">
-                <span class="room-price">$450 / noche</span>
-                <a
-                  href="room-detail.html?id=presidential"
-                  class="btn btn-outline"
-                  >Ver Detalles</a
-                >
-              </div>
-            </div>
-          </div>
-        </div>
+        <div id="rooms-container" class="room-cards"></div>
 
         <!-- <div class="rooms-cta">
           <a href="/rooms" class="btn btn-primary"
@@ -282,14 +212,47 @@
           if (data.success) {
             habitaciones = data.data;
             console.log("Habitaciones cargadas:", habitaciones);
-            // Aquí puedes llamar una función para renderizar las habitaciones
-            // mostrarHabitaciones(habitaciones);
+            const contenedor = document.getElementById("rooms-container");
+
+            // Limpiar contenedor primero
+            contenedor.innerHTML = "";
+
+            // Crear y agregar cada tarjeta
+            habitaciones.forEach((habitacion) => {
+              const tarjetaHTML = crearTarjetaHabitacion(habitacion);
+              contenedor.insertAdjacentHTML("beforeend", tarjetaHTML);
+            });
           } else {
             console.error("Error del servidor:", data.error);
           }
         } catch (error) {
           console.error("Ocurrió un error al cargar habitaciones:", error);
         }
+      }
+      function crearTarjetaHabitacion(habitacion) {
+        return `
+    <div class="room-card">
+      <div class="room-image">
+        <img
+          src="https://images.unsplash.com/photo-1517840901100-8179e982acb7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="${habitacion.nombre}"
+          loading="lazy"
+        />
+      </div>
+      <div class="room-details">
+        <h3 class="room-title">${habitacion.nombre}</h3>
+        <p class="room-description">
+          ${habitacion.descripcion}
+        </p>
+        <div class="room-footer">
+          <span class="room-price">$${habitacion.precio_noche} / noche</span>
+          <a href="room-detail.html?id=${habitacion.id}" class="btn btn-outline">
+            Ver Detalles
+          </a>
+        </div>
+      </div>
+    </div>
+  `;
       }
     </script>
   </body>
