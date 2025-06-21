@@ -179,6 +179,7 @@
     <div id="footer-root"></div>
     <!-- Al final del body -->
     <script src="./load-component.js" defer></script>
+    <script src="./scripts/authService.js" defer></script>
     <script>
       let habitaciones = [];
 
@@ -188,7 +189,7 @@
 
       async function cargarHabitaciones() {
         try {
-          const response = await fetch("php/obtenerHabitaciones.php");
+          const response = await fetch("api/obtenerHabitaciones.php");
 
           // Verifica si la respuesta fue exitosa
           if (!response.ok) {

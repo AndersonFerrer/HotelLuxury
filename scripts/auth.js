@@ -1,3 +1,5 @@
+import { registrarCliente } from "./authService.js";
+
 document.addEventListener("DOMContentLoaded", function () {
   // Manejo de tabs
   const tabTriggers = document.querySelectorAll(".tab-trigger");
@@ -65,15 +67,36 @@ document.addEventListener("DOMContentLoaded", function () {
     registerForm.addEventListener("submit", function (e) {
       e.preventDefault();
 
-      const name = document.getElementById("register-name").value;
-      const email = document.getElementById("register-email").value;
-      const password = document.getElementById("register-password").value;
+      const formData = {
+        nombres: document.getElementById("register-nombres").value,
+        apellidos: document.getElementById("register-apellidos").value,
+        id_tipo_documento: document.getElementById("register-tipo-documento")
+          .value,
+        numero_documento: document.getElementById("register-numero-documento")
+          .value,
+        correo: document.getElementById("register-correo").value,
+        telefono: document.getElementById("register-telefono").value,
+        fecha_nacimiento: document.getElementById("register-fecha-nacimiento")
+          .value,
+        region: document.getElementById("register-region").value,
+        provincia: document.getElementById("register-provincia").value,
+        distrito: document.getElementById("register-distrito").value,
+        direccion_detallada: document.getElementById(
+          "register-direccion-detallada"
+        ).value,
+        password: document.getElementById("register-password").value,
+        confirmPassword: document.getElementById("register-confirm-password")
+          .value,
+      };
 
-      // Logica de registro
-      console.log("Register:", { name, email, password });
+      // Validar que las contraseñas coincidan
+      if (formData.password !== formData.confirmPassword) {
+        alert("Las contraseñas no coinciden");
+        return;
+      }
 
-      // Simulación de registro exitoso
-      alert(`Registro exitoso para ${name} (${email})`);
+      // Llamar a la función de registro
+      registrarCliente(formData);
     });
   }
 });

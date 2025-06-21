@@ -99,7 +99,7 @@
               </form>
             </div>
 
-            <div class="tab-content" id="register-tab">
+            <!-- <div class="tab-content" id="register-tab">
               <form id="registerForm" class="auth-form">
                 <div class="form-group">
                   <label for="register-name" class="form-label"
@@ -160,6 +160,228 @@
                   Registrarse
                 </button>
               </form>
+            </div> -->
+            <div class="tab-content" id="register-tab">
+              <form id="registerForm" class="auth-form">
+                <!-- Información Personal -->
+                <div class="form-section">
+                  <h3 class="form-section-title">Información Personal</h3>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="register-nombres" class="form-label"
+                        >Nombres *</label
+                      >
+                      <input
+                        type="text"
+                        id="register-nombres"
+                        class="form-input"
+                        placeholder="Nombres completos"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="register-apellidos" class="form-label"
+                        >Apellidos *</label
+                      >
+                      <input
+                        type="text"
+                        id="register-apellidos"
+                        class="form-input"
+                        placeholder="Apellidos completos"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Documento de Identidad -->
+                <div class="form-section">
+                  <h3 class="form-section-title">Documento de Identidad</h3>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="register-tipo-documento" class="form-label"
+                        >Tipo de Documento *</label
+                      >
+                      <select
+                        id="register-tipo-documento"
+                        class="form-input"
+                        required
+                      >
+                        <option value="">Seleccionar tipo</option>
+                        <option value="1">DNI</option>
+                        <option value="2">Carné de Extranjería</option>
+                        <option value="3">Pasaporte</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="register-numero-documento" class="form-label"
+                        >Número de Documento *</label
+                      >
+                      <input
+                        type="text"
+                        id="register-numero-documento"
+                        class="form-input"
+                        placeholder="Número de documento"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Información de Contacto -->
+                <div class="form-section">
+                  <h3 class="form-section-title">Información de Contacto</h3>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="register-correo" class="form-label"
+                        >Correo Electrónico *</label
+                      >
+                      <input
+                        type="email"
+                        id="register-correo"
+                        class="form-input"
+                        placeholder="correo@ejemplo.com"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="register-telefono" class="form-label"
+                        >Teléfono</label
+                      >
+                      <input
+                        type="tel"
+                        id="register-telefono"
+                        class="form-input"
+                        placeholder="+51 987654321"
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="register-fecha-nacimiento" class="form-label"
+                      >Fecha de Nacimiento</label
+                    >
+                    <input
+                      type="date"
+                      id="register-fecha-nacimiento"
+                      class="form-input"
+                    />
+                  </div>
+                </div>
+
+                <!-- Dirección -->
+                <div class="form-section">
+                  <h3 class="form-section-title">Dirección</h3>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="register-region" class="form-label"
+                        >Región/Departamento</label
+                      >
+                      <input
+                        type="text"
+                        id="register-region"
+                        class="form-input"
+                        placeholder="Lima"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="register-provincia" class="form-label"
+                        >Provincia</label
+                      >
+                      <input
+                        type="text"
+                        id="register-provincia"
+                        class="form-input"
+                        placeholder="Lima"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="register-distrito" class="form-label"
+                        >Distrito</label
+                      >
+                      <input
+                        type="text"
+                        id="register-distrito"
+                        class="form-input"
+                        placeholder="Miraflores"
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="register-direccion-detallada" class="form-label"
+                      >Dirección Detallada</label
+                    >
+                    <input
+                      type="text"
+                      id="register-direccion-detallada"
+                      class="form-input"
+                      placeholder="Av. Larco 123, Dpto. 4B"
+                    />
+                  </div>
+                </div>
+
+                <!-- Contraseña -->
+                <div class="form-section">
+                  <h3 class="form-section-title">Seguridad</h3>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="register-password" class="form-label"
+                        >Contraseña *</label
+                      >
+                      <div class="password-input-container">
+                        <input
+                          type="password"
+                          id="register-password"
+                          class="form-input"
+                          placeholder="Mínimo 8 caracteres"
+                          required
+                        />
+                        <button
+                          type="button"
+                          class="password-toggle"
+                          aria-label="Mostrar contraseña"
+                        >
+                          <i class="fas fa-eye"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="register-confirm-password" class="form-label"
+                        >Confirmar Contraseña *</label
+                      >
+                      <input
+                        type="password"
+                        id="register-confirm-password"
+                        class="form-input"
+                        placeholder="Repetir contraseña"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="terms-container">
+                  <input
+                    type="checkbox"
+                    id="register-terms"
+                    class="checkbox"
+                    required
+                  />
+                  <label for="register-terms" class="checkbox-label">
+                    Acepto los
+                    <a href="/terms" class="terms-link"
+                      >términos y condiciones</a
+                    >
+                    y la
+                    <a href="/privacy" class="terms-link"
+                      >política de privacidad</a
+                    >
+                  </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                  Crear Cuenta
+                </button>
+              </form>
             </div>
           </div>
         </div>
@@ -169,6 +391,6 @@
     <!-- Footer -->
     <div id="footer-root"></div>
     <script src="./load-component.js"></script>
-    <script src="./scripts/auth.js"></script>
+    <script type="module" src="./scripts/auth.js"></script>
   </body>
 </html>
