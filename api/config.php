@@ -46,19 +46,4 @@ try {
 // Zona horaria
 date_default_timezone_set($_ENV['TIMEZONE'] ?? 'America/Lima');
 
-// FUNCION PARA LIMPIAR DATOS DE ENTRADA
-function limpiarDatos($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
-}
-
-// FUNCION PARA ENVIAR RESPUESTA JSON
-function enviarJSON($datos, $status_code = 200) {
-    http_response_code($status_code);
-    header('Content-Type: application/json');
-    echo json_encode($datos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    exit();
-}
 ?>

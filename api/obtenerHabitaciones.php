@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once __DIR__ . '/utils.php';
 
 // Configurar cabeceras CORS
 header("Access-Control-Allow-Origin: *");
@@ -26,7 +27,7 @@ try {
         'success' => true,
         'data' => $habitaciones,
         'count' => count($habitaciones)
-    ]);
+    ], 200);
     
 } catch (PDOException $e) {
     enviarJSON([
