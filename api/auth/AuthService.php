@@ -2,117 +2,24 @@
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../utils.php';
 
-class AuthService {
+class AuthService
+{
     private $conn;
 
-    public function __construct($conn) {
+    public function __construct($conn)
+    {
         $this->conn = $conn;
     }
 
-    /**
-     * Registra un nuevo cliente en el sistema
-     */
-    public function registrarCliente($datos) {
-        // Iniciar transacción AL PRINCIPIO
-        $this->conn->beginTransaction();
-        
-        try {
-            // Validar datos requeridos
-            $required = ['nombres', 'apellidos', 'id_tipo_documento', 'numero_documento', 
-                        'telefono', 'correo', 'password', 'region', 'provincia', 
-                        'distrito', 'direccion_detallada'];
-            
-            foreach ($required as $field) {
-                if (empty($datos[$field])) {
-                    throw new Exception("El campo $field es requerido");
-                }
-            }
-    
-            // Verificar si el correo ya existe (DENTRO de la transacción)
-            $stmt = $this->conn->prepare("SELECT id_persona FROM Persona WHERE correo = ?");
-            $stmt->execute([$datos['correo']]);
-            if ($stmt->rowCount() > 0) {
-                throw new Exception("El correo electrónico ya está registrado");
-            }
-    
-            // Verificar si el documento ya existe (DENTRO de la transacción)
-            $stmt = $this->conn->prepare("SELECT id_persona FROM Persona WHERE numero_documento = ? AND id_tipo_documento = ?");
-            $stmt->execute([$datos['numero_documento'], $datos['id_tipo_documento']]);
-            if ($stmt->rowCount() > 0) {
-                throw new Exception("El número de documento ya está registrado para este tipo de documento");
-            }
-    
-            // 1. Insertar dirección
-            $stmt = $this->conn->prepare("
-                INSERT INTO Direccion (region, provincia, distrito, direccion_detallada) 
-                VALUES (?, ?, ?, ?) RETURNING id_direccion
-            ");
-            $stmt->execute([
-                $datos['region'],
-                $datos['provincia'],
-                $datos['distrito'],
-                $datos['direccion_detallada']
-            ]);
-            $id_direccion = $stmt->fetch(PDO::FETCH_ASSOC)['id_direccion'];
-    
-            // 2. Insertar persona
-            $hashedPassword = password_hash($datos['password'], PASSWORD_BCRYPT);
-            $stmt = $this->conn->prepare("
-                INSERT INTO Persona (
-                    nombres, apellidos, id_tipo_documento, numero_documento, 
-                    telefono, correo, password, fecha_nacimiento, id_direccion, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-                RETURNING id_persona
-            ");
-            $stmt->execute([
-                $datos['nombres'],
-                $datos['apellidos'],
-                $datos['id_tipo_documento'],
-                $datos['numero_documento'],
-                $datos['telefono'],
-                $datos['correo'],
-                $hashedPassword,
-                $datos['fecha_nacimiento'] ?? null,
-                $id_direccion
-            ]);
-            $id_persona = $stmt->fetch(PDO::FETCH_ASSOC)['id_persona'];
-    
-            // 3. Insertar cliente
-            $stmt = $this->conn->prepare("
-                INSERT INTO Cliente (id_persona) 
-                VALUES (?)
-                RETURNING id_cliente
-            ");
-            $stmt->execute([$id_persona]);
-            $id_cliente = $stmt->fetch(PDO::FETCH_ASSOC)['id_cliente'];
-    
-            // Confirmar transacción SI TODO SALE BIEN
-            $this->conn->commit();
-    
-            return [
-                'success' => true,
-                'message' => 'Registro exitoso',
-                'cliente_id' => $id_cliente
-            ];
-    
-        } catch (Exception $e) {
-            // Solo hacer rollback si la transacción está activa
-            if ($this->conn->inTransaction()) {
-                $this->conn->rollBack();
-            }
-            
-            return [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
-        }
-    }
-
-    /**
+        /**
      * Inicia sesión con correo y contraseña
      */
-    public function iniciarSesion($correo, $password) {
+    public function iniciarSesion($correo, $password)
+    {
         try {
+            // Manejo seguro de sesión
+            $this->startSessionIfNotStarted();
+
             // Buscar persona por correo
             $stmt = $this->conn->prepare("
                 SELECT p.*, c.id_cliente 
@@ -134,7 +41,6 @@ class AuthService {
             }
 
             // Crear sesión (en un API REST usaríamos tokens JWT)
-            session_start();
             $_SESSION['usuario'] = [
                 'id' => $usuario['id_persona'],
                 'cliente_id' => $usuario['id_cliente'],
@@ -147,9 +53,9 @@ class AuthService {
 
             return [
                 'success' => true,
-                'usuario' => $_SESSION['usuario']
+                'usuario' => $_SESSION['usuario'],
+                'message' => 'Inicio de sesión exitoso.'
             ];
-
         } catch (Exception $e) {
             return [
                 'success' => false,
@@ -159,27 +65,203 @@ class AuthService {
     }
 
     /**
+     * Registra un nuevo cliente en el sistema
+     */
+    public function registrarCliente($datos) {
+        // Registrar intento
+        error_log("Intento de registro: " . ($datos['correo'] ?? 'sin email'));
+        
+        // Iniciar transacción
+        $this->conn->beginTransaction();
+        
+        try {
+            // Validaciones mejoradas
+            $this->validarDatosRegistro($datos);
+    
+            // Verificar unicidad
+            $this->verificarUnicidad($datos['correo'], $datos['numero_documento'], $datos['id_tipo_documento']);
+    
+            // Insertar dirección
+            $id_direccion = $this->insertarDireccion(
+                $datos['region'],
+                $datos['provincia'],
+                $datos['distrito'],
+                $datos['direccion_detallada']
+            );
+    
+            // Insertar persona
+            $id_persona = $this->insertarPersona($datos, $id_direccion);
+    
+            // Insertar cliente
+            $id_cliente = $this->insertarCliente($id_persona);
+    
+            // Confirmar transacción
+            $this->conn->commit();
+         
+            return [
+                'success' => true,
+                'message' => 'Registro exitoso. Inicie sesión con los datos registrados.',
+                'cliente_id' => $id_cliente
+            ];
+    
+        } catch (Exception $e) {
+            if ($this->conn->inTransaction()) {
+                $this->conn->rollBack();
+            }
+            
+            error_log("Error en registro: " . $e->getMessage());
+            
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+
+    // Métodos auxiliares:
+
+    private function validarDatosRegistro($datos)
+    {
+        $required = [
+            'nombres',
+            'apellidos',
+            'id_tipo_documento',
+            'numero_documento',
+            'telefono',
+            'correo',
+            'password',
+            'region',
+            'provincia',
+            'distrito',
+            'direccion_detallada'
+        ];
+
+        foreach ($required as $field) {
+            if (empty($datos[$field])) {
+                throw new Exception("El campo $field es requerido");
+            }
+        }
+
+        if (strlen($datos['password']) < 8) {
+            throw new Exception("La contraseña debe tener al menos 8 caracteres");
+        }
+
+        if (!filter_var($datos['correo'], FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("El formato del correo electrónico no es válido");
+        }
+
+        if (!is_numeric($datos['id_tipo_documento'])) {
+            throw new Exception("Tipo de documento inválido");
+        }
+    }
+
+    private function verificarUnicidad($correo, $numero_documento, $id_tipo_documento)
+    {
+        $stmt = $this->conn->prepare("SELECT id_persona FROM Persona WHERE correo = ?");
+        $stmt->execute([$correo]);
+        if ($stmt->rowCount() > 0) {
+            throw new Exception("El correo electrónico ya está registrado");
+        }
+
+        $stmt = $this->conn->prepare("SELECT id_persona FROM Persona WHERE numero_documento = ? AND id_tipo_documento = ?");
+        $stmt->execute([$numero_documento, $id_tipo_documento]);
+        if ($stmt->rowCount() > 0) {
+            throw new Exception("El número de documento ya está registrado para este tipo de documento");
+        }
+    }
+
+    private function insertarDireccion($region, $provincia, $distrito, $direccion)
+    {
+        $stmt = $this->conn->prepare("
+        INSERT INTO Direccion (region, provincia, distrito, direccion_detallada) 
+        VALUES (?, ?, ?, ?) RETURNING id_direccion
+    ");
+        $stmt->execute([$region, $provincia, $distrito, $direccion]);
+        return $stmt->fetch(PDO::FETCH_ASSOC)['id_direccion'];
+    }
+
+    private function insertarPersona($datos, $id_direccion)
+    {
+        $hashedPassword = password_hash($datos['password'], PASSWORD_BCRYPT);
+
+        $stmt = $this->conn->prepare("
+        INSERT INTO Persona (
+            nombres, apellidos, id_tipo_documento, numero_documento, 
+            telefono, correo, password, fecha_nacimiento, id_direccion, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        RETURNING id_persona
+    ");
+
+        $stmt->execute([
+            $datos['nombres'],
+            $datos['apellidos'],
+            $datos['id_tipo_documento'],
+            $datos['numero_documento'],
+            $datos['telefono'],
+            $datos['correo'],
+            $hashedPassword,
+            $datos['fecha_nacimiento'] ?? null,
+            $id_direccion
+        ]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['id_persona'];
+    }
+
+    private function insertarCliente($id_persona)
+    {
+        $stmt = $this->conn->prepare("
+        INSERT INTO Cliente (id_persona) 
+        VALUES (?)
+        RETURNING id_cliente
+    ");
+        $stmt->execute([$id_persona]);
+        return $stmt->fetch(PDO::FETCH_ASSOC)['id_cliente'];
+    }
+
+    /**
      * Verifica si hay una sesión activa
      */
-    public function verificarSesion() {
-        session_start();
+    public function verificarSesion()
+    {
+        // Iniciar sesión solo si no está activa
+        $this->startSessionIfNotStarted();
+
         if (isset($_SESSION['usuario'])) {
             return [
                 'success' => true,
-                'usuario' => $_SESSION['usuario']
+                'usuario' => $_SESSION['usuario'],
+                'session_id' => session_id(),
+                'session_status' => session_status()
             ];
         }
-        return ['success' => false];
+
+        return [
+            'success' => false,
+            'session_id' => session_id(),
+            'session_status' => session_status()
+        ];
     }
 
     /**
      * Cierra la sesión actual
      */
-    public function cerrarSesion() {
+    public function cerrarSesion()
+    {
         session_start();
         session_unset();
         session_destroy();
         return ['success' => true];
     }
+    private function startSessionIfNotStarted()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start([
+                'cookie_lifetime' => 86400, // 1 día
+                'cookie_secure' => true, // Solo en HTTPS
+                'cookie_httponly' => true, // Accesible solo por HTTP
+                'use_strict_mode' => true
+            ]);
+        }
+    }
 }
-?>

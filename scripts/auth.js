@@ -1,4 +1,4 @@
-import { registrarCliente } from "./authService.js";
+import { iniciarSesion, registrarCliente } from "./authService.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   // Manejo de tabs
@@ -49,14 +49,11 @@ document.addEventListener("DOMContentLoaded", function () {
     loginForm.addEventListener("submit", function (e) {
       e.preventDefault();
 
-      const email = document.getElementById("login-email").value;
+      const correo = document.getElementById("login-email").value;
       const password = document.getElementById("login-password").value;
 
       // Logica de autenticación
-      console.log("Login:", { email, password });
-
-      // Simulación de login exitoso
-      alert(`Inicio de sesión exitoso para ${email}`);
+      iniciarSesion({ correo, password });
     });
   }
 
