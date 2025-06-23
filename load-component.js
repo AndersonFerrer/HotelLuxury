@@ -1,4 +1,7 @@
-document.addEventListener("DOMContentLoaded", function () {
+import { verificarAutenticacion } from "./scripts/authService.js";
+
+document.addEventListener("DOMContentLoaded", async function () {
+  await verificarAutenticacion();
   // Cargar navbar
   fetch("./components/navbar.html")
     .then((response) => response.text())
