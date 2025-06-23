@@ -128,6 +128,7 @@ class AuthService
             'apellidos',
             'id_tipo_documento',
             'numero_documento',
+            'fecha_nacimiento',
             'telefono',
             'correo',
             'password',
@@ -143,6 +144,10 @@ class AuthService
             }
         }
 
+        $this->validarTipoDocumento($datos['id_tipo_documento'], $datos['numero_documento']);
+        $this->validarTelefono($datos['telefono']);
+        $this->validarMayoriaEdad($datos['fecha_nacimiento']);
+
         if (strlen($datos['password']) < 8) {
             throw new Exception("La contraseña debe tener al menos 8 caracteres");
         }
@@ -153,6 +158,67 @@ class AuthService
 
         if (!is_numeric($datos['id_tipo_documento'])) {
             throw new Exception("Tipo de documento inválido");
+        }
+    }
+
+    private function validarMayoriaEdad($fechaNacimiento) {
+        $fechaNac = new DateTime($fechaNacimiento);
+        $hoy = new DateTime();
+        $edad = $hoy->diff($fechaNac)->y;
+        
+        if ($edad < 18) {
+            throw new Exception("Debes tener al menos 18 años para registrarte");
+        }
+        
+        // Opcional: Validar que la fecha no sea en el futuro
+        if ($fechaNac > $hoy) {
+            throw new Exception("La fecha de nacimiento no puede ser futura");
+        }
+    }
+
+    private function validarTelefono($telefono) {
+        // Eliminar espacios, guiones y el prefijo +51 si existe
+        $numero = preg_replace('/[^0-9]/', '', $telefono);
+        $numero = str_replace('+51', '', $numero);
+        $numero = str_replace('51', '', $numero);
+        
+        // Validar longitud (9 dígitos para Perú)
+        if (!preg_match('/^9[0-9]{8}$/', $numero)) {
+            throw new Exception("El número de teléfono debe tener 9 dígitos y comenzar con 9");
+        }
+    }
+
+    private function validarTipoDocumento($id_tipo_documento, $numero_documento) {
+        // Eliminar espacios y guiones
+        $numero = preg_replace('/[^0-9]/', '', $numero_documento);
+        
+        switch ($id_tipo_documento) {
+            case 1: // DNI (Perú)
+                if (!preg_match('/^[0-9]{8}$/', $numero)) {
+                    throw new Exception("El DNI debe tener 8 dígitos numéricos");
+                }
+                break;
+                
+            case 2: // Carnet de Extranjería
+                if (!preg_match('/^[A-Z0-9]{6,12}$/', $numero_documento)) {
+                    throw new Exception("El Carnet de Extranjería debe tener entre 6 y 12 caracteres alfanuméricos");
+                }
+                break;
+                
+            case 3: // Pasaporte
+                if (!preg_match('/^[A-Z0-9]{6,12}$/', $numero_documento)) {
+                    throw new Exception("El Pasaporte debe tener entre 6 y 12 caracteres alfanuméricos");
+                }
+                break;
+                
+            case 4: // RUC
+                if (!preg_match('/^[0-9]{11}$/', $numero)) {
+                    throw new Exception("El RUC debe tener 11 dígitos numéricos");
+                }
+                break;
+                
+            default:
+                throw new Exception("Tipo de documento no válido");
         }
     }
 
