@@ -217,7 +217,9 @@
 
             // Limpiar contenedor primero
             contenedor.innerHTML = "";
-
+            if (habitaciones.length === 0) {
+              return (contenedor.innerText = "No se encontraron habitaciones");
+            }
             // Crear y agregar cada tarjeta
             habitaciones.forEach((habitacion) => {
               const tarjetaHTML = crearTarjetaHabitacion(habitacion);
@@ -246,8 +248,8 @@
           ${habitacion.descripcion}
         </p>
         <div class="room-footer">
-          <span class="room-price">$${habitacion.precio_noche} / noche</span>
-          <a href="room-detail.html?id=${habitacion.id}" class="btn btn-outline">
+          <span class="room-price">S/. ${habitacion.precio_noche} / noche</span>
+          <a href="room-detail.html?id=${habitacion.id_tipo_habitacion}" class="btn btn-outline">
             Ver Detalles
           </a>
         </div>
