@@ -34,21 +34,13 @@
             <div class="room-features-grid">
               <div class="feature-card">
                 <i class="fas fa-bed feature-icon"></i>
-                <span id="bed-type" class="feature-text">1 Cama King</span>
-              </div>
-              <div class="feature-card">
-                <i class="fas fa-users feature-icon"></i>
-                <span id="room-capacity" class="feature-text"
-                  >2-4 Personas</span
+                <span id="bed-type" class="feature-text"
+                  >0 habitaciones disponibles</span
                 >
               </div>
               <div class="feature-card">
-                <i class="fas fa-vector-square feature-icon"></i>
-                <span id="room-size" class="feature-text">75 m²</span>
-              </div>
-              <div class="feature-card">
-                <i class="fas fa-wifi feature-icon"></i>
-                <span class="feature-text">WiFi Gratis</span>
+                <i class="fas fa-users feature-icon"></i>
+                <span id="room-capacity" class="feature-text">0 Personas</span>
               </div>
             </div>
 
@@ -80,7 +72,7 @@
         <div class="booking-sidebar">
           <div class="booking-card">
             <div class="price-display">
-              <span id="room-price" class="price-amount">$450</span>
+              <span id="room-price" class="price-amount">S/. 450</span>
               <span class="price-per-night">por noche</span>
             </div>
 
@@ -114,131 +106,6 @@
     <script src="load-component.js"></script>
     <script src="scripts/booking-form.js"></script>
     <script src="scripts/room-gallery.js"></script>
-    <script>
-      // Load room data based on URL
-      document.addEventListener("DOMContentLoaded", function () {
-        const urlParams = new URLSearchParams(window.location.search);
-        const roomId = urlParams.get("id") || "presidential";
-
-        const roomData = getRoomData(roomId);
-        updateRoomDetails(roomData);
-
-        // Initialize gallery with room images
-        initRoomGallery(roomData.images);
-
-        // Initialize booking form
-        initBookingForm(roomId, roomData.price);
-      });
-
-      function getRoomData(roomId) {
-        const rooms = {
-          presidential: {
-            name: "Suite Presidencial",
-            description:
-              "Disfrute de nuestra lujosa habitación diseñada para ofrecerle la máxima comodidad y elegancia durante su estancia. Con vistas impresionantes y todas las comodidades que pueda necesitar, esta habitación es perfecta para viajeros exigentes que buscan una experiencia excepcional.",
-            price: 450,
-            capacity: "2-4",
-            size: "75",
-            bedType: "1 Cama King",
-            features: [
-              "WiFi Gratis",
-              "Desayuno incluido",
-              "Aire acondicionado",
-              "TV de pantalla plana",
-              "Minibar",
-              "Caja fuerte",
-              "Baño privado",
-              "Jacuzzi",
-              "Sala de estar separada",
-              "Servicio de mayordomo",
-              "Terraza privada",
-            ],
-            images: [
-              "https://assets.easybroker.com/property_images/3356813/54200415/EB-LW6813.JPG?version=1667418198",
-              "https://i.pinimg.com/736x/6e/41/8a/6e418a8f89d34aadbbf35ecccb655e31.jpg",
-              "https://media-cdn.tripadvisor.com/media/photo-s/13/b0/b3/1b/suite-presidencial-bano.jpg",
-              "https://media-cdn.tripadvisor.com/media/photo-s/13/b0/b3/1b/suite-presidencial-bano.jpg",
-            ],
-          },
-          deluxe: {
-            name: "Suite Deluxe",
-            description:
-              "Una habitación espaciosa y elegante con todas las comodidades modernas para una estancia relajante. Perfecta para parejas o pequeños grupos que buscan un poco más de lujo durante su viaje.",
-            price: 250,
-            capacity: "2-3",
-            size: "50",
-            bedType: "1 Cama King",
-            features: [
-              "WiFi Gratis",
-              "Desayuno incluido",
-              "Aire acondicionado",
-              "TV de pantalla plana",
-              "Minibar",
-              "Caja fuerte",
-              "Baño privado",
-              "Jacuzzi",
-              "Sala de estar separada",
-            ],
-            images: [
-              "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjo46tYA5IUec3lzC-W-nsXTD2MqXgnF-EqE56mcmTcn1thbyl4wmK22HLxbxBZX-VV8vUZYRjaK7rc1TNgrK-iAztT9jlcxgVaVSp3G-iF6HFDF0N6t5fzWGsfkrLODPKMPgYTR-NdHmqlVSW5_m-2c-k3nVzwBWGdr8f7-aub-S111q5ZX0gafT8Mfg/s16000/hostales%20en%20cusco.jpg",
-              "https://plus.unsplash.com/premium_photo-1678297270523-8775c817d0b3?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-              "https://alvearicon.com/files/habitaciones/galeria/thumbs/deluxe-room-5.jpg",
-              "https://www.peninsula.com/es/-/media/images/new-york/03roomssuites/new-york_grand-premier-room_bathroom-(1).jpg?mw=905&hash=5416EDE9A6DCD3B01F51811F690C39E2",
-            ],
-          },
-          standard: {
-            name: "Habitación Estándar",
-            description:
-              "Una habitación cómoda y bien equipada para aquellos que buscan un alojamiento práctico sin renunciar a la calidad. Ideal para estancias cortas o viajeros que pasan la mayor parte del tiempo explorando.",
-            price: 120,
-            capacity: "2",
-            size: "35",
-            bedType: "1 Cama King",
-            features: [
-              "WiFi Gratis",
-              "Desayuno incluido",
-              "Aire acondicionado",
-              "TV de pantalla plana",
-              "Minibar",
-              "Caja fuerte",
-              "Baño privado",
-            ],
-            images: [
-              "https://images.mirai.com/INFOROOMS/100376307/2lvOjWQowKt0dyxNFJ23/2lvOjWQowKt0dyxNFJ23_original.jpg",
-              "assets/standard-1.png",
-              "https://www.princess-hotels.com/wp-content/blogs.dir/1738/files/platinum-yucatan-princess-home-1//Suite-presidencial-foto-fija-home.jpg",
-              "https://cdn.pixabay.com/photo/2023/05/19/14/33/bathroom-8004699_1280.jpg",
-            ],
-          },
-        };
-
-        return rooms[roomId] || rooms.presidential;
-      }
-
-      function updateRoomDetails(roomData) {
-        document.getElementById("room-name").textContent = roomData.name;
-        document.getElementById("room-description").textContent =
-          roomData.description;
-        document.getElementById("room-price").textContent =
-          "$" + roomData.price;
-        document.getElementById("bed-type").textContent = roomData.bedType;
-        document.getElementById("room-capacity").textContent =
-          roomData.capacity + " Personas";
-        document.getElementById("room-size").textContent =
-          roomData.size + " m²";
-
-        const featuresContainer = document.getElementById("room-features");
-        featuresContainer.innerHTML = "";
-        roomData.features.forEach((feature) => {
-          const featureElement = document.createElement("div");
-          featureElement.className = "flex items-center";
-          featureElement.innerHTML = `
-          <i class="fas fa-check text-[#d4af37] mr-2"></i>
-          <span class="text-gray-600">${feature}</span>
-        `;
-          featuresContainer.appendChild(featureElement);
-        });
-      }
-    </script>
+    <script src="scripts/room-detail.js"></script>
   </body>
 </html>

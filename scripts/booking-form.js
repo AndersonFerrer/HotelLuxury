@@ -68,19 +68,19 @@ function initBookingForm(roomId, roomPrice) {
       <div class="price-summary">
         <div class="price-row">
           <span class="price-label">
-            $${roomPrice} x <span id="nights">3</span> noches
+            S/. ${roomPrice} x <span id="nights">3</span> noches
           </span>
-          <span id="subtotal" class="price-value">$${roomPrice * 3}</span>
+          <span id="subtotal" class="price-value">S/. ${roomPrice * 3}</span>
         </div>
         <div class="price-row">
-          <span class="price-label">Impuestos (10%)</span>
-          <span id="taxes" class="price-value">$${Math.round(
-            roomPrice * 3 * 0.1
+          <span class="price-label">Impuestos (18%)</span>
+          <span id="taxes" class="price-value">S/. ${Math.round(
+            roomPrice * 3 * 0.18
           )}</span>
         </div>
         <div class="price-row total-row">
           <span>Total</span>
-          <span id="total-price">$${Math.round(roomPrice * 3 * 1.1)}</span>
+          <span id="total-price">S/. ${Math.round(roomPrice * 3 * 1.1)}</span>
         </div>
       </div>
 
@@ -212,7 +212,7 @@ function initBookingForm(roomId, roomPrice) {
 
     const nights = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
     const subtotal = nights * roomPrice;
-    const taxes = Math.round(subtotal * 0.1);
+    const taxes = Math.round(subtotal * 0.18);
     const total = subtotal + taxes;
 
     const nightsElement = document.getElementById("nights");
@@ -221,9 +221,9 @@ function initBookingForm(roomId, roomPrice) {
     const totalElement = document.getElementById("total-price");
 
     if (nightsElement) nightsElement.textContent = nights;
-    if (subtotalElement) subtotalElement.textContent = `$${subtotal}`;
-    if (taxesElement) taxesElement.textContent = `$${taxes}`;
-    if (totalElement) totalElement.textContent = `$${total}`;
+    if (subtotalElement) subtotalElement.textContent = `S/. ${subtotal}`;
+    if (taxesElement) taxesElement.textContent = `S/. ${taxes}`;
+    if (totalElement) totalElement.textContent = `S/. ${total}`;
   };
 
   // Toggle calendar visibility
