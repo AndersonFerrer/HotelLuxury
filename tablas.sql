@@ -65,6 +65,7 @@ CREATE TABLE TipoHabitacion (
     nombre VARCHAR(100) NOT NULL,
     descripcion TEXT,
     precio_noche DECIMAL(10,2) NOT NULL,
+    aforo INT NOT NULL DEFAULT 4,
     CONSTRAINT uk_tipohab_nombre UNIQUE (nombre)
 );
 
