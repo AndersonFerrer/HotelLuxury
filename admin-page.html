@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Administración - Luxury Hotel</title>
+    <link rel="stylesheet" href="/styles/admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Incluir el aside -->
+    <div id="aside-root"></div>
+
+    <!-- Contenido principal -->
+    <div class="admin-main-content">
+      <!-- Header -->
+      <header class="admin-header">
+        <button id="menuToggle" class="mobile-menu-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h1>Dashboard</h1>
+        <div class="admin-header-actions">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Buscar..." />
+          </div>
+          <div class="user-profile">
+            <div class="profile-icon">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-info">
+              <span class="profile-name">Admin</span>
+              <span class="profile-email">admin@luxuryhotel.com</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Contenedor para rutas -->
+      <main id="admin-content-container">
+        <!-- El contenido dinámico se cargará aquí -->
+      </main>
+    </div>
+    <script type="module" src="/scripts/admin.js"></script>
+  </body>
+</html>
