@@ -41,9 +41,33 @@
 
       <!-- Contenedor para rutas -->
       <main id="admin-content-container">
-        <!-- El contenido dinámico se cargará aquí -->
+        <!-- Dashboard Stats -->
+        <div class="dashboard-stats">
+          <div class="stat-card total-rooms">
+            <h3>Total Habitaciones</h3>
+            <p id="total-rooms">0</p>
+          </div>
+          <div class="stat-card available-rooms">
+            <h3>Disponibles</h3>
+            <p id="available-rooms">0</p>
+          </div>
+          <div class="stat-card occupied-rooms">
+            <h3>Ocupadas</h3>
+            <p id="occupied-rooms">0</p>
+          </div>
+          <div class="stat-card maintenance-rooms">
+            <h3>Mantenimiento</h3>
+            <p id="maintenance-rooms">0</p>
+          </div>
+          <div class="stat-card occupancy-rate">
+            <h3>% Ocupación</h3>
+            <p id="occupancy-rate">0%</p>
+          </div>
+        </div>
       </main>
     </div>
     <script type="module" src="/scripts/admin.js"></script>
+    <script type="module" src="/scripts/authService.js"></script>
+    <script src="/scripts/dashboard-stats.js"></script>
   </body>
 </html>

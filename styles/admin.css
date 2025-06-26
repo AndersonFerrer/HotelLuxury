@@ -186,3 +186,37 @@
 body {
   margin: 0;
 }
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h3 {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card p {
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Colores específicos para cada tarjeta */
+.total-rooms { border-left: 4px solid #4CAF50; }
+.available-rooms { border-left: 4px solid #2196F3; }
+.occupied-rooms { border-left: 4px solid #FFC107; }
+.maintenance-rooms { border-left: 4px solid #F44336; }
+.occupancy-rate { border-left: 4px solid #9C27B0; }
