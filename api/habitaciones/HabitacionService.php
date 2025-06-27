@@ -96,6 +96,47 @@ class HabitacionService {
         }
     }
 
+    public function getAllHabitaciones() {
+        try {
+            $sql = "
+                SELECT 
+                    h.id_habitacion,
+                    h.numero,
+                    h.estado,
+                    th.nombre AS tipo_habitacion,
+                    th.precio_noche,
+                    COUNT(hc.id_caracteristica) AS cantidad_caracteristicas,
+                    r.id_reserva,
+                    r.fecha_checkout,
+                    hu.nombres AS huesped_nombres,
+                    hu.apellidos AS huesped_apellidos
+                FROM Habitacion h
+                INNER JOIN TipoHabitacion th ON h.id_tipo_habitacion = th.id_tipo_habitacion
+                LEFT JOIN HabitacionCaracteristica hc ON h.id_habitacion = hc.id_habitacion
+                LEFT JOIN Reserva r ON r.id_habitacion = h.id_habitacion AND r.estado = 'Ocupada'
+                LEFT JOIN Huesped hu ON hu.id_reserva = r.id_reserva
+                GROUP BY h.id_habitacion, th.nombre, th.precio_noche, r.id_reserva, hu.nombres, hu.apellidos, r.fecha_checkout
+                ORDER BY h.numero;
+            ";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
+            $habitaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return [
+                "success" => true,
+                "message" => "Habitaciones encontradas",
+                "data" => $habitaciones
+            ];
+        } catch (PDOException $e) {
+            return [
+                "success" => false,
+                "message" => "Error al obtener habitaciones",
+                "error" => $e->getMessage()
+            ];
+        }
+    }
+
     private function obtenerImagenesHabitacion($id_tipo_habitacion) {
         // Aquí puedes implementar la lógica para obtener imágenes
         // Esto es un ejemplo - adapta según tu base de datos
