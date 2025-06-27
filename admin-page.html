@@ -21,53 +21,21 @@
         <button id="menuToggle" class="mobile-menu-btn">
           <i class="fas fa-bars"></i>
         </button>
-        <h1>Dashboard</h1>
+        <h1 id="pageTitle">Dashboard</h1>
         <div class="admin-header-actions">
           <div class="search-box">
             <i class="fas fa-search"></i>
             <input type="text" placeholder="Buscar..." />
           </div>
-          <div class="user-profile">
-            <div class="profile-icon">
-              <i class="fas fa-user"></i>
-            </div>
-            <div class="profile-info">
-              <span class="profile-name">Admin</span>
-              <span class="profile-email">admin@luxuryhotel.com</span>
-            </div>
-          </div>
         </div>
       </header>
 
       <!-- Contenedor para rutas -->
-      <main id="admin-content-container">
-        <!-- Dashboard Stats -->
-        <div class="dashboard-stats">
-          <div class="stat-card total-rooms">
-            <h3>Total Habitaciones</h3>
-            <p id="total-rooms">0</p>
-          </div>
-          <div class="stat-card available-rooms">
-            <h3>Disponibles</h3>
-            <p id="available-rooms">0</p>
-          </div>
-          <div class="stat-card occupied-rooms">
-            <h3>Ocupadas</h3>
-            <p id="occupied-rooms">0</p>
-          </div>
-          <div class="stat-card maintenance-rooms">
-            <h3>Mantenimiento</h3>
-            <p id="maintenance-rooms">0</p>
-          </div>
-          <div class="stat-card occupancy-rate">
-            <h3>% Ocupación</h3>
-            <p id="occupancy-rate">0%</p>
-          </div>
-        </div>
-      </main>
+      <main id="admin-content-container"></main>
     </div>
+    <div class="admin-sidebar-overlay"></div>
     <script type="module" src="/scripts/admin.js"></script>
+    <script type="module" src="/scripts/router.js"></script>
     <script type="module" src="/scripts/authService.js"></script>
-    <script src="/scripts/dashboard-stats.js"></script>
   </body>
 </html>
