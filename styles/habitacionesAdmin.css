@@ -1,0 +1,149 @@
+/* Colores específicos para cada tarjeta */
+.total-rooms {
+  border-left: 4px solid #4caf50;
+}
+.available-rooms {
+  border-left: 4px solid #2196f3;
+}
+.occupied-rooms {
+  border-left: 4px solid #ffc107;
+}
+.maintenance-rooms {
+  border-left: 4px solid #f44336;
+}
+.occupancy-rate {
+  border-left: 4px solid #9c27b0;
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h3 {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card p {
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.habitaciones-section {
+  background: #fff;
+  margin-top: 16px;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  font-family: sans-serif;
+}
+
+.habitaciones-section h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.4rem;
+}
+
+.tabla-habitaciones {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.tabla-habitaciones th,
+.tabla-habitaciones td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+  font-size: 0.95rem;
+}
+
+.tipo-habitacion p {
+  margin: 0;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.estado {
+  padding: 0.4em 0.8em;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  display: inline-block;
+  font-weight: 600;
+}
+
+.estado-disponible {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.estado-ocupada {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.estado-mantenimiento {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.limpieza-info {
+  font-size: 0.85rem;
+  color: #444;
+}
+
+.acciones button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 0.3rem;
+  font-size: 1rem;
+  color: #444;
+  transition: color 0.2s;
+}
+
+.acciones button:hover {
+  color: #000;
+}
+
+.acciones .accion-eliminar {
+  color: #e11d48;
+}
+
+.acciones .accion-eliminar:hover {
+  color: #b91c1c;
+}
+
+.tabla-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* scroll suave en iOS */
+}
+
+.tabla-habitaciones {
+  min-width: 900px; /* o el ancho que necesites para que no se rompa */
+}
+
+.modal-habitacion {
+  border: none;
+  border-radius: 10px;
+  padding: 1.5rem;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+.modal-habitacion::backdrop {
+  background: rgba(0, 0, 0, 0.3);
+}

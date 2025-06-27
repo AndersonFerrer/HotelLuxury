@@ -1,0 +1,83 @@
+<div class="dashboard-stats">
+  <div class="stat-card total-rooms">
+    <h3>Total Habitaciones</h3>
+    <p id="total-rooms">0</p>
+  </div>
+  <div class="stat-card available-rooms">
+    <h3>Disponibles</h3>
+    <p id="available-rooms">0</p>
+  </div>
+  <div class="stat-card occupied-rooms">
+    <h3>Ocupadas</h3>
+    <p id="occupied-rooms">0</p>
+  </div>
+  <div class="stat-card maintenance-rooms">
+    <h3>Mantenimiento</h3>
+    <p id="maintenance-rooms">0</p>
+  </div>
+  <div class="stat-card occupancy-rate">
+    <h3>% Ocupación</h3>
+    <p id="occupancy-rate">0%</p>
+  </div>
+</div>
+
+<!-- habitaciones.html -->
+<section class="habitaciones-section">
+  <h2>Lista de Habitaciones</h2>
+  <p>
+    Gestiona todas las habitaciones del hotel. Total:
+    <span id="total-habitaciones">1</span> habitaciones
+  </p>
+
+  <div class="tabla-wrapper">
+    <table class="tabla-habitaciones">
+      <thead>
+        <tr>
+          <th>Número</th>
+          <th>Tipo</th>
+          <th>Estado</th>
+          <th>Precio/Noche</th>
+          <th>Huésped Actual</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="habitaciones-tbody">
+        <!-- Fila base para clonar -->
+        <tr class="habitacion-fila">
+          <td class="habitacion-numero">#101</td>
+          <td>
+            <div class="tipo-habitacion">
+              <strong>Habitación Estándar</strong>
+              <p class="caracteristicas">5 características</p>
+            </div>
+          </td>
+          <td><span class="estado estado-disponible">Disponible</span></td>
+          <td>$120.00</td>
+          <td class="huesped">-</td>
+          <td class="acciones">
+            <button class="accion-ver" title="Ver">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="accion-editar" title="Editar">
+              <i class="fas fa-pen"></i>
+            </button>
+            <button class="accion-eliminar" title="Eliminar">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<dialog id="modal-habitacion" class="modal-habitacion">
+  <form method="dialog">
+    <h3 id="modal-titulo">Ver Habitación</h3>
+    <div id="modal-contenido">
+      <!-- Aquí pondrás el contenido dinámico -->
+    </div>
+    <div class="modal-actions">
+      <button>Cancelar</button>
+    </div>
+  </form>
+</dialog>
