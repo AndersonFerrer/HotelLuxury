@@ -3,7 +3,7 @@
 const routes = {
   dashboard: {
     html: "pagesAdmin/dashboard.html",
-    //css: "styles/dashboardAdmin.css",
+    css: "styles/dashboardAdmin.css",
   },
   habitaciones: {
     html: "pagesAdmin/habitaciones.html",
