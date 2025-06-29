@@ -1,119 +1,22 @@
-/* Variables de color */
-:root {
-  --primary-color: #3498db;
-  --secondary-color: #2ecc71;
-  --danger-color: #e74c3c;
-  --warning-color: #f39c12;
-  --dark-color: #2c3e50;
-  --light-color: #ecf0f1;
-  --white: #ffffff;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* Enlace "Ver Todas" */
+.view-all {
+  text-align: right;
+  margin-top: 1rem;
 }
 
-/* Estilos generales */
-body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5f7fa;
-  margin: 0;
-  padding: 0;
-  color: var(--dark-color);
-}
-
-h1 {
-  color: var(--dark-color);
-  margin-bottom: 2rem;
-  font-size: 2rem;
-  text-align: center;
-}
-
-/* Grid de estadísticas */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
-/* Tarjetas de estadísticas */
-.stat-card {
-  background-color: var(--white);
-  border-radius: 10px;
-  padding: 1rem;
-  box-shadow: var(--shadow);
-  display: flex;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.stat-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: rgba(52, 152, 219, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 1.5rem;
+.view-all-link {
   color: var(--primary-color);
-  font-size: 1.5rem;
-}
-
-.stat-content {
-  flex: 1;
-}
-
-.stat-label {
-  display: block;
-  color: #7f8c8d;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  text-decoration: none;
   font-weight: 500;
-}
-
-.stat-value {
-  display: block;
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: var(--dark-color);
-}
-
-.stat-trend {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  font-size: 0.85rem;
 }
 
-.stat-trend i {
-  margin-right: 0.3rem;
+.view-all-link i {
+  margin-left: 5px;
+  transition: transform 0.2s;
 }
 
-/* Colores para las tendencias */
-.up {
-  color: var(--secondary-color);
-}
-
-.down {
-  color: var(--danger-color);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stat-card {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .stat-icon {
-    margin-right: 0;
-    margin-bottom: 1rem;
-  }
+.view-all-link:hover i {
+  transform: translateX(3px);
 }
