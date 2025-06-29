@@ -30,16 +30,35 @@ function updateTableRooms(data) {
   tbody.innerHTML = ""; // Limpiar
 
   data.forEach((habitacion) => {
+    const getStatus = (estado) => {
+      switch (estado) {
+        case "Disponible":
+          return "success";
+        case "Ocupada":
+          return "danger";
+        case "Mantenimiento":
+          return "warning";
+        default:
+          return "info";
+      }
+    };
     const fila = `<tr class="habitacion-fila">
-          <td class="habitacion-numero">${habitacion.numero}</td>
+          <td class="habitacion-id">${habitacion.id_habitacion}</td>
+          <td class="habitacion-numero">#${habitacion.numero}</td>
           <td>
             <div>
-              <strong class="habitacion-tipo">${habitacion.tipo_habitacion}</strong>
-              <p class="caracteristicas">${habitacion.cantidad_caracteristicas} características</p>
+              <strong class="habitacion-tipo">${
+                habitacion.tipo_habitacion
+              }</strong>
+              <p class="caracteristicas">${
+                habitacion.cantidad_caracteristicas
+              } características</p>
             </div>
           </td>
-          <td><span class="status-badge habitacion-estado success">${habitacion.estado}</span></td>
-          <td class="habitacion-precio">$${habitacion.precio_noche}</td>
+          <td><span class="status-badge habitacion-estado ${getStatus(
+            habitacion.estado
+          )}">${habitacion.estado}</span></td>
+          <td class="habitacion-precio">S/. ${habitacion.precio_noche}</td>
           <td>-</td>
           <td class="acciones">
             <button class="action-btn info" title="Ver">
@@ -77,13 +96,11 @@ const modalContenido = document.getElementById("modal-contenido");
 const modalTitulo = document.getElementById("modal-titulo");
 // Al recorrer y renderizar las filas, también agrega los listeners
 document.querySelectorAll(".habitacion-fila").forEach((fila) => {
-  console.log(fila);
   const verBtn = fila.querySelector(".action-btn.info");
   const editarBtn = fila.querySelector(".action-btn.warning");
   const eliminarBtn = fila.querySelector(".action-btn.danger");
 
   verBtn.addEventListener("click", () => {
-    console.log("gaaaa");
     modalTitulo.textContent = "Ver Habitación";
     modalContenido.innerHTML = generarHTMLVer(fila);
     modal.showModal();
@@ -99,6 +116,40 @@ document.querySelectorAll(".habitacion-fila").forEach((fila) => {
     modalTitulo.textContent = "Eliminar Habitación";
     modalContenido.innerHTML = generarHTMLEliminar(fila);
     modal.showModal();
+    // Agregar el event listener al botón recién creado
+    modalContenido
+      .querySelector(".btn-confirmar-eliminar")
+      .addEventListener("click", async () => {
+        const id_habitacion = modalContenido.querySelector(
+          ".btn-confirmar-eliminar"
+        ).dataset.id_habitacion;
+
+        if (!id_habitacion) {
+          alert("No se pudo obtener el ID de la habitación");
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `api/habitaciones/delete.php?id_habitacion=${id_habitacion}`,
+            {
+              method: "DELETE",
+            }
+          );
+
+          const data = await response.json();
+
+          if (!response.ok || !data.success) {
+            throw new Error(data.message || "Error al eliminar habitación");
+          }
+          await fetchRoomsAll();
+          modal.close();
+          alert("Habitación eliminada con éxito"); // Feedback al usuario
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Error al eliminar habitación: " + error.message);
+        }
+      });
   });
 });
 
@@ -107,7 +158,8 @@ function generarHTMLVer(fila) {
   const tipo = fila.querySelector(".habitacion-tipo")?.textContent;
   const estado = fila.querySelector(".habitacion-estado")?.textContent;
   const precio = fila.querySelector(".habitacion-precio")?.textContent;
-  const huesped = fila.querySelector(".habitacion-huesped")?.innerHTML;
+  const huesped =
+    fila.querySelector(".habitacion-huesped")?.innerHTML || "No tiene";
 
   return `
     <p><strong>Número:</strong> ${numero}</p>
@@ -133,7 +185,8 @@ function generarFormularioEditar(fila) {
 }
 
 function generarHTMLEliminar(fila) {
+  const id_habitacion = fila.querySelector(".habitacion-id")?.textContent;
   const numero = fila.querySelector(".habitacion-numero")?.textContent;
   return `<p>¿Estás seguro de que deseas eliminar la habitación <strong>${numero}</strong>?</p>
-          <button class="btn-confirmar-eliminar">Sí, eliminar</button>`;
+          <button class="btn-confirmar-eliminar" data-id_habitacion="${id_habitacion}">Sí, eliminar</button>`;
 }
