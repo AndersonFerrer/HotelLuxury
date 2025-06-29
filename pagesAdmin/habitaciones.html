@@ -1,36 +1,48 @@
-<div class="dashboard-stats">
-  <div class="stat-card total-rooms">
-    <h3>Total Habitaciones</h3>
-    <p id="total-rooms">0</p>
+<div class="stats-grid">
+  <div class="stat-card border-info">
+    <div>
+      <span class="stat-label">Total Habitaciones</span>
+      <span class="stat-value" id="total-rooms">0</span>
+    </div>
   </div>
-  <div class="stat-card available-rooms">
-    <h3>Disponibles</h3>
-    <p id="available-rooms">0</p>
+  <div class="stat-card border-success">
+    <div>
+      <span class="stat-label">Disponibles</span>
+      <span id="available-rooms" class="stat-value">0</span>
+    </div>
   </div>
-  <div class="stat-card occupied-rooms">
-    <h3>Ocupadas</h3>
-    <p id="occupied-rooms">0</p>
+  <div class="stat-card border-danger">
+    <div>
+      <span class="stat-label">Ocupadas</span>
+      <span id="occupied-rooms" class="stat-value">0</span>
+    </div>
   </div>
-  <div class="stat-card maintenance-rooms">
-    <h3>Mantenimiento</h3>
-    <p id="maintenance-rooms">0</p>
+  <div class="stat-card border-warning">
+    <div>
+      <span class="stat-label">Mantenimiento</span>
+      <span id="maintenance-rooms" class="stat-value">0</span>
+    </div>
   </div>
-  <div class="stat-card occupancy-rate">
-    <h3>% Ocupación</h3>
-    <p id="occupancy-rate">0%</p>
+  <div class="stat-card border-warning">
+    <div>
+      <span class="stat-label">% Ocupación</span>
+      <span id="occupancy-rate" class="stat-value">0%</span>
+    </div>
   </div>
 </div>
 
 <!-- habitaciones.html -->
-<section class="habitaciones-section">
-  <h2>Lista de Habitaciones</h2>
-  <p>
-    Gestiona todas las habitaciones del hotel. Total:
-    <span id="total-habitaciones">1</span> habitaciones
-  </p>
+<section class="table-container">
+  <div class="section-header">
+    <h2>Lista de Habitaciones</h2>
+    <p>
+      Gestiona todas las habitaciones del hotel. Total:
+      <span id="total-habitaciones">1</span> habitaciones
+    </p>
+  </div>
 
-  <div class="tabla-wrapper">
-    <table class="tabla-habitaciones">
+  <div class="table-wrapper">
+    <table class="admin-table">
       <thead>
         <tr>
           <th>Número</th>
@@ -46,22 +58,22 @@
         <tr class="habitacion-fila">
           <td class="habitacion-numero">#101</td>
           <td>
-            <div class="tipo-habitacion">
-              <strong>Habitación Estándar</strong>
+            <div>
+              <strong class="tipo-habitacion">Habitación Estándar</strong>
               <p class="caracteristicas">5 características</p>
             </div>
           </td>
-          <td><span class="estado estado-disponible">Disponible</span></td>
+          <td><span class="status-badge success">Disponible</span></td>
           <td>$120.00</td>
-          <td class="huesped">-</td>
+          <td>-</td>
           <td class="acciones">
-            <button class="accion-ver" title="Ver">
+            <button class="action-btn info" title="Ver">
               <i class="fas fa-eye"></i>
             </button>
-            <button class="accion-editar" title="Editar">
+            <button class="action-btn warning" title="Editar">
               <i class="fas fa-pen"></i>
             </button>
-            <button class="accion-eliminar" title="Eliminar">
+            <button class="action-btn danger" title="Eliminar">
               <i class="fas fa-trash"></i>
             </button>
           </td>

@@ -27,30 +27,33 @@ async function fetchRoomsAll() {
 
 function updateTableRooms(data) {
   const tbody = document.getElementById("habitaciones-tbody");
-  const baseRow = document.querySelector(".habitacion-fila");
-
   tbody.innerHTML = ""; // Limpiar
 
   data.forEach((habitacion) => {
-    const clone = baseRow.cloneNode(true);
-
-    clone.querySelector(".habitacion-numero").textContent = habitacion.numero;
-    clone.querySelector(".tipo-habitacion strong").textContent =
-      habitacion.tipo_habitacion;
-    clone.querySelector(
-      ".caracteristicas"
-    ).textContent = `${habitacion.cantidad_caracteristicas} características`;
-
-    const estadoSpan = clone.querySelector(".estado");
-    estadoSpan.textContent = habitacion.estado;
-    estadoSpan.className = "estado estado-" + habitacion.estado.toLowerCase();
-
-    clone.children[3].textContent = `$${habitacion.precio_noche}`;
-    clone.querySelector(".huesped").innerHTML = habitacion.huesped
-      ? `${habitacion.huesped.nombre}<br><small>Checkout: ${habitacion.huesped.checkout}</small>`
-      : "-";
-
-    tbody.appendChild(clone);
+    const fila = `<tr class="habitacion-fila">
+          <td class="habitacion-numero">${habitacion.numero}</td>
+          <td>
+            <div>
+              <strong class="habitacion-tipo">${habitacion.tipo_habitacion}</strong>
+              <p class="caracteristicas">${habitacion.cantidad_caracteristicas} características</p>
+            </div>
+          </td>
+          <td><span class="status-badge habitacion-estado success">${habitacion.estado}</span></td>
+          <td class="habitacion-precio">$${habitacion.precio_noche}</td>
+          <td>-</td>
+          <td class="acciones">
+            <button class="action-btn info" title="Ver">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="action-btn warning" title="Editar">
+              <i class="fas fa-pen"></i>
+            </button>
+            <button class="action-btn danger" title="Eliminar">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>`;
+    tbody.insertAdjacentHTML("beforeend", fila);
   });
 }
 
@@ -66,18 +69,18 @@ function updateDashboardStats(data) {
     data.porcentaje_ocupacion || 0
   }%`;
 }
-fetchRoomStats();
-fetchRoomsAll();
+await fetchRoomStats();
+await fetchRoomsAll();
 
 const modal = document.getElementById("modal-habitacion");
 const modalContenido = document.getElementById("modal-contenido");
 const modalTitulo = document.getElementById("modal-titulo");
-
 // Al recorrer y renderizar las filas, también agrega los listeners
 document.querySelectorAll(".habitacion-fila").forEach((fila) => {
-  const verBtn = fila.querySelector(".accion-ver");
-  const editarBtn = fila.querySelector(".accion-editar");
-  const eliminarBtn = fila.querySelector(".accion-eliminar");
+  console.log(fila);
+  const verBtn = fila.querySelector(".action-btn.info");
+  const editarBtn = fila.querySelector(".action-btn.warning");
+  const eliminarBtn = fila.querySelector(".action-btn.danger");
 
   verBtn.addEventListener("click", () => {
     console.log("gaaaa");
@@ -101,10 +104,10 @@ document.querySelectorAll(".habitacion-fila").forEach((fila) => {
 
 function generarHTMLVer(fila) {
   const numero = fila.querySelector(".habitacion-numero")?.textContent;
-  const tipo = fila.querySelector(".tipo-habitacion strong")?.textContent;
-  const estado = fila.querySelector(".estado")?.textContent;
-  const precio = fila.children[3]?.textContent;
-  const huesped = fila.querySelector(".huesped")?.innerHTML;
+  const tipo = fila.querySelector(".habitacion-tipo")?.textContent;
+  const estado = fila.querySelector(".habitacion-estado")?.textContent;
+  const precio = fila.querySelector(".habitacion-precio")?.textContent;
+  const huesped = fila.querySelector(".habitacion-huesped")?.innerHTML;
 
   return `
     <p><strong>Número:</strong> ${numero}</p>
