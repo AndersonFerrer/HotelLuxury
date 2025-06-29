@@ -3,7 +3,7 @@
   <div class="stat-card border-info">
     <div class="stat-content">
       <span class="stat-label">Reservas Totales</span>
-      <span class="stat-value">128</span>
+      <span id="total-reservas" class="stat-value"></span>
     </div>
   </div>
 
@@ -11,7 +11,7 @@
   <div class="stat-card border-success">
     <div class="stat-content">
       <span class="stat-label">Ingresos</span>
-      <span class="stat-value">$45,231</span>
+      <span id="ingresos-totales" class="stat-value"></span>
     </div>
   </div>
 
@@ -19,7 +19,7 @@
   <div class="stat-card border-warning">
     <div class="stat-content">
       <span class="stat-label">Tasa de Ocupación</span>
-      <span class="stat-value">78%</span>
+      <span id="tasa-ocupacion-dashboard" class="stat-value"></span>
     </div>
   </div>
 
@@ -27,7 +27,7 @@
   <div class="stat-card border-danger">
     <div class="stat-content">
       <span class="stat-label">Nuevos Clientes</span>
-      <span class="stat-value">42</span>
+      <span id="nuevos-clientes" class="stat-value"></span>
     </div>
   </div>
 </div>
@@ -41,7 +41,7 @@
   <div class="table-wrapper">
     <table class="admin-table">
       <thead>
-        <tr>
+        <tr id="table-reservaas">
           <th>ID</th>
           <th>Huésped</th>
           <th>Habitación</th>
@@ -51,53 +51,7 @@
           <th>Total</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>LH-1234</td>
-          <td>Juan Pérez</td>
-          <td>Suite Deluxe</td>
-          <td>15/12/2023</td>
-          <td>20/12/2023</td>
-          <td><span class="status-badge success">Confirmada</span></td>
-          <td>$1250</td>
-        </tr>
-        <tr>
-          <td>LH-5678</td>
-          <td>María López</td>
-          <td>Habitación Estándar</td>
-          <td>10/02/2024</td>
-          <td>15/02/2024</td>
-          <td><span class="status-badge warning">Pendiente</span></td>
-          <td>$600</td>
-        </tr>
-        <tr>
-          <td>LH-9012</td>
-          <td>Carlos Rodríguez</td>
-          <td>Suite Presidencial</td>
-          <td>05/09/2023</td>
-          <td>10/09/2023</td>
-          <td><span class="status-badge info">Completada</span></td>
-          <td>$2250</td>
-        </tr>
-        <tr>
-          <td>LH-3456</td>
-          <td>Ana Martinez</td>
-          <td>Suite Deluxe</td>
-          <td>20/01/2024</td>
-          <td>25/01/2024</td>
-          <td><span class="status-badge success">Confirmada</span></td>
-          <td>$1250</td>
-        </tr>
-        <tr>
-          <td>LH-7890</td>
-          <td>Roberto Sánchez</td>
-          <td>Habitación Estándar</td>
-          <td>03/03/2024</td>
-          <td>08/03/2024</td>
-          <td><span class="status-badge warning">Pendiente</span></td>
-          <td>$600</td>
-        </tr>
-      </tbody>
+      <tbody id="table-reservas-dashboard"></tbody>
     </table>
   </div>
 
