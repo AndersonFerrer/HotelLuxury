@@ -27,6 +27,9 @@ async function fetchRoomsAll() {
 
 function updateTableRooms(data) {
   const tbody = document.getElementById("habitaciones-tbody");
+  if (data.length === 0) {
+    return (tbody.innerText = "No hay habitaciones");
+  }
   tbody.innerHTML = ""; // Limpiar
 
   data.forEach((habitacion) => {
@@ -143,6 +146,7 @@ document.querySelectorAll(".habitacion-fila").forEach((fila) => {
             throw new Error(data.message || "Error al eliminar habitación");
           }
           await fetchRoomsAll();
+          await fetchRoomStats();
           modal.close();
           alert("Habitación eliminada con éxito"); // Feedback al usuario
         } catch (error) {
@@ -190,3 +194,11 @@ function generarHTMLEliminar(fila) {
   return `<p>¿Estás seguro de que deseas eliminar la habitación <strong>${numero}</strong>?</p>
           <button class="btn-confirmar-eliminar" data-id_habitacion="${id_habitacion}">Sí, eliminar</button>`;
 }
+
+window.addEventListener("hashchange", async () => {
+  const hash = location.hash.slice(1) || "dashboard";
+  if (hash === "habitaciones") {
+    await fetchRoomsAll();
+    await fetchRoomStats();
+  }
+});
