@@ -145,5 +145,47 @@ class HabitacionService {
             "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjo46tYA5IUec3lzC-W-nsXTD2MqXgnF-EqE56mcmTcn1thbyl4wmK22HLxbxBZX-VV8vUZYRjaK7rc1TNgrK-iAztT9jlcxgVaVSp3G-iF6HFDF0N6t5fzWGsfkrLODPKMPgYTR-NdHmqlVSW5_m-2c-k3nVzwBWGdr8f7-aub-S111q5ZX0gafT8Mfg/s16000/hostales%20en%20cusco.jpg"
         ];
     }
+
+    //SERICIO PARA ELIMINAR HABITACION POR NUMERO
+    public function eliminarHabitacionPorId($id_habitacion) {
+    try {
+        // Validación básica
+        if (empty($id_habitacion)) {
+            throw new PDOException("ID de habitación no proporcionado");
+        }
+
+        // Verificar existencia primero
+        $checkSql = "SELECT id_habitacion FROM Habitacion WHERE id_habitacion = ?";
+        $checkStmt = $this->conn->prepare($checkSql);
+        $checkStmt->execute([$id_habitacion]);
+        
+        if ($checkStmt->rowCount() === 0) {
+            return [
+                "success" => false,
+                "message" => "Habitación no encontrada"
+            ];
+        }
+
+        // Eliminar la habitación
+        $deleteSql = "DELETE FROM Habitacion WHERE id_habitacion = ?";
+        $deleteStmt = $this->conn->prepare($deleteSql);
+        $deleteStmt->execute([$id_habitacion]);
+
+        return [
+            "success" => true,
+            "message" => "Habitación eliminada con éxito"
+        ];
+
+    } catch (PDOException $e) {
+        // Log del error (opcional)
+        error_log("Error al eliminar habitación: " . $e->getMessage());
+        
+        return [
+            "success" => false,
+            "message" => "Error al eliminar habitación",
+            "error" => $e->getMessage()
+        ];
+    }
+    }
 }
 ?>
