@@ -4,6 +4,7 @@ const routes = {
   dashboard: {
     html: "pagesAdmin/dashboard.html",
     css: "styles/dashboardAdmin.css",
+    script: "scripts/dashboardAdmin.js",
   },
   habitaciones: {
     html: "pagesAdmin/habitaciones.html",
@@ -29,6 +30,7 @@ const routes = {
   reservas: {
     html: "pagesAdmin/reservas.html",
     css: "styles/reservasAdmin.css",
+    script: "scripts/reservasAdmin.js",
   },
 };
 async function router() {
