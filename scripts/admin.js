@@ -14,23 +14,31 @@ document.addEventListener("DOMContentLoaded", async function () {
     .then((data) => {
       aside.innerHTML = data;
       adminSidebar = document.querySelector(".admin-sidebar");
+      // Función para actualizar el estado activo
+      const updateActiveLink = () => {
+        const navLinks = document.querySelectorAll(".nav-link");
+        const currentHash = window.location.hash || "#dashboard";
+
+        navLinks.forEach((link) => {
+          // Extraer el hash del href (ej: "admin-page.html#reservas" → "#reservas")
+          const linkHash =
+            "#" + (link.getAttribute("href").split("#")[1] || "dashboard");
+          link.classList.toggle("active", linkHash === currentHash);
+        });
+      };
+
       // Manejar clics en los enlaces del sidebar
       const navLinks = document.querySelectorAll(".nav-link");
-
       navLinks.forEach((link) => {
-        const currentHash = location.hash || "#dashboard";
-        const href = link.getAttribute("href");
-        // slice(15) por el admin-page.html que contiene el href
-        if (href.slice(15) === currentHash) {
-          link.classList.add("active");
-        } else {
-          link.classList.remove("active");
-        }
         link.addEventListener("click", function (e) {
-          // Remover clase active de todos los links
-          navLinks.forEach((l) => l.classList.remove("active"));
-          // Agregar clase active al link clickeado
-          this.classList.add("active");
+          // Prevenir comportamiento por defecto solo si es un enlace hash
+          if (this.getAttribute("href").includes("#")) {
+            e.preventDefault();
+
+            // Actualizar el hash sin recargar
+            const newHash = this.getAttribute("href").split("#")[1];
+            window.location.hash = newHash || "dashboard";
+          }
 
           // Cerrar sidebar en móvil si está abierto
           if (window.innerWidth <= 768) {
@@ -39,10 +47,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             document.body.style.overflow = "";
             document
               .querySelector(".admin-sidebar-overlay")
-              .classList.toggle("visible");
+              ?.classList.remove("visible");
           }
         });
       });
+
+      // Actualizar al cargar y cuando cambia el hash
+      updateActiveLink();
+      window.addEventListener("hashchange", updateActiveLink);
 
       // Manejar logout
       document.getElementById("logoutBtn")?.addEventListener("click", () => {

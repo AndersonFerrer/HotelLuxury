@@ -28,7 +28,7 @@ const routes = {
   },
   reservas: {
     html: "pagesAdmin/reservas.html",
-    //css: "styles/reservasAdmin.css",
+    css: "styles/reservasAdmin.css",
   },
 };
 async function router() {
