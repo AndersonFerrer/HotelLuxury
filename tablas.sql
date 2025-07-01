@@ -80,7 +80,7 @@ CREATE TABLE Habitacion (
 );
 
 -- Tabla: CaracteristicaHabitacion
-CREATE TABLE CaracteristicaHabitacion (
+CREATE TABLE CaracteristicaTipoHabitacion (
     id_caracteristica SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     descripcion TEXT,
@@ -88,12 +88,12 @@ CREATE TABLE CaracteristicaHabitacion (
 );
 
 -- Tabla: HabitacionCaracteristica
-CREATE TABLE HabitacionCaracteristica (
+CREATE TABLE TipoHabitacionCaracteristica (
     id_habitacion INT NOT NULL,
     id_caracteristica INT NOT NULL,
-    PRIMARY KEY (id_habitacion, id_caracteristica),
-    FOREIGN KEY (id_habitacion) REFERENCES Habitacion(id_habitacion) ON DELETE CASCADE,
-    FOREIGN KEY (id_caracteristica) REFERENCES CaracteristicaHabitacion(id_caracteristica) ON DELETE CASCADE
+    PRIMARY KEY (id_tipo_habitacion, id_caracteristica),
+    FOREIGN KEY (id_tipo_habitacion) REFERENCES TipoHabitacion(id_tipo_habitacion) ON DELETE CASCADE,
+    FOREIGN KEY (id_caracteristica) REFERENCES CaracteristicaTipoHabitacion(id_caracteristica) ON DELETE CASCADE
 );
 
 -- Tabla: Reserva
