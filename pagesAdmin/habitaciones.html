@@ -34,11 +34,15 @@
 <!-- habitaciones.html -->
 <section class="table-container">
   <div class="section-header">
-    <h2>Lista de Habitaciones</h2>
-    <p>
-      Gestiona todas las habitaciones del hotel. Total:
-      <span id="total-habitaciones">1</span> habitaciones
-    </p>
+    <div>
+      <h2>Lista de Habitaciones</h2>
+      <p>
+        Gestiona todas las habitaciones del hotel. Total:
+        <span id="total-habitaciones">1</span> habitaciones
+      </p>
+    </div>
+
+    <button class="btn">+ Nueva Reserva</button>
   </div>
 
   <div class="table-wrapper">
@@ -64,8 +68,8 @@
     <div id="modal-contenido">
       <!-- Cotenido dinámico -->
     </div>
-    <div class="modal-actions">
-      <button>Cancelar</button>
+    <div id="modal-actions" class="modal-actions">
+      <button type="button" class="btn-cancelar">Cancelar</button>
     </div>
   </form>
 </dialog>

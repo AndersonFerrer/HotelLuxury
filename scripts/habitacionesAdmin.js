@@ -79,6 +79,21 @@ function updateTableRooms(data) {
   });
 }
 
+let tipos_habitaciones = [];
+
+async function fetchTiposHabitaciones() {
+  try {
+    const response = await fetch("api/habitaciones/getTipoHabitaciones.php");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const { data } = await response.json();
+    tipos_habitaciones = data;
+  } catch (error) {
+    console.error("Error al obtener tipos de habitaciones:", error);
+  }
+}
+
 // Función para actualizar las estadísticas en el dashboard
 function updateDashboardStats(data) {
   document.getElementById("total-rooms").textContent = data.total || 0;
@@ -93,10 +108,12 @@ function updateDashboardStats(data) {
 }
 await fetchRoomStats();
 await fetchRoomsAll();
+await fetchTiposHabitaciones();
 
 const modal = document.getElementById("modal-habitacion");
 const modalContenido = document.getElementById("modal-contenido");
 const modalTitulo = document.getElementById("modal-titulo");
+const modalActions = document.getElementById("modal-actions");
 // Al recorrer y renderizar las filas, también agrega los listeners
 document.querySelectorAll(".habitacion-fila").forEach((fila) => {
   const verBtn = fila.querySelector(".action-btn.info");
@@ -165,6 +182,14 @@ function generarHTMLVer(fila) {
   const huesped =
     fila.querySelector(".habitacion-huesped")?.innerHTML || "No tiene";
 
+  const btnAgregar = document.querySelector(".btn-confirmar-agregar");
+  const btnEditar = document.querySelector(".btn-confirmar-editar");
+  const btnEliminar = document.querySelector(".btn-confirmar-eliminar");
+  if (btnAgregar || btnEliminar || btnEditar) {
+    btnAgregar?.remove();
+    btnEliminar?.remove();
+    btnEditar?.remove();
+  }
   return `
     <p><strong>Número:</strong> ${numero}</p>
     <p><strong>Tipo:</strong> ${tipo}</p>
@@ -177,6 +202,21 @@ function generarHTMLVer(fila) {
 function generarFormularioEditar(fila) {
   const numero = fila.querySelector(".habitacion-numero")?.textContent;
   const tipo = fila.querySelector(".tipo-habitacion strong")?.textContent;
+  const btnAgregar = document.querySelector(".btn-confirmar-agregar");
+  const btnEditar = document.querySelector(".btn-confirmar-editar");
+  const btnEliminar = document.querySelector(".btn-confirmar-eliminar");
+  if (btnAgregar || btnEliminar) {
+    btnAgregar?.remove();
+    btnEliminar?.remove();
+  }
+  if (!btnEditar) {
+    modalActions.insertAdjacentHTML(
+      "beforeend",
+      `
+    <button type="submit" class="btn-confirmar-editar">Editar</button>
+  `
+    );
+  }
 
   return `
     <label>Número: <input type="text" value="${numero.replace(
@@ -184,16 +224,107 @@ function generarFormularioEditar(fila) {
       ""
     )}" /></label><br>
     <label>Tipo: <input type="text" value="${tipo}" /></label><br>
-    <button type="submit">Guardar Cambios</button>
   `;
 }
 
 function generarHTMLEliminar(fila) {
   const id_habitacion = fila.querySelector(".habitacion-id")?.textContent;
   const numero = fila.querySelector(".habitacion-numero")?.textContent;
+  const btnAgregar = document.querySelector(".btn-confirmar-agregar");
+  const btnEditar = document.querySelector(".btn-confirmar-editar");
+  const btnEliminar = document.querySelector(".btn-confirmar-eliminar");
+  if (btnAgregar || btnEditar) {
+    btnAgregar?.remove();
+    btnEditar?.remove();
+  }
+  if (!btnEliminar) {
+    modalActions.insertAdjacentHTML(
+      "beforeend",
+      `
+    <button class="btn-confirmar-eliminar" data-id_habitacion="${id_habitacion}">Sí, eliminar</button>
+  `
+    );
+  }
   return `<p>¿Estás seguro de que deseas eliminar la habitación <strong>${numero}</strong>?</p>
-          <button class="btn-confirmar-eliminar" data-id_habitacion="${id_habitacion}">Sí, eliminar</button>`;
+          `;
 }
+
+const btnAgregar = document.querySelector(".btn");
+const btnCerrar = document.querySelector(".btn-cancelar");
+
+btnCerrar.addEventListener("click", () => {
+  modal.close();
+});
+
+btnAgregar.addEventListener("click", () => {
+  modalTitulo.textContent = "Agregar Habitación";
+  modalContenido.innerHTML = generarFormularioAgregar();
+  const btnAgregar = document.querySelector(".btn-confirmar-agregar");
+  const btnEditar = document.querySelector(".btn-confirmar-editar");
+  if (btnEditar) {
+    btnEditar.remove();
+  }
+  if (!btnAgregar) {
+    modalActions.insertAdjacentHTML(
+      "beforeend",
+      `
+    <button type="submit" class="btn-confirmar-agregar">Agregar</button>
+  `
+    );
+  }
+
+  modal.showModal();
+});
+
+function generarFormularioAgregar() {
+  return `
+    <label>Número: <input name="numero" id="numero-habitacion" type="text" /></label><br>
+    <label>Tipo: <select name="tipo" id="tipo-habitacion">
+      ${tipos_habitaciones
+        .map(
+          (tipo) =>
+            `<option value="${tipo.id_tipo_habitacion}">${tipo.nombre}</option>`
+        )
+        .join("")}
+    </select></label><br>
+  `;
+}
+
+const formularioAgregar = document.querySelector("form");
+
+formularioAgregar.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const numero = document.getElementById("numero-habitacion").value;
+  const tipo = document.getElementById("tipo-habitacion").value;
+
+  if (!numero || !tipo) {
+    alert("Por favor, completa todos los campos");
+    return;
+  }
+  try {
+    const response = await fetch("api/habitaciones/insert.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ numero, tipo }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || "Error al agregar habitación");
+    }
+
+    await fetchRoomsAll();
+    await fetchRoomStats();
+    modal.close();
+    alert("Habitación agregada con éxito"); // Feedback al usuario
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Error al agregar habitación: " + error.message);
+  }
+});
 
 window.addEventListener("hashchange", async () => {
   const hash = location.hash.slice(1) || "dashboard";
