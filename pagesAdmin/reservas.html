@@ -35,8 +35,12 @@
 <!-- Sección de Reservas Recientes -->
 <div class="table-container">
   <div class="section-header">
-    <h2>Lista de Reservas</h2>
-    <p>Gestiona todas las reservas del hotel en el sistema.</p>
+    <div>
+      <h2>Lista de Reservas</h2>
+      <p>Gestiona todas las reservas del hotel en el sistema.</p>
+    </div>
+
+    <button class="btn">+ Nueva Reserva</button>
   </div>
 
   <div class="table-wrapper">
@@ -57,3 +61,14 @@
     </table>
   </div>
 </div>
+<dialog id="modal-reservas" class="modal-reservas">
+  <form method="dialog">
+    <h3 id="modal-titulo">Ver Habitación</h3>
+    <div id="modal-contenido">
+      <!-- Cotenido dinámico -->
+    </div>
+    <div class="modal-actions">
+      <button>Cancelar</button>
+    </div>
+  </form>
+</dialog>
