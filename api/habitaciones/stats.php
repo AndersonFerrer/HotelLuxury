@@ -14,7 +14,7 @@ try {
     $sql = "SELECT 
             COUNT(*) as total,
             SUM(CASE WHEN estado = 'Disponible' THEN 1 ELSE 0 END) as disponibles,
-            SUM(CASE WHEN estado = 'Ocupada' THEN 1 ELSE 0 END) as ocupadas,
+            SUM(CASE WHEN estado = 'Ocupado' THEN 1 ELSE 0 END) as ocupadas,
             SUM(CASE WHEN estado = 'Mantenimiento' THEN 1 ELSE 0 END) as mantenimiento
             FROM Habitacion";
     

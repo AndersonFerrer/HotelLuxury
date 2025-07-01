@@ -49,7 +49,7 @@ class DashboardService {
     private function calcularTasaOcupacion() {
         // Calculamos la tasa de ocupación como (noches ocupadas / noches totales) * 100
         $sql = "SELECT 
-                (SELECT COUNT(*) FROM Habitacion WHERE estado = 'Ocupada') as ocupadas,
+                (SELECT COUNT(*) FROM Habitacion WHERE estado = 'Ocupado') as ocupadas,
                 (SELECT COUNT(*) FROM Habitacion) as total";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
