@@ -54,7 +54,18 @@ const esRutaPublica = () => {
 };
 
 export const cerrarSesion = async () => {
-  return await fetch("/api/auth/logout", { method: "POST" }).then(() => {
-    window.location.href = "/login.html";
-  });
+  await fetch("/api/auth/logout.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        alert("Sesion cerrada exitosamente");
+        window.location.href = "/";
+      } else {
+        alert(data.error);
+      }
+    })
+    .catch((error) => console.error(error));
 };

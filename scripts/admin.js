@@ -1,4 +1,4 @@
-import { verificarAutenticacion } from "./authService.js";
+import { cerrarSesion, verificarAutenticacion } from "./authService.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
   await verificarAutenticacion();
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       // Manejar logout
       document.getElementById("logoutBtn")?.addEventListener("click", () => {
         // Aquí iría la lógica para cerrar sesión
-        console.log("Cerrar sesión");
+        cerrarSesion();
       });
     })
     .catch((error) => {
