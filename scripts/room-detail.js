@@ -41,14 +41,18 @@ function updateRoomDetails(roomData) {
 
   const featuresContainer = document.getElementById("room-features");
   featuresContainer.innerHTML = "";
-  const caracteristicas = roomData.caracteristicas.split(", ");
-  caracteristicas.forEach((feature) => {
-    const featureElement = document.createElement("div");
-    featureElement.className = "flex items-center";
-    featureElement.innerHTML = `
+  if (roomData.caracteristicas) {
+    const caracteristicas = roomData.caracteristicas.split(", ");
+    caracteristicas.forEach((feature) => {
+      const featureElement = document.createElement("div");
+      featureElement.className = "flex items-center";
+      featureElement.innerHTML = `
     <i class="fas fa-check text-[#d4af37] mr-2"></i>
     <span class="text-gray-600">${feature}</span>
   `;
-    featuresContainer.appendChild(featureElement);
-  });
+      featuresContainer.appendChild(featureElement);
+    });
+  } else {
+    featuresContainer.innerText = "No hay características";
+  }
 }
