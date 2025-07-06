@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", async function () {
       // Cargar el script del navbar después de que el HTML esté cargado
       const script = document.createElement("script");
       script.src = "./scripts/navbar.js";
+      script.onload = () => {
+        if (window.actualizarBotonesNavbar) window.actualizarBotonesNavbar();
+      };
       document.body.appendChild(script);
     })
     .catch((error) => {

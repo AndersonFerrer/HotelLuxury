@@ -1,4 +1,8 @@
-import { iniciarSesion, registrarCliente } from "./authService.js";
+import {
+  iniciarSesion,
+  iniciarSesionEmpleado,
+  registrarCliente,
+} from "./authService.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   // Manejo de tabs
@@ -46,14 +50,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const loginForm = document.getElementById("loginForm");
 
   if (loginForm) {
-    loginForm.addEventListener("submit", function (e) {
+    loginForm.addEventListener("submit", async function (e) {
       e.preventDefault();
-
       const correo = document.getElementById("login-email").value;
       const password = document.getElementById("login-password").value;
-
-      // Logica de autenticación
-      iniciarSesion({ correo, password });
+      // Login unificado: la función ya redirige según el tipo
+      await iniciarSesion({ correo, password });
     });
   }
 

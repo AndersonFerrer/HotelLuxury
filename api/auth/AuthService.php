@@ -11,20 +11,24 @@ class AuthService
         $this->conn = $conn;
     }
 
-        /**
-     * Inicia sesión con correo y contraseña
+    /**
+     * Inicia sesión y devuelve tipo de usuario (empleado o cliente)
      */
     public function iniciarSesion($correo, $password)
     {
         try {
-            // Manejo seguro de sesión
             $this->startSessionIfNotStarted();
 
             // Buscar persona por correo
             $stmt = $this->conn->prepare("
-                SELECT p.*, c.id_cliente 
+                SELECT p.*,
+                       c.id_cliente,
+                       e.id_empleado,
+                       pu.nombre AS puesto_nombre
                 FROM Persona p
                 LEFT JOIN Cliente c ON p.id_persona = c.id_persona
+                LEFT JOIN Empleado e ON p.id_persona = e.id_persona
+                LEFT JOIN Puesto pu ON e.id_puesto = pu.id_puesto
                 WHERE p.correo = ?
             ");
             $stmt->execute([$correo]);
@@ -34,27 +38,88 @@ class AuthService
                 throw new Exception("Correo o contraseña incorrectos");
             }
 
-            // Verificar contraseña (en un sistema real aquí verificarías el hash)
-            // Esto es solo un ejemplo - en producción usa password_verify()
             if (!password_verify($password, $usuario['password'])) {
                 throw new Exception("Correo o contraseña incorrectos");
             }
 
-            // Crear sesión (en un API REST usaríamos tokens JWT)
-            $_SESSION['usuario'] = [
+            // Determinar tipo de usuario
+            $tipo = null;
+            if (!empty($usuario['id_empleado'])) {
+                $tipo = 'empleado';
+            } elseif (!empty($usuario['id_cliente'])) {
+                $tipo = 'cliente';
+            }
+
+            if (!$tipo) {
+                throw new Exception("El usuario no está registrado como empleado ni como cliente");
+            }
+
+            $usuarioSesion = [
                 'id' => $usuario['id_persona'],
-                'cliente_id' => $usuario['id_cliente'],
                 'nombres' => $usuario['nombres'],
                 'apellidos' => $usuario['apellidos'],
                 'correo' => $usuario['correo'],
-                'tipo_documento' => $usuario['id_tipo_documento'],
-                'numero_documento' => $usuario['numero_documento']
+                'tipo' => $tipo,
+                'id_empleado' => $usuario['id_empleado'] ?? null,
+                'puesto' => $usuario['puesto_nombre'] ?? null,
+                'id_cliente' => $usuario['id_cliente'] ?? null,
+            ];
+
+            $_SESSION['usuario'] = $usuarioSesion;
+
+            return [
+                'success' => true,
+                'usuario' => $usuarioSesion,
+                'message' => 'Inicio de sesión exitoso.'
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Inicia sesión SOLO para empleados
+     */
+    public function iniciarSesionEmpleado($correo, $password)
+    {
+        try {
+            $this->startSessionIfNotStarted();
+
+            // Buscar persona y verificar si es empleado
+            $stmt = $this->conn->prepare("
+                SELECT p.*, e.id_empleado, pu.nombre AS puesto_nombre
+                FROM Persona p
+                INNER JOIN Empleado e ON p.id_persona = e.id_persona
+                INNER JOIN Puesto pu ON e.id_puesto = pu.id_puesto
+                WHERE p.correo = ?
+            ");
+            $stmt->execute([$correo]);
+            $empleado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$empleado) {
+                throw new Exception("Solo los empleados pueden iniciar sesión en el panel de administración.");
+            }
+
+            if (!password_verify($password, $empleado['password'])) {
+                throw new Exception("Correo o contraseña incorrectos");
+            }
+
+            $_SESSION['empleado'] = [
+                'id' => $empleado['id_persona'],
+                'id_empleado' => $empleado['id_empleado'],
+                'nombres' => $empleado['nombres'],
+                'apellidos' => $empleado['apellidos'],
+                'correo' => $empleado['correo'],
+                'puesto' => $empleado['puesto_nombre'],
             ];
 
             return [
                 'success' => true,
-                'usuario' => $_SESSION['usuario'],
-                'message' => 'Inicio de sesión exitoso.'
+                'empleado' => $_SESSION['empleado'],
+                'message' => 'Inicio de sesión exitoso (empleado).'
             ];
         } catch (Exception $e) {
             return [
