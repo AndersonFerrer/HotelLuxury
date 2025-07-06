@@ -79,8 +79,8 @@ CREATE TABLE Habitacion (
     CONSTRAINT uk_habitacion_numero UNIQUE (numero)
 );
 
--- Tabla: CaracteristicaHabitacion
-CREATE TABLE CaracteristicaTipoHabitacion (
+-- Tabla: Caracteristica
+CREATE TABLE Caracteristica (
     id_caracteristica SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     descripcion TEXT,
@@ -126,18 +126,6 @@ CREATE TABLE Pago (
     id_metodo_pago INT,
     FOREIGN KEY (id_reserva) REFERENCES Reserva(id_reserva),
     FOREIGN KEY (id_metodo_pago) REFERENCES MetodoPago(id_metodo_pago)
-);
-
--- Tabla: Huesped
-CREATE TABLE Huesped (
-    id_huesped SERIAL PRIMARY KEY,
-    id_reserva INT NOT NULL,
-    nombres VARCHAR(100) NOT NULL,
-    apellidos VARCHAR(100) NOT NULL,
-    id_tipo_documento INT NOT NULL,
-    numero_documento VARCHAR(20) NOT NULL,
-    FOREIGN KEY (id_reserva) REFERENCES Reserva(id_reserva),
-    FOREIGN KEY (id_tipo_documento) REFERENCES TipoDocumento(id_tipo_documento)
 );
 
 -- Tabla: HistorialReserva
