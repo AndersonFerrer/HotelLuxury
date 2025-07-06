@@ -120,110 +120,221 @@ document.querySelectorAll(".habitacion-fila").forEach((fila) => {
   const editarBtn = fila.querySelector(".action-btn.warning");
   const eliminarBtn = fila.querySelector(".action-btn.danger");
 
-  verBtn.addEventListener("click", () => {
-    modalTitulo.textContent = "Ver Habitación";
-    modalContenido.innerHTML = generarHTMLVer(fila);
+  verBtn.addEventListener("click", async () => {
+    const idHabitacion = fila.querySelector(".habitacion-id")?.textContent;
+    modalTitulo.textContent = "Detalles de Habitación";
+    modalContenido.innerHTML =
+      '<div style="text-align:center;">Cargando...</div>';
     modal.showModal();
+    modalActions.innerHTML = "";
+    try {
+      const response = await fetch(
+        `api/habitaciones/detalle.php?id=${idHabitacion}`
+      );
+      const { data, success } = await response.json();
+      if (!success) throw new Error("No se pudo obtener el detalle");
+      modalContenido.innerHTML = generarModalVisualHabitacion(data);
+      // Botón Cancelar
+      modalActions.innerHTML = `<button type="button" class="btn-cancelar">Cancelar</button>`;
+      modalActions.querySelector(".btn-cancelar").onclick = () => modal.close();
+    } catch (e) {
+      modalContenido.innerHTML = `<div style='color:red;'>Error al cargar detalles</div>`;
+    }
   });
 
-  editarBtn.addEventListener("click", () => {
-    modalTitulo.textContent = "Editar Habitación";
-    modalContenido.innerHTML = generarFormularioEditar(fila);
+  editarBtn.addEventListener("click", async () => {
+    const idHabitacion = fila.querySelector(".habitacion-id")?.textContent;
+    modalTitulo.textContent = `Editar Habitación #${idHabitacion}`;
+    modalContenido.innerHTML =
+      '<div style="text-align:center;">Cargando...</div>';
     modal.showModal();
+    modalActions.innerHTML = "";
+    try {
+      const response = await fetch(
+        `api/habitaciones/detalle.php?id=${idHabitacion}`
+      );
+      const { data, success } = await response.json();
+      if (!success) throw new Error("No se pudo obtener el detalle");
+      modalContenido.innerHTML = generarFormularioEditarVisual(data);
+      // Botones Cancelar y Guardar Cambios
+      modalActions.innerHTML = `
+        <button type="button" class="btn-cancelar">Cancelar</button>
+        <button type="submit" id="btn-guardar-editar">Guardar Cambios</button>
+      `;
+      modalActions.querySelector(".btn-cancelar").onclick = () => modal.close();
+      modalActions.querySelector("#btn-guardar-editar").onclick =
+        async function (e) {
+          e.preventDefault();
+          const numero = document.getElementById("edit-numero").value;
+          const estado = document.getElementById("edit-estado").value;
+          const id_tipo_habitacion = document.getElementById("edit-tipo").value;
+          const payload = {
+            id_habitacion: idHabitacion,
+            numero,
+            estado,
+            id_tipo_habitacion,
+          };
+          try {
+            const res = await fetch("api/habitaciones/update.php", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+            const result = await res.json();
+            if (!result.success) throw new Error(result.message);
+            await fetchRoomsAll();
+            await fetchRoomStats();
+            modal.close();
+            alert("Habitación actualizada correctamente");
+          } catch (err) {
+            alert("Error al actualizar: " + err.message);
+          }
+        };
+    } catch (e) {
+      modalContenido.innerHTML = `<div style='color:red;'>Error al cargar detalles</div>`;
+    }
   });
 
   eliminarBtn.addEventListener("click", () => {
+    const idHabitacion = fila.querySelector(".habitacion-id")?.textContent;
+    const numero = fila.querySelector(".habitacion-numero")?.textContent;
     modalTitulo.textContent = "Eliminar Habitación";
-    modalContenido.innerHTML = generarHTMLEliminar(fila);
+    modalContenido.innerHTML = `<p>¿Estás seguro de que deseas eliminar la habitación <strong>${numero}</strong>?</p>`;
     modal.showModal();
-    // Agregar el event listener al botón recién creado
-    modalContenido
-      .querySelector(".btn-confirmar-eliminar")
-      .addEventListener("click", async () => {
-        const id_habitacion = modalContenido.querySelector(
-          ".btn-confirmar-eliminar"
-        ).dataset.id_habitacion;
-
-        if (!id_habitacion) {
+    modalActions.innerHTML = `
+      <button type="button" class="btn-cancelar">Cancelar</button>
+      <button class="btn-confirmar-eliminar" data-id_habitacion="${idHabitacion}">Sí, eliminar</button>
+    `;
+    modalActions.querySelector(".btn-cancelar").onclick = () => modal.close();
+    modalActions.querySelector(".btn-confirmar-eliminar").onclick =
+      async () => {
+        if (!idHabitacion) {
           alert("No se pudo obtener el ID de la habitación");
           return;
         }
-
         try {
           const response = await fetch(
-            `api/habitaciones/delete.php?id_habitacion=${id_habitacion}`,
-            {
-              method: "DELETE",
-            }
+            `api/habitaciones/delete.php?id_habitacion=${idHabitacion}`,
+            { method: "DELETE" }
           );
-
           const data = await response.json();
-
           if (!response.ok || !data.success) {
             throw new Error(data.message || "Error al eliminar habitación");
           }
           await fetchRoomsAll();
           await fetchRoomStats();
           modal.close();
-          alert("Habitación eliminada con éxito"); // Feedback al usuario
+          alert("Habitación eliminada con éxito");
         } catch (error) {
           console.error("Error:", error);
           alert("Error al eliminar habitación: " + error.message);
         }
-      });
+      };
   });
 });
 
-function generarHTMLVer(fila) {
-  const numero = fila.querySelector(".habitacion-numero")?.textContent;
-  const tipo = fila.querySelector(".habitacion-tipo")?.textContent;
-  const estado = fila.querySelector(".habitacion-estado")?.textContent;
-  const precio = fila.querySelector(".habitacion-precio")?.textContent;
-  const huesped =
-    fila.querySelector(".habitacion-huesped")?.innerHTML || "No tiene";
-
-  const btnAgregar = document.querySelector(".btn-confirmar-agregar");
-  const btnEditar = document.querySelector(".btn-confirmar-editar");
-  const btnEliminar = document.querySelector(".btn-confirmar-eliminar");
-  if (btnAgregar || btnEliminar || btnEditar) {
-    btnAgregar?.remove();
-    btnEliminar?.remove();
-    btnEditar?.remove();
+function generarModalVisualHabitacion(data) {
+  // Estado badge
+  let estadoBadge = `<span class="status-badge ${
+    data.estado === "Disponible"
+      ? "success"
+      : data.estado === "Ocupada"
+      ? "danger"
+      : "warning"
+  }">${data.estado}</span>`;
+  // Imágenes
+  let imagenesHTML = "";
+  if (data.imagenes && data.imagenes.length > 0) {
+    imagenesHTML =
+      `<div style='display:flex;gap:8px;justify-content:center;margin-bottom:1rem;'>` +
+      data.imagenes
+        .map(
+          (img) =>
+            `<img src='${img}' alt='img' style='width:90px;height:60px;object-fit:cover;border-radius:6px;'>`
+        )
+        .join("") +
+      `</div>`;
   }
+  // Características
+  let caracs =
+    data.caracteristicas && data.caracteristicas.length
+      ? data.caracteristicas
+          .map(
+            (c) =>
+              `<li><i class='fas fa-check-circle' style='color:#27ae60;'></i> ${c}</li>`
+          )
+          .join("")
+      : "<li>No especificadas</li>";
+  // Última limpieza
+  let limpieza = data.ultima_limpieza
+    ? new Date(data.ultima_limpieza).toLocaleString("es-PE")
+    : "No registrada";
   return `
-    <p><strong>Número:</strong> ${numero}</p>
-    <p><strong>Tipo:</strong> ${tipo}</p>
-    <p><strong>Estado:</strong> ${estado}</p>
-    <p><strong>Precio:</strong> ${precio}</p>
-    <p><strong>Huésped:</strong> ${huesped}</p>
+    <div style="padding:0.5rem 0;">
+      <h4 style="margin-bottom:0.5rem;">Información General</h4>
+      ${imagenesHTML}
+      <div style="background:#f8f9fa;padding:1rem;border-radius:8px;margin-bottom:1rem;">
+        <strong>Número:</strong> ${data.numero}<br>
+        <strong>Tipo:</strong> ${data.tipo_nombre}<br>
+        <strong>Estado:</strong> ${estadoBadge}<br>
+        <strong>Precio por noche:</strong> <span style='color:#d4af37;font-weight:bold;'>S/. ${
+          data.precio_noche
+        }</span><br>
+        <strong>Última limpieza:</strong> ${limpieza}
+      </div>
+      <h4>Descripción del Tipo</h4>
+      <div style="background:#f8f9fa;padding:0.75rem;border-radius:8px;margin-bottom:1rem;">${
+        data.tipo_descripcion || ""
+      }</div>
+      <h4>Características</h4>
+      <ul style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1.5rem;list-style:none;padding:0;">${caracs}</ul>
+    </div>
   `;
 }
 
-function generarFormularioEditar(fila) {
-  const numero = fila.querySelector(".habitacion-numero")?.textContent;
-  const tipo = fila.querySelector(".tipo-habitacion strong")?.textContent;
-  const btnAgregar = document.querySelector(".btn-confirmar-agregar");
-  const btnEditar = document.querySelector(".btn-confirmar-editar");
-  const btnEliminar = document.querySelector(".btn-confirmar-eliminar");
-  if (btnAgregar || btnEliminar) {
-    btnAgregar?.remove();
-    btnEliminar?.remove();
-  }
-  if (!btnEditar) {
-    modalActions.insertAdjacentHTML(
-      "beforeend",
-      `
-    <button type="submit" class="btn-confirmar-editar">Editar</button>
-  `
-    );
-  }
-
+function generarFormularioEditarVisual(data) {
+  console.log(data);
+  // Estado
+  const estados = ["Disponible", "Ocupada", "Mantenimiento"];
+  // Tipos de habitación
+  const tipoOptions = tipos_habitaciones
+    .map(
+      (tipo) =>
+        `<option value="${tipo.id_tipo_habitacion}" ${
+          tipo.nombre === data.tipo_nombre ? "selected" : ""
+        }>${tipo.nombre} - S/. ${tipo.precio_noche}/noche</option>`
+    )
+    .join("");
   return `
-    <label>Número: <input type="text" value="${numero.replace(
-      "#",
-      ""
-    )}" /></label><br>
-    <label>Tipo: <input type="text" value="${tipo}" /></label><br>
+    <form id="form-editar-habitacion" style="min-width:320px;max-width:500px;margin:auto;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+        <div>
+          <label for="edit-estado"><strong>Estado</strong></label><br>
+          <select id="edit-estado" class="form-input" style="width:100%;margin-bottom:1rem;">
+            ${estados
+              .map(
+                (est) =>
+                  `<option value="${est}" ${
+                    est === data.estado ? "selected" : ""
+                  }>${est}</option>`
+              )
+              .join("")}
+          </select>
+        </div>
+        <div>
+          <label for="edit-tipo"><strong>Tipo de Habitación</strong></label><br>
+          <select id="edit-tipo" class="form-input" style="width:100%;margin-bottom:1rem;">
+            ${tipoOptions}
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:1rem;">
+        <label for="edit-numero"><strong>Número</strong></label><br>
+        <input id="edit-numero" class="form-input" type="text" value="${
+          data.numero
+        }" style="width:100%;margin-bottom:1rem;" />
+      </div>
+    </form>
   `;
 }
 
@@ -259,72 +370,63 @@ btnCerrar.addEventListener("click", () => {
 btnAgregar.addEventListener("click", () => {
   modalTitulo.textContent = "Agregar Habitación";
   modalContenido.innerHTML = generarFormularioAgregar();
-  const btnAgregar = document.querySelector(".btn-confirmar-agregar");
-  const btnEditar = document.querySelector(".btn-confirmar-editar");
-  if (btnEditar) {
-    btnEditar.remove();
-  }
-  if (!btnAgregar) {
-    modalActions.insertAdjacentHTML(
-      "beforeend",
-      `
-    <button type="submit" class="btn-confirmar-agregar">Agregar</button>
-  `
-    );
-  }
-
   modal.showModal();
+  modalActions.innerHTML = `
+    <button type="button" class="btn-cancelar">Cancelar</button>
+    <button type="submit" class="btn-confirmar-agregar">Agregar</button>
+  `;
+  modalActions.querySelector(".btn-cancelar").onclick = () => modal.close();
+  modalActions.querySelector(".btn-confirmar-agregar").onclick = async (e) => {
+    e.preventDefault();
+    const numero = document.getElementById("numero-habitacion").value;
+    const tipo = document.getElementById("tipo-habitacion").value;
+    if (!numero || !tipo) {
+      alert("Por favor, completa todos los campos");
+      return;
+    }
+    try {
+      const response = await fetch("api/habitaciones/insert.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ numero, tipo }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Error al agregar habitación");
+      }
+      await fetchRoomsAll();
+      await fetchRoomStats();
+      modal.close();
+      alert("Habitación agregada con éxito");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error al agregar habitación: " + error.message);
+    }
+  };
 });
 
 function generarFormularioAgregar() {
+  const tipoOptions = tipos_habitaciones
+    .map(
+      (tipo) =>
+        `<option value="${tipo.id_tipo_habitacion}">${tipo.nombre} - S/. ${tipo.precio_noche}/noche</option>`
+    )
+    .join("");
   return `
-    <label>Número: <input name="numero" id="numero-habitacion" type="text" /></label><br>
-    <label>Tipo: <select name="tipo" id="tipo-habitacion">
-      ${tipos_habitaciones
-        .map(
-          (tipo) =>
-            `<option value="${tipo.id_tipo_habitacion}">${tipo.nombre}</option>`
-        )
-        .join("")}
-    </select></label><br>
+    <form id="form-agregar-habitacion" style="min-width:320px;max-width:500px;margin:auto;">
+      <div style="margin-bottom:1rem;">
+        <label for="numero-habitacion"><strong>Número</strong></label><br>
+        <input id="numero-habitacion" class="form-input" type="text" style="width:100%;margin-bottom:1rem;" />
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label for="tipo-habitacion"><strong>Tipo de Habitación</strong></label><br>
+        <select id="tipo-habitacion" class="form-input" style="width:100%;margin-bottom:1rem;">
+          ${tipoOptions}
+        </select>
+      </div>
+    </form>
   `;
 }
-
-const formularioAgregar = document.querySelector("form");
-
-formularioAgregar.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const numero = document.getElementById("numero-habitacion").value;
-  const tipo = document.getElementById("tipo-habitacion").value;
-
-  if (!numero || !tipo) {
-    alert("Por favor, completa todos los campos");
-    return;
-  }
-  try {
-    const response = await fetch("api/habitaciones/insert.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ numero, tipo }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok || !data.success) {
-      throw new Error(data.message || "Error al agregar habitación");
-    }
-
-    await fetchRoomsAll();
-    await fetchRoomStats();
-    modal.close();
-    alert("Habitación agregada con éxito"); // Feedback al usuario
-  } catch (error) {
-    console.error("Error:", error);
-    alert("Error al agregar habitación: " + error.message);
-  }
-});
 
 window.addEventListener("hashchange", async () => {
   const hash = location.hash.slice(1) || "dashboard";

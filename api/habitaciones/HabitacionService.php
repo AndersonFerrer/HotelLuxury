@@ -40,59 +40,38 @@ class HabitacionService {
     }
 
     /**
-     * Obtiene el detalle completo de un tipo de habitación
+     * Obtiene el detalle completo de una habitación individual (por id de habitación)
      */
-    public function obtenerDetalleHabitacion($id_o_nombre) {
+    public function obtenerDetalleHabitacionPorId($id_habitacion) {
         try {
-            // Determinar si el parámetro es ID o nombre
-            $is_id = is_numeric($id_o_nombre);
-            
-            $sql = "SELECT 
-                        th.*,
-                        COUNT(h.id_tipo_habitacion) AS habitaciones_disponibles,
-                        (
-                            SELECT STRING_AGG(ch.nombre, ', ')
-                            FROM TipoHabitacionCaracteristica hc
-                            JOIN Caracteristica ch ON hc.id_caracteristica = ch.id_caracteristica
-                            WHERE hc.id_tipo_habitacion IN (
-                                SELECT id_habitacion FROM Habitacion 
-                                WHERE id_tipo_habitacion = th.id_tipo_habitacion
-                                LIMIT 1
-                            )
-                        ) AS caracteristicas
-                    FROM TipoHabitacion th
-                    LEFT JOIN Habitacion h ON th.id_tipo_habitacion = h.id_tipo_habitacion 
-                        AND h.estado = 'Disponible'
-                    WHERE th." . ($is_id ? "id_tipo_habitacion = ?" : "nombre ILIKE ?") . "
-                    GROUP BY th.id_tipo_habitacion";
-            
+            $sql = "SELECT h.id_habitacion, h.numero, h.estado, h.id_tipo_habitacion, th.nombre AS tipo_nombre, th.descripcion AS tipo_descripcion, th.precio_noche, th.aforo
+                    FROM Habitacion h
+                    INNER JOIN TipoHabitacion th ON h.id_tipo_habitacion = th.id_tipo_habitacion
+                    WHERE h.id_habitacion = ?";
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$is_id ? $id_o_nombre : '%'.$id_o_nombre.'%']);
-            
+            $stmt->execute([$id_habitacion]);
             $habitacion = $stmt->fetch(PDO::FETCH_ASSOC);
-            
             if (!$habitacion) {
-                return [
-                    'success' => false,
-                    'error' => 'Habitación no encontrada'
-                ];
+                return [ 'success' => false, 'error' => 'Habitación no encontrada' ];
             }
-            
-            // Obtener imágenes de ejemplo (puedes adaptar esto a tu estructura real)
+            // Características
+            $sqlCar = "SELECT cth.nombre FROM TipoHabitacionCaracteristica thc
+                        INNER JOIN Caracteristica cth ON thc.id_caracteristica = cth.id_caracteristica
+                        WHERE thc.id_tipo_habitacion = ?";
+            $stmtCar = $this->conn->prepare($sqlCar);
+            $stmtCar->execute([$habitacion['id_tipo_habitacion']]);
+            $caracteristicas = $stmtCar->fetchAll(PDO::FETCH_COLUMN);
+            $habitacion['caracteristicas'] = $caracteristicas;
+            // Imágenes
             $habitacion['imagenes'] = $this->obtenerImagenesHabitacion($habitacion['id_tipo_habitacion']);
-            
             return [
                 'success' => true,
                 'data' => $habitacion,
                 'message' => 'Detalle de habitación obtenida.'
             ];
-            
         } catch (PDOException $e) {
             error_log("Error al obtener detalle de habitación: " . $e->getMessage());
-            return [
-                'success' => false,
-                'error' => 'Error al obtener detalle de habitación'
-            ];
+            return [ 'success' => false, 'error' => 'Error al obtener detalle de habitación' ];
         }
     }
 
@@ -191,7 +170,7 @@ class HabitacionService {
 
     public function obtenerTiposHabitaciones() {
         try {
-            $sql = "SELECT id_tipo_habitacion, nombre FROM TipoHabitacion";
+            $sql = "SELECT id_tipo_habitacion, nombre, precio_noche FROM TipoHabitacion";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
             $tiposHabitaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -243,5 +222,29 @@ class HabitacionService {
     }
 }
 
+    public function actualizarHabitacion($id, $numero, $estado, $id_tipo_habitacion) {
+        try {
+            // Validar existencia
+            $stmt = $this->conn->prepare("SELECT id_habitacion FROM Habitacion WHERE id_habitacion = ?");
+            $stmt->execute([$id]);
+            if ($stmt->rowCount() === 0) {
+                return ["success" => false, "message" => "Habitación no encontrada"];
+            }
+            // Validar número único (excepto para sí misma)
+            $stmt = $this->conn->prepare("SELECT id_habitacion FROM Habitacion WHERE numero = ? AND id_habitacion != ?");
+            $stmt->execute([$numero, $id]);
+            if ($stmt->rowCount() > 0) {
+                return ["success" => false, "message" => "El número de habitación ya existe"];
+            }
+            // Actualizar
+            $sql = "UPDATE Habitacion SET numero = ?, estado = ?, id_tipo_habitacion = ? WHERE id_habitacion = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$numero, $estado, $id_tipo_habitacion, $id]);
+            return ["success" => true, "message" => "Habitación actualizada correctamente"];
+        } catch (PDOException $e) {
+            error_log("Error al actualizar habitación: " . $e->getMessage());
+            return ["success" => false, "message" => "Error al actualizar habitación", "error" => $e->getMessage()];
+        }
+    }
 }
 ?>
