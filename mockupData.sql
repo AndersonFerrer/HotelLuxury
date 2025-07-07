@@ -198,15 +198,71 @@ INSERT INTO HistorialReserva (id_historial, id_reserva, estado_anterior, estado_
 (1, 1, 'Pendiente', 'Confirmada', '2023-05-01 09:00:00'),
 (2, 1, 'Confirmada', 'Activa', '2023-05-15 14:30:00'),
 -- Cambios para reserva 2
-(3, 2, 'Pendiente', 'Confirmada', '2023-05-05 10:15:00'),
+(3, 2, 'Pendiente', 'Confirmada', '2023-05-02 10:15:00'),
 (4, 2, 'Confirmada', 'Activa', '2023-05-18 15:45:00'),
 -- Cambios para reserva 3
-(5, 3, 'Pendiente', 'Confirmada', '2023-05-10 11:20:00'),
-(6, 3, 'Confirmada', 'Activa', '2023-05-16 16:00:00'),
+(5, 3, 'Pendiente', 'Confirmada', '2023-05-03 11:30:00'),
+(6, 3, 'Confirmada', 'Activa', '2023-05-16 16:20:00'),
+-- Cambios para reserva 4
+(7, 4, 'Pendiente', 'Confirmada', '2023-05-01 14:00:00'),
+-- Cambios para reserva 5
+(8, 5, 'Pendiente', 'Confirmada', '2023-05-05 16:30:00'),
 -- Cambios para reservas pasadas
-(7, 6, 'Pendiente', 'Confirmada', '2023-04-18 14:00:00'),
-(8, 6, 'Confirmada', 'Activa', '2023-04-25 12:30:00'),
-(9, 6, 'Activa', 'Finalizada', '2023-04-28 10:00:00'),
-(10, 7, 'Pendiente', 'Confirmada', '2023-04-12 16:45:00'),
-(11, 7, 'Confirmada', 'Activa', '2023-04-20 14:15:00'),
-(12, 7, 'Activa', 'Finalizada', '2023-04-25 11:00:00');
+(9, 6, 'Pendiente', 'Confirmada', '2023-04-20 09:00:00'),
+(10, 6, 'Confirmada', 'Activa', '2023-04-25 14:00:00'),
+(11, 6, 'Activa', 'Completada', '2023-04-28 11:00:00'),
+(12, 7, 'Pendiente', 'Confirmada', '2023-04-15 10:00:00'),
+(13, 7, 'Confirmada', 'Activa', '2023-04-20 15:00:00'),
+(14, 7, 'Activa', 'Completada', '2023-04-25 10:00:00'),
+(15, 8, 'Pendiente', 'Confirmada', '2023-04-10 12:00:00'),
+(16, 8, 'Confirmada', 'Activa', '2023-04-12 14:00:00'),
+(17, 8, 'Activa', 'Completada', '2023-04-15 11:00:00');
+
+-- ========================================
+-- DATOS DE PRUEBA PARA EL FLUJO COMPLETO
+-- ========================================
+
+-- Agregar más reservas en diferentes estados para probar el flujo completo
+INSERT INTO Reserva (id_reserva, id_cliente, id_habitacion, fecha_reserva, fecha_checkin, fecha_checkout, estado, total) VALUES
+-- Reserva pendiente (recién creada por cliente)
+(9, 1, 2, CURRENT_DATE, '2025-01-20', '2025-01-23', 'Pendiente', 450.00),
+
+-- Reserva confirmada (empleado la confirmó)
+(10, 2, 6, CURRENT_DATE - INTERVAL '2 days', '2025-01-25', '2025-01-28', 'Confirmada', 660.00),
+
+-- Reserva activa (check-in realizado)
+(11, 3, 9, CURRENT_DATE - INTERVAL '5 days', '2025-01-15', '2025-01-18', 'Activa', 1050.00),
+
+-- Reserva completada (check-out realizado)
+(12, 4, 15, CURRENT_DATE - INTERVAL '10 days', '2025-01-05', '2025-01-08', 'Completada', 450.00),
+
+-- Reserva cancelada
+(13, 5, 16, CURRENT_DATE - INTERVAL '3 days', '2025-01-30', '2025-02-02', 'Cancelada', 660.00);
+
+-- Agregar historial para las nuevas reservas
+INSERT INTO HistorialReserva (id_historial, id_reserva, estado_anterior, estado_nuevo, fecha_cambio) VALUES
+-- Reserva 10 (confirmada)
+(18, 10, 'Pendiente', 'Confirmada', CURRENT_DATE - INTERVAL '1 day'),
+
+-- Reserva 11 (activa)
+(19, 11, 'Pendiente', 'Confirmada', CURRENT_DATE - INTERVAL '4 days'),
+(20, 11, 'Confirmada', 'Activa', CURRENT_DATE - INTERVAL '4 days'),
+
+-- Reserva 12 (completada)
+(21, 12, 'Pendiente', 'Confirmada', CURRENT_DATE - INTERVAL '9 days'),
+(22, 12, 'Confirmada', 'Activa', CURRENT_DATE - INTERVAL '7 days'),
+(23, 12, 'Activa', 'Completada', CURRENT_DATE - INTERVAL '7 days'),
+
+-- Reserva 13 (cancelada)
+(24, 13, 'Pendiente', 'Cancelada', CURRENT_DATE - INTERVAL '2 days');
+
+-- Agregar algunos pagos para las nuevas reservas
+INSERT INTO Pago (id_pago, id_reserva, monto, fecha_pago, id_metodo_pago) VALUES
+-- Pago para reserva confirmada
+(10, 10, 660.00, CURRENT_DATE - INTERVAL '1 day', 2),
+
+-- Pago inicial para reserva activa
+(11, 11, 500.00, CURRENT_DATE - INTERVAL '4 days', 2),
+
+-- Pago completo para reserva completada
+(12, 12, 450.00, CURRENT_DATE - INTERVAL '9 days', 1);
