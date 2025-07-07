@@ -12,24 +12,26 @@ async function fetchDashboardStats() {
   }
 }
 
-await fetchDashboardStats();
-
 function updateDashboardUI(stats) {
   console.log(stats);
-  document.getElementById("total-reservas").textContent =
-    stats.reservas_totales;
-  document.getElementById(
-    "ingresos-totales"
-  ).textContent = `S/. ${stats.ingresos_totales}`;
-  document.getElementById(
-    "tasa-ocupacion-dashboard"
-  ).textContent = `${stats.tasa_ocupacion}%`;
-  document.getElementById("nuevos-clientes").textContent =
-    stats.nuevos_clientes;
+
+  // Verificar que los elementos existen antes de intentar acceder a ellos
+  const totalReservas = document.getElementById("total-reservas");
+  const ingresosTotales = document.getElementById("ingresos-totales");
+  const tasaOcupacion = document.getElementById("tasa-ocupacion-dashboard");
+  const nuevosClientes = document.getElementById("nuevos-clientes");
+
+  if (totalReservas) totalReservas.textContent = stats.reservas_totales;
+  if (ingresosTotales)
+    ingresosTotales.textContent = `S/. ${stats.ingresos_totales}`;
+  if (tasaOcupacion) tasaOcupacion.textContent = `${stats.tasa_ocupacion}%`;
+  if (nuevosClientes) nuevosClientes.textContent = stats.nuevos_clientes;
 }
 
 function updateTableUI(data) {
   const tableBody = document.getElementById("table-reservas-dashboard");
+  if (!tableBody) return; // Si no existe la tabla, salir
+
   if (data.length === 0) {
     return (tableBody.innerText = "No hay reservas recientes");
   }
@@ -65,6 +67,17 @@ function updateTableUI(data) {
     tableBody.innerHTML += row;
   });
 }
+
+// Solo ejecutar si estamos en la página del dashboard
+function initDashboard() {
+  const hash = location.hash.slice(1) || "dashboard";
+  if (hash === "dashboard") {
+    fetchDashboardStats();
+  }
+}
+
+// Ejecutar al cargar la página
+initDashboard();
 
 window.addEventListener("hashchange", async () => {
   const hash = location.hash.slice(1) || "dashboard";
