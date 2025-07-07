@@ -1,4 +1,4 @@
-function initRoomGallery(images) {
+export function initRoomGallery(images) {
   const galleryContainer = document.getElementById("room-gallery");
 
   // Create gallery HTML

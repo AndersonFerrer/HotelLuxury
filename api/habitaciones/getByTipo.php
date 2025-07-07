@@ -11,20 +11,25 @@ header('Content-Type: application/json');
 if (ob_get_length()) ob_clean();
 
 try {
-    if (!isset($_GET['id'])) {
-        throw new Exception("Se requiere parámetro 'id'", 400);
+    if (!isset($_GET['tipo'])) {
+        throw new Exception("Se requiere parámetro 'tipo'", 400);
     }
+
+    $id_tipo = intval($_GET['tipo']);
+    
     $habitacionService = new HabitacionService($conn);
-    $resultado = $habitacionService->obtenerDetalleTipoHabitacionPorId($_GET['id']);
+    $resultado = $habitacionService->obtenerHabitacionesDisponiblesPorTipo($id_tipo);
+    
     if ($resultado['success']) {
         enviarJSON($resultado);
     } else {
-        enviarJSON($resultado, 404);
+        enviarJSON($resultado, 400);
     }
+
 } catch (Exception $e) {
     enviarJSON([
         'success' => false,
         'error' => $e->getMessage()
     ], $e->getCode() ?: 500);
 }
-?>
+?> 

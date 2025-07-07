@@ -1,3 +1,6 @@
+import { initRoomGallery } from "./room-gallery.js";
+import { initBookingForm } from "./booking-form.js";
+
 document.addEventListener("DOMContentLoaded", async function () {
   const urlParams = new URLSearchParams(window.location.search);
   const roomId = urlParams.get("id") || "1";
@@ -15,19 +18,32 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (tipo_habitacion) {
         updateRoomDetails(tipo_habitacion);
         initRoomGallery(tipo_habitacion.imagenes || []);
-        initBookingForm(roomId, tipo_habitacion.precio_noche);
+        initBookingForm(
+          roomId,
+          tipo_habitacion.precio_noche,
+          tipo_habitacion.id_tipo_habitacion
+        );
       } else {
         console.error("Habitación no encontrada");
+        alert("El tipo de habitación no existe");
+        window.location.href = "/";
       }
     } else {
       console.error("Error del servidor:", data.error);
+      alert("El tipo de habitación no existe o no está disponible");
+      window.location.href = "/";
     }
   } catch (error) {
     console.error("Error al obtener detalles de habitación:", error);
+    alert(
+      "Ocurrió un error al cargar los detalles de la habitación posiblemente no exista"
+    );
+    window.location.href = "/";
   }
 });
 
 function updateRoomDetails(roomData) {
+  console.log(roomData);
   document.getElementById("room-name").textContent =
     "Habitación " + roomData.nombre;
   document.getElementById("room-description").textContent =
@@ -42,7 +58,7 @@ function updateRoomDetails(roomData) {
   const featuresContainer = document.getElementById("room-features");
   featuresContainer.innerHTML = "";
   if (roomData.caracteristicas) {
-    const caracteristicas = roomData.caracteristicas.split(", ");
+    const caracteristicas = roomData.caracteristicas;
     caracteristicas.forEach((feature) => {
       const featureElement = document.createElement("div");
       featureElement.className = "flex items-center";

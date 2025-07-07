@@ -1,4 +1,4 @@
-function initBookingForm(roomId, roomPrice) {
+export function initBookingForm(roomId, roomPrice, idTipoHabitacion) {
   const formContainer = document.getElementById("booking-form");
 
   // Create date picker input
@@ -17,11 +17,58 @@ function initBookingForm(roomId, roomPrice) {
   let endDate = defaultEndDate;
   let adults = 2;
   let children = 0;
+  let habitacionesDisponibles = [];
+  let habitacionSeleccionada = null;
+
+  // Cargar habitaciones disponibles del tipo seleccionado
+  async function cargarHabitacionesDisponibles() {
+    try {
+      const response = await fetch(
+        `/api/habitaciones/getByTipo.php?tipo=${idTipoHabitacion}`
+      );
+      const data = await response.json();
+
+      if (data.success && data.data.length > 0) {
+        habitacionesDisponibles = data.data;
+        actualizarSelectHabitaciones();
+      } else {
+        alert("No hay habitaciones disponibles de este tipo");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error al cargar habitaciones:", error);
+      alert("Error al cargar habitaciones disponibles");
+      return false;
+    }
+    return true;
+  }
+
+  function actualizarSelectHabitaciones() {
+    const habitacionSelect = document.getElementById("habitacion-select");
+    if (habitacionSelect) {
+      habitacionSelect.innerHTML =
+        '<option value="">Seleccionar habitación</option>';
+      habitacionesDisponibles.forEach((habitacion) => {
+        const option = document.createElement("option");
+        option.value = habitacion.id_habitacion;
+        option.textContent = `Habitación #${habitacion.numero}`;
+        habitacionSelect.appendChild(option);
+      });
+    }
+  }
 
   // Create form HTML
   formContainer.innerHTML = `
     <div class="booking-form">
       <div class="form-space">
+        <!-- Habitación -->
+        <div class="form-group">
+          <label class="form-label">Habitación</label>
+          <select id="habitacion-select" class="form-input" required>
+            <option value="">Cargando habitaciones...</option>
+          </select>
+        </div>
+
         <!-- Date Range -->
         <div class="form-group">
           <label class="form-label">Fechas de estancia</label>
@@ -80,7 +127,7 @@ function initBookingForm(roomId, roomPrice) {
         </div>
         <div class="price-row total-row">
           <span>Total</span>
-          <span id="total-price">S/. ${Math.round(roomPrice * 3 * 1.1)}</span>
+          <span id="total-price">S/. ${Math.round(roomPrice * 3 * 1.18)}</span>
         </div>
       </div>
 
@@ -92,6 +139,21 @@ function initBookingForm(roomId, roomPrice) {
       <p class="disclaimer-text">No se te cobrará nada por ahora</p>
     </div>
   `;
+
+  // Cargar habitaciones al inicializar
+  cargarHabitacionesDisponibles().then((success) => {
+    if (!success) {
+      document.getElementById("book-button").disabled = true;
+    }
+  });
+
+  // Event listener para selección de habitación
+  const habitacionSelect = document.getElementById("habitacion-select");
+  if (habitacionSelect) {
+    habitacionSelect.addEventListener("change", (e) => {
+      habitacionSeleccionada = e.target.value;
+    });
+  }
 
   // Calendar functionality
   let currentMonth = today.getMonth();
@@ -283,20 +345,71 @@ function initBookingForm(roomId, roomPrice) {
   // Book button
   const bookButton = document.getElementById("book-button");
   if (bookButton) {
-    bookButton.addEventListener("click", () => {
+    bookButton.addEventListener("click", async () => {
       if (!startDate || !endDate) {
         alert("Por favor selecciona las fechas de tu estancia");
         return;
       }
 
-      const params = new URLSearchParams();
-      params.append("room", roomId);
-      params.append("from", startDate.toISOString());
-      params.append("to", endDate.toISOString());
-      params.append("adults", adults);
-      params.append("children", children);
+      if (!habitacionSeleccionada) {
+        alert("Por favor selecciona una habitación");
+        return;
+      }
 
-      window.location.href = `/booking.html?${params.toString()}`;
+      // Verificar autenticación antes de proceder
+      try {
+        const authResponse = await fetch("/api/auth/check-session.php");
+        const authData = await authResponse.json();
+
+        if (!authData.success || !authData.usuario) {
+          alert("Debes iniciar sesión para realizar una reserva");
+          window.location.href = "/auth.html";
+          return;
+        }
+
+        if (authData.usuario.tipo !== "cliente") {
+          alert("Solo los clientes pueden realizar reservas");
+          if (authData.usuario.tipo === "empleado") {
+            window.location.href = "/admin-page.html";
+          } else {
+            window.location.href = "/auth.html";
+          }
+          return;
+        }
+
+        // Si está autenticado como cliente, proceder con la reserva
+        const reservaData = {
+          id_habitacion: habitacionSeleccionada,
+          fecha_checkin: startDate.toISOString().split("T")[0], // Formato YYYY-MM-DD
+          fecha_checkout: endDate.toISOString().split("T")[0], // Formato YYYY-MM-DD
+          total: Math.round(
+            roomPrice *
+              Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) *
+              1.18
+          ), // Precio con impuestos
+        };
+
+        const response = await fetch("/api/reservas/insert.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(reservaData),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert(
+            `¡Reserva creada exitosamente!\n\nDetalles:\n- Habitación: ${result.data.habitacion}\n- Check-in: ${result.data.fecha_checkin}\n- Check-out: ${result.data.fecha_checkout}\n- Total: S/. ${result.data.total}\n\nID de reserva: ${result.data.id_reserva}`
+          );
+          // Opcional: redirigir a una página de confirmación o al home
+          window.location.href = "/";
+        } else {
+          alert("Error al crear la reserva: " + result.error);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error al procesar la reserva. Por favor, intenta nuevamente.");
+      }
     });
   }
 
