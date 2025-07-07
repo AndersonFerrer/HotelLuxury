@@ -246,5 +246,75 @@ class HabitacionService {
             return ["success" => false, "message" => "Error al actualizar habitación", "error" => $e->getMessage()];
         }
     }
+
+    /**
+     * Obtiene habitaciones disponibles de un tipo específico
+     */
+    public function obtenerHabitacionesDisponiblesPorTipo($id_tipo_habitacion) {
+        try {
+            $sql = "SELECT h.id_habitacion, h.numero, h.estado, th.nombre, th.precio_noche
+                    FROM Habitacion h
+                    INNER JOIN TipoHabitacion th ON h.id_tipo_habitacion = th.id_tipo_habitacion
+                    WHERE h.id_tipo_habitacion = ? AND h.estado = 'Disponible'
+                    ORDER BY h.numero ASC";
+            
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$id_tipo_habitacion]);
+            
+            return [
+                'success' => true,
+                'data' => $stmt->fetchAll(),
+                'count' => $stmt->rowCount()
+            ];
+            
+        } catch (PDOException $e) {
+            error_log("Error al obtener habitaciones por tipo: " . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => 'Error al obtener habitaciones disponibles'
+            ];
+        }
+    }
+
+    /**
+     * Obtiene el detalle de un tipo de habitación por su id, incluyendo imágenes, características y habitaciones disponibles
+     */
+    public function obtenerDetalleTipoHabitacionPorId($id_tipo_habitacion) {
+        try {
+            // Obtener datos del tipo de habitación
+            $sql = "SELECT id_tipo_habitacion, nombre, descripcion, precio_noche, aforo
+                    FROM TipoHabitacion
+                    WHERE id_tipo_habitacion = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$id_tipo_habitacion]);
+            $tipo = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$tipo) {
+                return [ 'success' => false, 'error' => 'Tipo de habitación no encontrado' ];
+            }
+            // Características
+            $sqlCar = "SELECT cth.nombre FROM TipoHabitacionCaracteristica thc
+                        INNER JOIN Caracteristica cth ON thc.id_caracteristica = cth.id_caracteristica
+                        WHERE thc.id_tipo_habitacion = ?";
+            $stmtCar = $this->conn->prepare($sqlCar);
+            $stmtCar->execute([$id_tipo_habitacion]);
+            $caracteristicas = $stmtCar->fetchAll(PDO::FETCH_COLUMN);
+            $tipo['caracteristicas'] = $caracteristicas;
+            // Imágenes (puedes adaptar esto según tu modelo)
+            $tipo['imagenes'] = $this->obtenerImagenesHabitacion($id_tipo_habitacion);
+            // Cantidad de habitaciones disponibles de ese tipo
+            $sqlHab = "SELECT COUNT(*) as cantidad FROM Habitacion WHERE id_tipo_habitacion = ? AND estado = 'Disponible'";
+            $stmtHab = $this->conn->prepare($sqlHab);
+            $stmtHab->execute([$id_tipo_habitacion]);
+            $tipo['habitaciones_disponibles'] = $stmtHab->fetch(PDO::FETCH_ASSOC)['cantidad'];
+            return [
+                'success' => true,
+                'data' => $tipo,
+                'message' => 'Detalle de tipo de habitación obtenido.'
+            ];
+        } catch (PDOException $e) {
+            error_log("Error al obtener detalle de tipo de habitación: " . $e->getMessage());
+            return [ 'success' => false, 'error' => 'Error al obtener detalle de tipo de habitación' ];
+        }
+    }
 }
 ?>

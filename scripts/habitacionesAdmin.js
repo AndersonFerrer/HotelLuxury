@@ -27,6 +27,8 @@ async function fetchRoomsAll() {
 
 function updateTableRooms(data) {
   const tbody = document.getElementById("habitaciones-tbody");
+  if (!tbody) return; // Si no existe la tabla, salir
+
   if (data.length === 0) {
     return (tbody.innerText = "No hay habitaciones");
   }
@@ -96,16 +98,21 @@ async function fetchTiposHabitaciones() {
 
 // Función para actualizar las estadísticas en el dashboard
 function updateDashboardStats(data) {
-  document.getElementById("total-rooms").textContent = data.total || 0;
-  document.getElementById("available-rooms").textContent =
-    data.disponibles || 0;
-  document.getElementById("occupied-rooms").textContent = data.ocupadas || 0;
-  document.getElementById("maintenance-rooms").textContent =
-    data.mantenimiento || 0;
-  document.getElementById("occupancy-rate").textContent = `${
-    data.porcentaje_ocupacion || 0
-  }%`;
+  // Verificar que los elementos existen antes de intentar acceder a ellos
+  const totalRooms = document.getElementById("total-rooms");
+  const availableRooms = document.getElementById("available-rooms");
+  const occupiedRooms = document.getElementById("occupied-rooms");
+  const maintenanceRooms = document.getElementById("maintenance-rooms");
+  const occupancyRate = document.getElementById("occupancy-rate");
+
+  if (totalRooms) totalRooms.textContent = data.total || 0;
+  if (availableRooms) availableRooms.textContent = data.disponibles || 0;
+  if (occupiedRooms) occupiedRooms.textContent = data.ocupadas || 0;
+  if (maintenanceRooms) maintenanceRooms.textContent = data.mantenimiento || 0;
+  if (occupancyRate)
+    occupancyRate.textContent = `${data.porcentaje_ocupacion || 0}%`;
 }
+
 await fetchRoomStats();
 await fetchRoomsAll();
 await fetchTiposHabitaciones();
@@ -295,7 +302,7 @@ function generarModalVisualHabitacion(data) {
 function generarFormularioEditarVisual(data) {
   console.log(data);
   // Estado
-  const estados = ["Disponible", "Ocupada", "Mantenimiento"];
+  const estados = ["Disponible", "Ocupado", "Mantenimiento"];
   // Tipos de habitación
   const tipoOptions = tipos_habitaciones
     .map(
