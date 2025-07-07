@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <!-- Tarjeta 2: Ingresos -->
+  <!-- Tarjeta 2: Confirmadas -->
   <div class="stat-card border-success">
     <div class="stat-content">
       <span class="stat-label">Confirmadas</span>
@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <!-- Tarjeta 3: Tasa de Ocupación -->
+  <!-- Tarjeta 3: Pendientes -->
   <div class="stat-card border-warning">
     <div class="stat-content">
       <span class="stat-label">Pendientes</span>
@@ -23,7 +23,7 @@
     </div>
   </div>
 
-  <!-- Tarjeta 4: Nuevos Clientes -->
+  <!-- Tarjeta 4: Ingresos -->
   <div class="stat-card border-success">
     <div class="stat-content">
       <span class="stat-label">Ingreso Total</span>
@@ -32,15 +32,24 @@
   </div>
 </div>
 
-<!-- Sección de Reservas Recientes -->
+<!-- Sección de Reservas -->
 <div class="table-container">
   <div class="section-header">
     <div>
-      <h2>Lista de Reservas</h2>
-      <p>Gestiona todas las reservas del hotel en el sistema.</p>
+      <h2>Gestión de Reservas</h2>
+      <p>Administra todas las reservas del hotel. Confirma, rechaza o cancela reservas según sea necesario.</p>
     </div>
 
-    <button class="btn">+ Nueva Reserva</button>
+    <div class="filter-controls">
+      <select id="filter-estado" class="form-input">
+        <option value="">Todos los estados</option>
+        <option value="Pendiente">Pendientes</option>
+        <option value="Confirmada">Confirmadas</option>
+        <option value="Activa">Activas</option>
+        <option value="Completada">Completadas</option>
+        <option value="Cancelada">Canceladas</option>
+      </select>
+    </div>
   </div>
 
   <div class="table-wrapper">
@@ -61,14 +70,30 @@
     </table>
   </div>
 </div>
+
+<!-- Modal para detalles y acciones -->
 <dialog id="modal-reservas" class="modal-reservas">
   <form method="dialog">
-    <h3 id="modal-titulo">Ver Habitación</h3>
+    <h3 id="modal-titulo">Detalles de Reserva</h3>
     <div id="modal-contenido">
-      <!-- Cotenido dinámico -->
+      <!-- Contenido dinámico -->
+    </div>
+    <div class="modal-actions" id="modal-actions">
+      <button type="button" class="btn-cancelar">Cancelar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Modal de confirmación -->
+<dialog id="modal-confirmacion" class="modal-reservas">
+  <form method="dialog">
+    <h3 id="modal-confirmacion-titulo">Confirmar Acción</h3>
+    <div id="modal-confirmacion-contenido">
+      <!-- Contenido dinámico -->
     </div>
     <div class="modal-actions">
-      <button>Cancelar</button>
+      <button type="button" class="btn-cancelar">Cancelar</button>
+      <button type="button" id="btn-confirmar-accion" class="btn-confirmar">Confirmar</button>
     </div>
   </form>
 </dialog>
