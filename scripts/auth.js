@@ -1,8 +1,9 @@
+import { iniciarSesion, registrarCliente } from "./authService.js";
 import {
-  iniciarSesion,
-  iniciarSesionEmpleado,
-  registrarCliente,
-} from "./authService.js";
+  withButtonLoader,
+  showSuccessToast,
+  showErrorToast,
+} from "./loaderUtils.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   // Manejo de tabs
@@ -52,10 +53,42 @@ document.addEventListener("DOMContentLoaded", function () {
   if (loginForm) {
     loginForm.addEventListener("submit", async function (e) {
       e.preventDefault();
+
+      const submitBtn = this.querySelector('button[type="submit"]');
       const correo = document.getElementById("login-email").value;
       const password = document.getElementById("login-password").value;
-      // Login unificado: la función ya redirige según el tipo
-      await iniciarSesion({ correo, password });
+
+      // Validar campos
+      if (!correo || !password) {
+        showErrorToast("Por favor completa todos los campos");
+        return;
+      }
+
+      try {
+        await withButtonLoader(
+          submitBtn,
+          async () => {
+            const result = await iniciarSesion({
+              correo,
+              password,
+              returnOnly: true,
+            });
+
+            if (result.success) {
+              showSuccessToast("Inicio de sesión exitoso");
+              // La función iniciarSesion ya maneja la redirección
+            } else {
+              showErrorToast(result.error || "Error al iniciar sesión");
+            }
+
+            return result;
+          },
+          "Iniciando sesión..."
+        );
+      } catch (error) {
+        console.error("Error en login:", error);
+        showErrorToast("Error al conectar con el servidor");
+      }
     });
   }
 
@@ -63,8 +96,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const registerForm = document.getElementById("registerForm");
 
   if (registerForm) {
-    registerForm.addEventListener("submit", function (e) {
+    registerForm.addEventListener("submit", async function (e) {
       e.preventDefault();
+
+      const submitBtn = this.querySelector('button[type="submit"]');
 
       const formData = {
         nombres: document.getElementById("register-nombres").value,
@@ -88,14 +123,60 @@ document.addEventListener("DOMContentLoaded", function () {
           .value,
       };
 
+      // Validar campos requeridos
+      const requiredFields = [
+        "nombres",
+        "apellidos",
+        "id_tipo_documento",
+        "numero_documento",
+        "correo",
+        "password",
+      ];
+      for (const field of requiredFields) {
+        if (!formData[field]) {
+          showErrorToast(`El campo ${field.replace("_", " ")} es requerido`);
+          return;
+        }
+      }
+
       // Validar que las contraseñas coincidan
       if (formData.password !== formData.confirmPassword) {
-        alert("Las contraseñas no coinciden");
+        showErrorToast("Las contraseñas no coinciden");
         return;
       }
 
-      // Llamar a la función de registro
-      registrarCliente(formData);
+      // Validar longitud de contraseña
+      if (formData.password.length < 8) {
+        showErrorToast("La contraseña debe tener al menos 8 caracteres");
+        return;
+      }
+
+      try {
+        await withButtonLoader(
+          submitBtn,
+          async () => {
+            const result = await registrarCliente(formData);
+
+            if (result.success) {
+              showSuccessToast(
+                "Registro exitoso. Inicia sesión con tus datos."
+              );
+              // Limpiar formulario
+              this.reset();
+              // Cambiar a tab de login
+              document.querySelector('[data-tab="login"]').click();
+            } else {
+              showErrorToast(result.error || "Error al registrar usuario");
+            }
+
+            return result;
+          },
+          "Creando cuenta..."
+        );
+      } catch (error) {
+        console.error("Error en registro:", error);
+        showErrorToast("Error al conectar con el servidor");
+      }
     });
   }
 });

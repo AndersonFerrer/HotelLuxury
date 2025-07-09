@@ -19,16 +19,21 @@ class AuthService
         try {
             $this->startSessionIfNotStarted();
 
-            // Buscar persona por correo
+            // Buscar persona por correo con información de dirección
             $stmt = $this->conn->prepare("
                 SELECT p.*,
                        c.id_cliente,
                        e.id_empleado,
-                       pu.nombre AS puesto_nombre
+                       pu.nombre AS puesto_nombre,
+                       d.region,
+                       d.provincia,
+                       d.distrito,
+                       d.direccion_detallada
                 FROM Persona p
                 LEFT JOIN Cliente c ON p.id_persona = c.id_persona
                 LEFT JOIN Empleado e ON p.id_persona = e.id_persona
                 LEFT JOIN Puesto pu ON e.id_puesto = pu.id_puesto
+                LEFT JOIN Direccion d ON p.id_direccion = d.id_direccion
                 WHERE p.correo = ?
             ");
             $stmt->execute([$correo]);
@@ -59,10 +64,18 @@ class AuthService
                 'nombres' => $usuario['nombres'],
                 'apellidos' => $usuario['apellidos'],
                 'correo' => $usuario['correo'],
+                'telefono' => $usuario['telefono'],
+                'fecha_nacimiento' => $usuario['fecha_nacimiento'],
                 'tipo' => $tipo,
                 'id_empleado' => $usuario['id_empleado'] ?? null,
                 'puesto' => $usuario['puesto_nombre'] ?? null,
                 'id_cliente' => $usuario['id_cliente'] ?? null,
+                'direccion' => [
+                    'region' => $usuario['region'] ?? '',
+                    'provincia' => $usuario['provincia'] ?? '',
+                    'distrito' => $usuario['distrito'] ?? '',
+                    'direccion_detallada' => $usuario['direccion_detallada'] ?? ''
+                ]
             ];
 
             $_SESSION['usuario'] = $usuarioSesion;
@@ -359,6 +372,81 @@ class AuthService
         $this->startSessionIfNotStarted();
 
         if (isset($_SESSION['usuario'])) {
+            // Si la sesión ya tiene la información completa, la devolvemos
+            if (isset($_SESSION['usuario']['direccion'])) {
+                return [
+                    'success' => true,
+                    'usuario' => $_SESSION['usuario'],
+                    'session_id' => session_id(),
+                    'session_status' => session_status()
+                ];
+            }
+
+            // Si la sesión no tiene la información completa, la actualizamos
+            try {
+                $id_persona = $_SESSION['usuario']['id'];
+                
+                $stmt = $this->conn->prepare("
+                    SELECT p.*,
+                           c.id_cliente,
+                           e.id_empleado,
+                           pu.nombre AS puesto_nombre,
+                           d.region,
+                           d.provincia,
+                           d.distrito,
+                           d.direccion_detallada
+                    FROM Persona p
+                    LEFT JOIN Cliente c ON p.id_persona = c.id_persona
+                    LEFT JOIN Empleado e ON p.id_persona = e.id_persona
+                    LEFT JOIN Puesto pu ON e.id_puesto = pu.id_puesto
+                    LEFT JOIN Direccion d ON p.id_direccion = d.id_direccion
+                    WHERE p.id_persona = ?
+                ");
+                $stmt->execute([$id_persona]);
+                $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($usuario) {
+                    // Determinar tipo de usuario
+                    $tipo = null;
+                    if (!empty($usuario['id_empleado'])) {
+                        $tipo = 'empleado';
+                    } elseif (!empty($usuario['id_cliente'])) {
+                        $tipo = 'cliente';
+                    }
+
+                    $usuarioSesion = [
+                        'id' => $usuario['id_persona'],
+                        'nombres' => $usuario['nombres'],
+                        'apellidos' => $usuario['apellidos'],
+                        'correo' => $usuario['correo'],
+                        'telefono' => $usuario['telefono'],
+                        'fecha_nacimiento' => $usuario['fecha_nacimiento'],
+                        'tipo' => $tipo,
+                        'id_empleado' => $usuario['id_empleado'] ?? null,
+                        'puesto' => $usuario['puesto_nombre'] ?? null,
+                        'id_cliente' => $usuario['id_cliente'] ?? null,
+                        'direccion' => [
+                            'region' => $usuario['region'] ?? '',
+                            'provincia' => $usuario['provincia'] ?? '',
+                            'distrito' => $usuario['distrito'] ?? '',
+                            'direccion_detallada' => $usuario['direccion_detallada'] ?? ''
+                        ]
+                    ];
+
+                    $_SESSION['usuario'] = $usuarioSesion;
+
+                    return [
+                        'success' => true,
+                        'usuario' => $usuarioSesion,
+                        'session_id' => session_id(),
+                        'session_status' => session_status()
+                    ];
+                }
+            } catch (Exception $e) {
+                error_log("Error al actualizar sesión con dirección: " . $e->getMessage());
+            }
+
+            // Si no se pudo actualizar, devolver la sesión actual
             return [
                 'success' => true,
                 'usuario' => $_SESSION['usuario'],
@@ -383,6 +471,177 @@ class AuthService
         session_unset();
         session_destroy();
         return ['success' => true];
+    }
+
+    /**
+     * Actualiza el perfil del usuario autenticado
+     */
+    public function actualizarPerfil($datos) {
+        try {
+            $this->startSessionIfNotStarted();
+
+            if (!isset($_SESSION['usuario'])) {
+                throw new Exception("Usuario no autenticado");
+            }
+
+            $id_persona = $_SESSION['usuario']['id'];
+
+            // Iniciar transacción
+            $this->conn->beginTransaction();
+
+            try {
+                // Validar datos requeridos
+                if (empty($datos['nombres']) || empty($datos['apellidos']) || empty($datos['correo'])) {
+                    throw new Exception("Nombres, apellidos y correo son requeridos");
+                }
+
+                // Verificar que el correo no esté en uso por otro usuario
+                $stmt = $this->conn->prepare("
+                    SELECT id_persona FROM Persona 
+                    WHERE correo = ? AND id_persona != ?
+                ");
+                $stmt->execute([$datos['correo'], $id_persona]);
+                if ($stmt->rowCount() > 0) {
+                    throw new Exception("El correo electrónico ya está en uso por otro usuario");
+                }
+
+                // Actualizar información de la persona
+                $stmt = $this->conn->prepare("
+                    UPDATE Persona 
+                    SET nombres = ?, apellidos = ?, correo = ?, telefono = ?
+                    WHERE id_persona = ?
+                ");
+                $stmt->execute([
+                    $datos['nombres'],
+                    $datos['apellidos'],
+                    $datos['correo'],
+                    $datos['telefono'] ?? null,
+                    $id_persona
+                ]);
+
+                // Actualizar dirección si se proporciona
+                if (isset($datos['direccion'])) {
+                    $direccion = $datos['direccion'];
+                    
+                    // Obtener el id_direccion actual
+                    $stmt = $this->conn->prepare("SELECT id_direccion FROM Persona WHERE id_persona = ?");
+                    $stmt->execute([$id_persona]);
+                    $id_direccion = $stmt->fetch(PDO::FETCH_ASSOC)['id_direccion'];
+
+                    if ($id_direccion) {
+                        // Actualizar dirección existente
+                        $stmt = $this->conn->prepare("
+                            UPDATE Direccion 
+                            SET region = ?, provincia = ?, distrito = ?, direccion_detallada = ?
+                            WHERE id_direccion = ?
+                        ");
+                        $stmt->execute([
+                            $direccion['region'] ?? '',
+                            $direccion['provincia'] ?? '',
+                            $direccion['distrito'] ?? '',
+                            $direccion['direccion_detallada'] ?? '',
+                            $id_direccion
+                        ]);
+                    } else {
+                        // Crear nueva dirección
+                        $stmt = $this->conn->prepare("
+                            INSERT INTO Direccion (region, provincia, distrito, direccion_detallada)
+                            VALUES (?, ?, ?, ?)
+                            RETURNING id_direccion
+                        ");
+                        $stmt->execute([
+                            $direccion['region'] ?? '',
+                            $direccion['provincia'] ?? '',
+                            $direccion['distrito'] ?? '',
+                            $direccion['direccion_detallada'] ?? ''
+                        ]);
+                        $id_direccion = $stmt->fetch(PDO::FETCH_ASSOC)['id_direccion'];
+
+                        // Asignar la dirección a la persona
+                        $stmt = $this->conn->prepare("
+                            UPDATE Persona SET id_direccion = ? WHERE id_persona = ?
+                        ");
+                        $stmt->execute([$id_direccion, $id_persona]);
+                    }
+                }
+
+                // Confirmar transacción
+                $this->conn->commit();
+
+                // Actualizar la sesión con los nuevos datos
+                $this->actualizarSesionUsuario($id_persona);
+
+                return [
+                    'success' => true,
+                    'message' => 'Perfil actualizado exitosamente'
+                ];
+
+            } catch (Exception $e) {
+                $this->conn->rollBack();
+                throw $e;
+            }
+
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Actualiza la sesión del usuario con los datos más recientes
+     */
+    private function actualizarSesionUsuario($id_persona) {
+        $stmt = $this->conn->prepare("
+            SELECT p.*,
+                   c.id_cliente,
+                   e.id_empleado,
+                   pu.nombre AS puesto_nombre,
+                   d.region,
+                   d.provincia,
+                   d.distrito,
+                   d.direccion_detallada
+            FROM Persona p
+            LEFT JOIN Cliente c ON p.id_persona = c.id_persona
+            LEFT JOIN Empleado e ON p.id_persona = e.id_persona
+            LEFT JOIN Puesto pu ON e.id_puesto = pu.id_puesto
+            LEFT JOIN Direccion d ON p.id_direccion = d.id_direccion
+            WHERE p.id_persona = ?
+        ");
+        $stmt->execute([$id_persona]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($usuario) {
+            // Determinar tipo de usuario
+            $tipo = null;
+            if (!empty($usuario['id_empleado'])) {
+                $tipo = 'empleado';
+            } elseif (!empty($usuario['id_cliente'])) {
+                $tipo = 'cliente';
+            }
+
+            $usuarioSesion = [
+                'id' => $usuario['id_persona'],
+                'nombres' => $usuario['nombres'],
+                'apellidos' => $usuario['apellidos'],
+                'correo' => $usuario['correo'],
+                'telefono' => $usuario['telefono'],
+                'fecha_nacimiento' => $usuario['fecha_nacimiento'],
+                'tipo' => $tipo,
+                'id_empleado' => $usuario['id_empleado'] ?? null,
+                'puesto' => $usuario['puesto_nombre'] ?? null,
+                'id_cliente' => $usuario['id_cliente'] ?? null,
+                'direccion' => [
+                    'region' => $usuario['region'] ?? '',
+                    'provincia' => $usuario['provincia'] ?? '',
+                    'distrito' => $usuario['distrito'] ?? '',
+                    'direccion_detallada' => $usuario['direccion_detallada'] ?? ''
+                ]
+            ];
+
+            $_SESSION['usuario'] = $usuarioSesion;
+        }
     }
     private function startSessionIfNotStarted()
     {
