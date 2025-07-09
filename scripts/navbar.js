@@ -1,3 +1,10 @@
+import { getSession, clearSessionCache, cerrarSesion } from "./authService.js";
+import {
+  withButtonLoader,
+  showSuccessToast,
+  showErrorToast,
+} from "./loaderUtils.js";
+
 // Seleccionar los elementos del navbar y agregar el evento de clic para el menú móvil
 const menuToggle = document.getElementById("menuToggle");
 const mobileMenu = document.getElementById("mobileMenu");
@@ -17,84 +24,76 @@ if (menuToggle) {
 }
 
 // Cerrar el menú móvil cuando se hace clic en un enlace - usar delegación de eventos
-const mobileMenuElement = document.getElementById("mobileMenu");
-if (mobileMenuElement) {
-  mobileMenuElement.addEventListener("click", function (e) {
-    if (e.target.classList.contains("mobile-link")) {
+const mobileMenuLinks = document.querySelector(".mobile-menu-links");
+if (mobileMenuLinks) {
+  mobileMenuLinks.addEventListener("click", function (e) {
+    if (e.target.tagName === "A") {
       mobileMenu.classList.remove("active");
       menuIcon.className = "fas fa-bars";
     }
   });
 }
 
-// Optimizar el evento resize usando debounce
-let resizeTimeout;
-window.addEventListener("resize", function () {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(function () {
-    if (window.innerWidth > 768 && mobileMenu.classList.contains("active")) {
-      mobileMenu.classList.remove("active");
-      menuIcon.className = "fas fa-bars";
-    }
-  }, 100);
-});
-
+// --- Mostrar botones según autenticación ---
 async function actualizarBotonesNavbar() {
+  const noAuth = document.querySelectorAll('[data-role="no-auth"]');
+  const cliente = document.querySelectorAll('[data-role="cliente"]');
+  const empleado = document.querySelectorAll('[data-role="empleado"]');
+
+  // Ocultar todos por defecto
+  noAuth.forEach((el) => (el.style.display = "none"));
+  cliente.forEach((el) => (el.style.display = "none"));
+  empleado.forEach((el) => (el.style.display = "none"));
+
   try {
-    const response = await fetch("/api/auth/check-session.php");
-    const data = await response.json();
-    const usuario = data.success ? data.usuario : null;
-
-    // Desktop
-    const desktopCta = document.querySelector(".desktop-cta");
-    if (desktopCta) {
-      if (usuario && usuario.tipo === "cliente") {
-        desktopCta.innerHTML = `
-          <button id="logout-btn" class="btn btn-outline">Cerrar Sesión</button>
-          <a href="/mi-cuenta.html" class="btn btn-primary">Mi Cuenta</a>
-        `;
-      } else {
-        desktopCta.innerHTML = `
-          <a href="auth.html" class="btn btn-outline">Iniciar Sesión</a>
-          <a href="../auth.html" class="btn btn-primary">Reservar Ahora</a>
-        `;
+    const data = await getSession();
+    if (data.success && data.usuario) {
+      if (data.usuario.tipo === "cliente") {
+        cliente.forEach((el) => (el.style.display = "flex"));
+      } else if (data.usuario.tipo === "empleado") {
+        empleado.forEach((el) => (el.style.display = "flex"));
       }
+    } else {
+      noAuth.forEach((el) => (el.style.display = "flex"));
     }
-
-    // Mobile
-    const mobileCta = document.querySelector(".mobile-cta");
-    if (mobileCta) {
-      if (usuario && usuario.tipo === "cliente") {
-        mobileCta.innerHTML = `
-          <button id="logout-btn-mobile" class="mobile-btn-outline">Cerrar Sesión</button>
-          <a href="/mi-cuenta.html" class="mobile-btn-primary">Mi Cuenta</a>
-        `;
-      } else {
-        mobileCta.innerHTML = `
-          <a href="auth.html" class="mobile-btn-outline">Iniciar Sesión</a>
-          <a href="../auth.html" class="mobile-btn-primary">Reservar Ahora</a>
-        `;
-      }
-    }
-
-    // Asignar evento cerrar sesión
-    document
-      .getElementById("logout-btn")
-      ?.addEventListener("click", async () => {
-        const mod = await import("./authService.js");
-        mod.cerrarSesion();
-      });
-    document
-      .getElementById("logout-btn-mobile")
-      ?.addEventListener("click", async () => {
-        const mod = await import("./authService.js");
-        mod.cerrarSesion();
-      });
-  } catch (e) {
-    // Si hay error, dejar los botones por defecto
+  } catch (error) {
+    noAuth.forEach((el) => (el.style.display = "flex"));
   }
 }
 
-// Esperar a que el DOM esté listo y el navbar cargado
-window.addEventListener("DOMContentLoaded", actualizarBotonesNavbar);
-// Si el navbar se recarga dinámicamente, también puedes llamar a actualizarBotonesNavbar() después de cargar el HTML del navbar.
+window.recargarNavbar = actualizarBotonesNavbar;
+actualizarBotonesNavbar();
+
+// --- Logout ---
+function configurarEventosLogout() {
+  document.querySelectorAll(".logout-btn, .logout-link").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      try {
+        await withButtonLoader(
+          btn,
+          async () => {
+            const result = await cerrarSesion();
+
+            if (result.success) {
+              showSuccessToast("Sesión cerrada exitosamente");
+              setTimeout(() => {
+                window.location.href = "/";
+              }, 1000);
+            } else {
+              showErrorToast("Error al cerrar sesión");
+            }
+
+            return result;
+          },
+          "Cerrando sesión..."
+        );
+      } catch (error) {
+        console.error("Error al cerrar sesión:", error);
+        showErrorToast("Error al cerrar sesión");
+      }
+    });
+  });
+}
+configurarEventosLogout();

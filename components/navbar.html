@@ -16,10 +16,27 @@
         <a href="contact.html" class="nav-link">Contacto</a>
       </nav>
 
-      <!-- CTA escritorio -->
-      <div class="desktop-cta">
+      <!-- CTA escritorio - No autenticado -->
+      <div class="desktop-cta" data-role="no-auth">
         <a href="auth.html" class="btn btn-outline">Iniciar Sesión</a>
         <a href="../auth.html" class="btn btn-primary">Reservar Ahora</a>
+      </div>
+
+      <!-- CTA escritorio - Cliente autenticado -->
+      <div class="desktop-cta" data-role="cliente" style="display: none;">
+        <a href="mi-cuenta.html" class="btn btn-outline">Mi Cuenta</a>
+        <a href="../auth.html" class="btn btn-primary">Reservar Ahora</a>
+        <button id="logout-btn-desktop" class="btn logout-btn btn-outline" style="margin-left: 8px;">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+
+      <!-- CTA escritorio - Empleado autenticado -->
+      <div class="desktop-cta" data-role="empleado" style="display: none;">
+        <a href="admin-page.html" class="btn btn-primary">Panel Admin</a>
+        <button id="logout-btn-desktop" class="btn logout-btn btn-outline" style="margin-left: 8px;">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
       </div>
 
       <!-- Mobile Menu Button -->
@@ -42,9 +59,28 @@
       <a href="/about" class="mobile-link">Nosotros</a> -->
       <a href="contact.html" class="mobile-link">Contacto</a>
     </div>
-    <div class="mobile-cta">
+    
+    <!-- Mobile CTA - No autenticado -->
+    <div class="mobile-cta" data-role="no-auth">
       <a href="auth.html" class="mobile-btn-outline">Iniciar Sesión</a>
       <a href="../auth.html" class="mobile-btn-primary">Reservar Ahora</a>
+    </div>
+
+    <!-- Mobile CTA - Cliente autenticado -->
+    <div class="mobile-cta" data-role="cliente" style="display: none;">
+      <a href="mi-cuenta.html" class="mobile-btn-outline">Mi Cuenta</a>
+      <a href="../auth.html" class="mobile-btn-primary">Reservar Ahora</a>
+      <button id="logout-btn-mobile" class="mobile-btn-outline" style="margin-top: 8px; width: 100%;">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
+    </div>
+
+    <!-- Mobile CTA - Empleado autenticado -->
+    <div class="mobile-cta" data-role="empleado" style="display: none;">
+      <a href="admin-page.html" class="mobile-btn-primary">Panel Admin</a>
+      <button id="logout-btn-mobile" class="mobile-btn-outline" style="margin-top: 8px; width: 100%;">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
     </div>
   </div>
 </header>
