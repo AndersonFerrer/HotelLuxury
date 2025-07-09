@@ -1,3 +1,11 @@
+import {
+  setTableLoading,
+  setTableNormal,
+  withButtonLoader,
+  showSuccessToast,
+  showErrorToast,
+} from "./loaderUtils.js";
+
 // Función para obtener las estadísticas de las habitaciones
 async function fetchRoomStats() {
   try {
@@ -9,11 +17,16 @@ async function fetchRoomStats() {
     updateDashboardStats(data);
   } catch (error) {
     console.error("Error al obtener estadísticas:", error);
+    showErrorToast("Error al cargar estadísticas");
   }
 }
 
 async function fetchRoomsAll() {
+  const table = document.querySelector(".table-container");
+
   try {
+    setTableLoading(table);
+
     const response = await fetch("api/habitaciones/getAll.php");
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -22,6 +35,9 @@ async function fetchRoomsAll() {
     updateTableRooms(data);
   } catch (error) {
     console.error("Error al obtener habitaciones:", error);
+    showErrorToast("Error al cargar habitaciones");
+  } finally {
+    setTableNormal(table);
   }
 }
 
@@ -172,29 +188,42 @@ document.querySelectorAll(".habitacion-fila").forEach((fila) => {
       modalActions.querySelector("#btn-guardar-editar").onclick =
         async function (e) {
           e.preventDefault();
-          const numero = document.getElementById("edit-numero").value;
-          const estado = document.getElementById("edit-estado").value;
-          const id_tipo_habitacion = document.getElementById("edit-tipo").value;
-          const payload = {
-            id_habitacion: idHabitacion,
-            numero,
-            estado,
-            id_tipo_habitacion,
-          };
+          const saveBtn = this;
+
           try {
-            const res = await fetch("api/habitaciones/update.php", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload),
-            });
-            const result = await res.json();
-            if (!result.success) throw new Error(result.message);
-            await fetchRoomsAll();
-            await fetchRoomStats();
-            modal.close();
-            alert("Habitación actualizada correctamente");
+            await withButtonLoader(
+              saveBtn,
+              async () => {
+                const numero = document.getElementById("edit-numero").value;
+                const estado = document.getElementById("edit-estado").value;
+                const id_tipo_habitacion =
+                  document.getElementById("edit-tipo").value;
+                const payload = {
+                  id_habitacion: idHabitacion,
+                  numero,
+                  estado,
+                  id_tipo_habitacion,
+                };
+
+                const res = await fetch("api/habitaciones/update.php", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(payload),
+                });
+                const result = await res.json();
+                if (!result.success) throw new Error(result.message);
+
+                await fetchRoomsAll();
+                await fetchRoomStats();
+                modal.close();
+                showSuccessToast("Habitación actualizada correctamente");
+
+                return result;
+              },
+              "Guardando..."
+            );
           } catch (err) {
-            alert("Error al actualizar: " + err.message);
+            showErrorToast("Error al actualizar: " + err.message);
           }
         };
     } catch (e) {
@@ -215,26 +244,38 @@ document.querySelectorAll(".habitacion-fila").forEach((fila) => {
     modalActions.querySelector(".btn-cancelar").onclick = () => modal.close();
     modalActions.querySelector(".btn-confirmar-eliminar").onclick =
       async () => {
+        const deleteBtn = modalActions.querySelector(".btn-confirmar-eliminar");
+
         if (!idHabitacion) {
-          alert("No se pudo obtener el ID de la habitación");
+          showErrorToast("No se pudo obtener el ID de la habitación");
           return;
         }
+
         try {
-          const response = await fetch(
-            `api/habitaciones/delete.php?id_habitacion=${idHabitacion}`,
-            { method: "DELETE" }
+          await withButtonLoader(
+            deleteBtn,
+            async () => {
+              const response = await fetch(
+                `api/habitaciones/delete.php?id_habitacion=${idHabitacion}`,
+                { method: "DELETE" }
+              );
+              const data = await response.json();
+              if (!response.ok || !data.success) {
+                throw new Error(data.message || "Error al eliminar habitación");
+              }
+
+              await fetchRoomsAll();
+              await fetchRoomStats();
+              modal.close();
+              showSuccessToast("Habitación eliminada con éxito");
+
+              return data;
+            },
+            "Eliminando..."
           );
-          const data = await response.json();
-          if (!response.ok || !data.success) {
-            throw new Error(data.message || "Error al eliminar habitación");
-          }
-          await fetchRoomsAll();
-          await fetchRoomStats();
-          modal.close();
-          alert("Habitación eliminada con éxito");
         } catch (error) {
           console.error("Error:", error);
-          alert("Error al eliminar habitación: " + error.message);
+          showErrorToast("Error al eliminar habitación: " + error.message);
         }
       };
   });

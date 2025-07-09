@@ -1,3 +1,10 @@
+import {
+  withButtonLoader,
+  withLoadingModal,
+  showSuccessToast,
+  showErrorToast,
+} from "./loaderUtils.js";
+
 export function initBookingForm(roomId, roomPrice, idTipoHabitacion) {
   const formContainer = document.getElementById("booking-form");
 
@@ -32,12 +39,12 @@ export function initBookingForm(roomId, roomPrice, idTipoHabitacion) {
         habitacionesDisponibles = data.data;
         actualizarSelectHabitaciones();
       } else {
-        alert("No hay habitaciones disponibles de este tipo");
+        showErrorToast("No hay habitaciones disponibles de este tipo");
         return false;
       }
     } catch (error) {
       console.error("Error al cargar habitaciones:", error);
-      alert("Error al cargar habitaciones disponibles");
+      showErrorToast("Error al cargar habitaciones disponibles");
       return false;
     }
     return true;
@@ -347,68 +354,84 @@ export function initBookingForm(roomId, roomPrice, idTipoHabitacion) {
   if (bookButton) {
     bookButton.addEventListener("click", async () => {
       if (!startDate || !endDate) {
-        alert("Por favor selecciona las fechas de tu estancia");
+        showErrorToast("Por favor selecciona las fechas de tu estancia");
         return;
       }
 
       if (!habitacionSeleccionada) {
-        alert("Por favor selecciona una habitación");
+        showErrorToast("Por favor selecciona una habitación");
         return;
       }
 
-      // Verificar autenticación antes de proceder
       try {
-        const authResponse = await fetch("/api/auth/check-session.php");
-        const authData = await authResponse.json();
+        await withButtonLoader(
+          bookButton,
+          async () => {
+            // Verificar autenticación antes de proceder
+            const authResponse = await fetch("/api/auth/check-session.php");
+            const authData = await authResponse.json();
 
-        if (!authData.success || !authData.usuario) {
-          alert("Debes iniciar sesión para realizar una reserva");
-          window.location.href = "/auth.html";
-          return;
-        }
+            if (!authData.success || !authData.usuario) {
+              showErrorToast("Debes iniciar sesión para realizar una reserva");
+              setTimeout(() => {
+                window.location.href = "/auth.html";
+              }, 2000);
+              return;
+            }
 
-        if (authData.usuario.tipo !== "cliente") {
-          alert("Solo los clientes pueden realizar reservas");
-          if (authData.usuario.tipo === "empleado") {
-            window.location.href = "/admin-page.html";
-          } else {
-            window.location.href = "/auth.html";
-          }
-          return;
-        }
+            if (authData.usuario.tipo !== "cliente") {
+              showErrorToast("Solo los clientes pueden realizar reservas");
+              setTimeout(() => {
+                if (authData.usuario.tipo === "empleado") {
+                  window.location.href = "/admin-page.html";
+                } else {
+                  window.location.href = "/auth.html";
+                }
+              }, 2000);
+              return;
+            }
 
-        // Si está autenticado como cliente, proceder con la reserva
-        const reservaData = {
-          id_habitacion: habitacionSeleccionada,
-          fecha_checkin: startDate.toISOString().split("T")[0], // Formato YYYY-MM-DD
-          fecha_checkout: endDate.toISOString().split("T")[0], // Formato YYYY-MM-DD
-          total: Math.round(
-            roomPrice *
-              Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) *
-              1.18
-          ), // Precio con impuestos
-        };
+            // Si está autenticado como cliente, proceder con la reserva
+            const reservaData = {
+              id_habitacion: habitacionSeleccionada,
+              fecha_checkin: startDate.toISOString().split("T")[0], // Formato YYYY-MM-DD
+              fecha_checkout: endDate.toISOString().split("T")[0], // Formato YYYY-MM-DD
+              total: Math.round(
+                roomPrice *
+                  Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) *
+                  1.18
+              ), // Precio con impuestos
+            };
 
-        const response = await fetch("/api/reservas/insert.php", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(reservaData),
-        });
+            const response = await fetch("/api/reservas/insert.php", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(reservaData),
+            });
 
-        const result = await response.json();
+            const result = await response.json();
 
-        if (result.success) {
-          alert(
-            `¡Reserva creada exitosamente!\n\nDetalles:\n- Habitación: ${result.data.habitacion}\n- Check-in: ${result.data.fecha_checkin}\n- Check-out: ${result.data.fecha_checkout}\n- Total: S/. ${result.data.total}\n\nID de reserva: ${result.data.id_reserva}`
-          );
-          // Opcional: redirigir a una página de confirmación o al home
-          window.location.href = "/";
-        } else {
-          alert("Error al crear la reserva: " + result.error);
-        }
+            if (result.success) {
+              showSuccessToast(
+                `¡Reserva creada exitosamente!\n\nDetalles:\n- Habitación: ${result.data.habitacion}\n- Check-in: ${result.data.fecha_checkin}\n- Check-out: ${result.data.fecha_checkout}\n- Total: S/. ${result.data.total}\n\nID de reserva: ${result.data.id_reserva}`
+              );
+              // Opcional: redirigir a una página de confirmación o al home
+              setTimeout(() => {
+                window.location.href = "/";
+              }, 3000);
+            } else {
+              showErrorToast("Error al crear la reserva: " + result.error);
+            }
+
+            return result;
+          },
+          "Procesando reserva..."
+        );
       } catch (error) {
         console.error("Error:", error);
-        alert("Error al procesar la reserva. Por favor, intenta nuevamente.");
+        showErrorToast(
+          "Error al procesar la reserva. Por favor, intenta nuevamente."
+        );
       }
     });
   }
