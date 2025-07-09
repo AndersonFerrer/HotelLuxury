@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Cuenta - Luxury Hotel</title>
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="styles/navbar.css" />
+  <link rel="stylesheet" href="styles/footer.css" />
+  <link rel="stylesheet" href="styles/mi-cuenta.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <!-- Navbar -->
+  <div id="navbar-root"></div>
+
+  <div class="mi-cuenta-container">
+    <div class="mi-cuenta-content">
+      <h1 class="mi-cuenta-title">Mi Cuenta</h1>
+      <div class="mi-cuenta-grid">
+        <!-- Sidebar -->
+        <aside class="mi-cuenta-sidebar">
+          <div class="sidebar-profile">
+            <div class="sidebar-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <h2 class="sidebar-username" id="sidebar-username">Nombre Apellido</h2>
+            <p class="sidebar-email" id="sidebar-email">correo@ejemplo.com</p>
+          </div>
+          <nav class="sidebar-nav">
+            <button class="sidebar-nav-btn active" data-tab="perfil">
+              <i class="fas fa-user icon"></i>Mi Perfil
+            </button>
+            <button class="sidebar-nav-btn" data-tab="reservas">
+              <i class="fas fa-calendar icon"></i>Mis Reservas
+            </button>
+            <button class="sidebar-nav-btn" id="logout-btn">
+              <i class="fas fa-sign-out-alt icon"></i>Cerrar Sesión
+            </button>
+          </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="tabs-container">
+          <div class="tabs-header">
+            <button class="tab-btn active" data-tab="perfil">Mi Perfil</button>
+            <button class="tab-btn" data-tab="reservas">Mis Reservas</button>
+          </div>
+          
+          <!-- Tab: Mi Perfil -->
+          <section class="tab-content" id="tab-perfil">
+            <div class="tab-card">
+              <div class="tab-header">
+                <h2 class="tab-title">Información Personal</h2>
+                <button id="edit-profile-btn" class="btn btn-outline">
+                  <i class="fas fa-edit"></i> Editar
+                </button>
+                <div id="edit-profile-actions" class="tab-actions hidden">
+                  <button id="cancel-edit-btn" class="btn btn-outline danger">
+                    <i class="fas fa-times"></i> Cancelar
+                  </button>
+                  <button id="save-profile-btn" class="btn btn-primary">
+                    <i class="fas fa-check"></i> Guardar
+                  </button>
+                </div>
+              </div>
+              
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">Nombre Completo</label>
+                  <p class="form-text" id="profile-name">Nombre Apellido</p>
+                  <input type="text" id="input-name" class="form-input hidden" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Correo Electrónico</label>
+                  <p class="form-text" id="profile-email">correo@ejemplo.com</p>
+                  <input type="email" id="input-email" class="form-input hidden" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Teléfono</label>
+                  <p class="form-text" id="profile-phone">+1 234 567 890</p>
+                  <input type="text" id="input-phone" class="form-input hidden" />
+                </div>
+              </div>
+              
+              <div class="separator"></div>
+              
+              <h2 class="tab-title">Dirección</h2>
+              <div class="form-grid">
+                <div class="form-group full-width">
+                  <label class="form-label">Dirección</label>
+                  <p class="form-text" id="profile-address">Calle Principal 123</p>
+                  <input type="text" id="input-address" class="form-input hidden" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Ciudad</label>
+                  <p class="form-text" id="profile-city">Ciudad</p>
+                  <input type="text" id="input-city" class="form-input hidden" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Provincia</label>
+                  <p class="form-text" id="profile-province">Provincia</p>
+                  <input type="text" id="input-province" class="form-input hidden" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Región</label>
+                  <p class="form-text" id="profile-region">Región</p>
+                  <input type="text" id="input-region" class="form-input hidden" />
+                </div>
+              </div>
+              
+              <div class="separator"></div>
+              
+              <h2 class="tab-title">Cambiar Contraseña</h2>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">Contraseña Actual</label>
+                  <input id="current-password" type="password" class="form-input" />
+                </div>
+                <div class="form-group"></div>
+                <div class="form-group">
+                  <label class="form-label">Nueva Contraseña</label>
+                  <input id="new-password" type="password" class="form-input" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Confirmar Contraseña</label>
+                  <input id="confirm-password" type="password" class="form-input" />
+                </div>
+              </div>
+              
+              <div class="mt-6 flex justify-end">
+                <button class="btn btn-primary">Actualizar Contraseña</button>
+              </div>
+            </div>
+          </section>
+          
+          <!-- Tab: Mis Reservas -->
+          <section class="tab-content hidden" id="tab-reservas">
+            <div class="tab-card">
+              <h2 class="tab-title">Mis Reservas</h2>
+              <div id="reservas-list" class="reservas-list">
+                <!-- Aquí se insertarán las reservas del usuario -->
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div id="footer-root"></div>
+  
+  <script type="module" src="load-component.js"></script>
+  <script type="module" src="scripts/mi-cuenta.js"></script>
+  <script type="module">
+    // Protección específica para clientes
+    import { inicializarProteccion } from './scripts/routeProtection.js';
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+      // La protección se ejecuta después de que load-component.js haya cargado la sesión
+      setTimeout(async () => {
+        await inicializarProteccion('cliente');
+      }, 100);
+    });
+  </script>
+</body>
+</html> 

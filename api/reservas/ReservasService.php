@@ -349,5 +349,106 @@ class ReservasService {
                 return null;
         }
     }
+
+    /**
+     * Obtiene las reservas de un cliente específico
+     */
+    public function obtenerReservasPorCliente($id_cliente) {
+        try {
+            $sql = "SELECT 
+                    r.id_reserva,
+                    r.fecha_reserva,
+                    r.fecha_checkin,
+                    r.fecha_checkout,
+                    r.estado,
+                    r.total,
+                    h.numero as numero_habitacion,
+                    th.nombre as tipo_habitacion,
+                    th.precio_noche,
+                    CONCAT(p.nombres, ' ', p.apellidos) as nombre_cliente,
+                    p.correo as email_cliente
+                FROM Reserva r
+                JOIN Habitacion h ON r.id_habitacion = h.id_habitacion
+                JOIN TipoHabitacion th ON h.id_tipo_habitacion = th.id_tipo_habitacion
+                JOIN Cliente c ON r.id_cliente = c.id_cliente
+                JOIN Persona p ON c.id_persona = p.id_persona
+                WHERE r.id_cliente = ?
+                ORDER BY r.fecha_reserva DESC";
+            
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$id_cliente]);
+            $reservas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Formatear las reservas para el frontend
+            $reservasFormateadas = [];
+            foreach ($reservas as $reserva) {
+                // Determinar el estado para el frontend
+                $estadoFrontend = $this->mapearEstadoFrontend($reserva['estado']);
+                
+                // Generar imagen de ejemplo basada en el tipo de habitación
+                $imagen = $this->obtenerImagenHabitacion($reserva['tipo_habitacion']);
+                
+                $reservasFormateadas[] = [
+                    'id' => $reserva['id_reserva'],
+                    'roomName' => $reserva['tipo_habitacion'] . ' - Habitación ' . $reserva['numero_habitacion'],
+                    'checkIn' => $reserva['fecha_checkin'],
+                    'checkOut' => $reserva['fecha_checkout'],
+                    'guests' => $reserva['numero_huespedes'] ?? 1,
+                    'status' => $estadoFrontend,
+                    'total' => $reserva['total'],
+                    'image' => $imagen,
+                    'fechaReserva' => $reserva['fecha_reserva'],
+                    'estadoOriginal' => $reserva['estado']
+                ];
+            }
+
+            return [
+                'success' => true,
+                'data' => $reservasFormateadas,
+                'message' => 'Reservas del cliente obtenidas correctamente.'
+            ];
+            
+        } catch (PDOException $e) {
+            error_log("Error al obtener reservas del cliente: " . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => 'Error al obtener las reservas del cliente'
+            ];
+        }
+    }
+
+    /**
+     * Mapea los estados de la base de datos a estados del frontend
+     */
+    private function mapearEstadoFrontend($estadoBD) {
+        switch ($estadoBD) {
+            case 'Pendiente':
+                return 'upcoming';
+            case 'Confirmada':
+                return 'confirmed';
+            case 'Activa':
+                return 'confirmed';
+            case 'Completada':
+                return 'completed';
+            case 'Cancelada':
+                return 'cancelled';
+            default:
+                return 'upcoming';
+        }
+    }
+
+    /**
+     * Obtiene una imagen de ejemplo basada en el tipo de habitación
+     */
+    private function obtenerImagenHabitacion($tipoHabitacion) {
+        // Imágenes de ejemplo - puedes adaptar esto según tu estructura
+        $imagenes = [
+            'Suite Deluxe' => 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=300&fit=crop',
+            'Habitación Estándar' => 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=400&h=300&fit=crop',
+            'Suite Presidencial' => 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&h=300&fit=crop'
+        ];
+        
+        return $imagenes[$tipoHabitacion] ?? 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=400&h=300&fit=crop';
+    }
 }
 ?>
