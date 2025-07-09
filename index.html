@@ -179,7 +179,13 @@
     <div id="footer-root"></div>
     <!-- Al final del body -->
     <script type="module" src="./load-component.js" defer></script>
-    <script>
+    <script type="module">
+      import { 
+        setSectionLoading, 
+        setSectionNormal, 
+        showErrorToast 
+      } from './scripts/loaderUtils.js';
+      
       let habitaciones = [];
 
       document.addEventListener("DOMContentLoaded", function () {
@@ -187,7 +193,11 @@
       });
 
       async function cargarHabitaciones() {
+        const contenedor = document.getElementById("rooms-container");
+        
         try {
+          setSectionLoading(contenedor);
+          
           const response = await fetch("api/obtenerHabitaciones.php");
 
           // Verifica si la respuesta fue exitosa
@@ -212,12 +222,12 @@
           if (data.success) {
             habitaciones = data.data;
             console.log("Habitaciones cargadas:", habitaciones);
-            const contenedor = document.getElementById("rooms-container");
 
             // Limpiar contenedor primero
             contenedor.innerHTML = "";
             if (habitaciones.length === 0) {
-              return (contenedor.innerText = "No se encontraron habitaciones");
+              contenedor.innerHTML = '<p class="text-center text-gray-500">No se encontraron habitaciones</p>';
+              return;
             }
             // Crear y agregar cada tarjeta
             habitaciones.forEach((habitacion) => {
@@ -226,11 +236,16 @@
             });
           } else {
             console.error("Error del servidor:", data.error);
+            showErrorToast("Error al cargar habitaciones: " + data.error);
           }
         } catch (error) {
           console.error("Ocurrió un error al cargar habitaciones:", error);
+          showErrorToast("Error al cargar habitaciones. Inténtalo de nuevo.");
+        } finally {
+          setSectionNormal(contenedor);
         }
       }
+      
       function crearTarjetaHabitacion(habitacion) {
         return `
     <div class="room-card">
@@ -248,7 +263,7 @@
         </p>
         <div class="room-footer">
           <span class="room-price">S/. ${habitacion.precio_noche} / noche</span>
-          <a href="room-detail.html?id=${habitacion.id_tipo_habitacion}" class="btn btn-outline">
+          <a href="room-detail.html?id=${habitacion.id_tipo_habitacion}" class="btn btn-outline" data-funcionalidad="ver_detalles">
             Ver Detalles
           </a>
         </div>
@@ -256,6 +271,17 @@
     </div>
   `;
       }
+    </script>
+    <script type="module">
+      // Protección para página pública
+      import { inicializarProteccionPublica } from './scripts/publicPageProtection.js';
+      
+      document.addEventListener('DOMContentLoaded', async () => {
+        // La protección se ejecuta después de que load-component.js haya cargado la sesión
+        setTimeout(async () => {
+          await inicializarProteccionPublica();
+        }, 100);
+      });
     </script>
   </body>
 </html>

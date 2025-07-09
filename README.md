@@ -9,6 +9,26 @@ Sistema completo de gestión hotelera con funcionalidades de reservas, autentica
 - **Registro de clientes** con validaciones completas
 - **Redirección automática** según tipo de usuario
 - **Gestión de sesiones** segura
+- **Sistema de protección de rutas** completo
+
+### 🛡️ Sistema de Protección de Rutas
+- **Verificación automática** de autenticación en todas las páginas
+- **Redireccionamiento inteligente** según tipo de usuario
+- **Protección de rutas privadas** para clientes y empleados
+- **Control de acceso** a funcionalidades específicas
+- **UI dinámica** que se adapta al estado de autenticación
+
+#### Rutas Configuradas:
+- **Públicas**: `/`, `/index.html`, `/auth.html`, `/contact.html`, `/room-detail.html`
+- **Cliente**: `/mi-cuenta.html`
+- **Empleado**: `/admin-page.html`, `/pagesAdmin/*`
+
+#### Comportamiento de Redireccionamiento:
+- **No autenticado** en ruta privada → Redirige a `/auth.html`
+- **Cliente** en ruta de empleado → Redirige a `/`
+- **Empleado** en ruta pública/cliente → Redirige a `/admin-page.html`
+- **Cliente** en ruta de cliente → Permite acceso
+- **Empleado** en ruta de empleado → Permite acceso
 
 ### 🏠 Gestión de Habitaciones
 - **Catálogo de habitaciones** con tipos y características
@@ -117,6 +137,10 @@ chmod 644 .env
 - Completar formulario de reserva
 - Reserva se crea en estado "Pendiente"
 
+#### 4. Acceso a Mi Cuenta
+- Solo clientes autenticados pueden acceder a `/mi-cuenta.html`
+- Ver reservas personales y gestionar perfil
+
 ### 👨‍💼 Empleados
 
 #### 1. Acceso Administrativo
@@ -167,6 +191,9 @@ proyecto/
 ├── components/            # Componentes HTML reutilizables
 ├── pagesAdmin/           # Páginas del panel administrativo
 ├── scripts/              # JavaScript del frontend
+│   ├── authService.js    # Servicios de autenticación
+│   ├── routeProtection.js # Protección de rutas
+│   └── publicPageProtection.js # Protección de páginas públicas
 ├── styles/               # Archivos CSS
 ├── vendor/               # Dependencias de Composer
 └── index.html            # Página principal
@@ -190,6 +217,7 @@ proyecto/
 
 ### Reservas
 - `GET /api/reservas/getAll.php` - Todas las reservas
+- `GET /api/reservas/getByCliente.php` - Reservas del cliente autenticado
 - `POST /api/reservas/insert.php` - Crear reserva
 - `POST /api/reservas/confirmar.php` - Confirmar reserva
 - `POST /api/reservas/rechazar.php` - Rechazar reserva
@@ -223,6 +251,8 @@ proyecto/
 - **Transacciones de base de datos** para operaciones críticas
 - **Validaciones de permisos** por tipo de usuario
 - **Protección contra CSRF** en formularios
+- **Sistema de protección de rutas** completo
+- **Redireccionamiento automático** según permisos
 
 ## 🐛 Solución de Problemas
 
@@ -239,12 +269,18 @@ proyecto/
 - Verificar configuración del servidor web
 - Comprobar headers en archivos PHP
 
+### Problemas de Redireccionamiento
+- Verificar que las rutas estén configuradas en `authService.js`
+- Comprobar que los scripts de protección estén incluidos
+- Revisar la consola del navegador para errores
+
 ## 📝 Notas de Desarrollo
 
 - El sistema usa **PHP vanilla** con **PDO** para base de datos
 - **JavaScript ES6+** para el frontend
 - **CSS Grid/Flexbox** para layouts responsivos
 - **PostgreSQL** como base de datos principal
+- **Sistema modular** de protección de rutas
 
 ## 🤝 Contribución
 
