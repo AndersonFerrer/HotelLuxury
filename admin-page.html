@@ -35,8 +35,21 @@
       <main id="admin-content-container"></main>
     </div>
     <div class="admin-sidebar-overlay"></div>
+    
+    <!-- Scripts -->
     <script type="module" src="/scripts/admin.js"></script>
     <script type="module" src="/scripts/router.js"></script>
     <script type="module" src="/scripts/authService.js"></script>
+    <script type="module">
+      // Protección específica para empleados
+      import { inicializarProteccion } from '/scripts/routeProtection.js';
+      
+      document.addEventListener('DOMContentLoaded', async () => {
+        // La protección se ejecuta después de que admin.js haya cargado completamente
+        setTimeout(async () => {
+          await inicializarProteccion('empleado');
+        }, 200);
+      });
+    </script>
   </body>
 </html>

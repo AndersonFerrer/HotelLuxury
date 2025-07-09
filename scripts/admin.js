@@ -1,19 +1,22 @@
-import { cerrarSesion, verificarAutenticacion } from "./authService.js";
+import { cerrarSesion, getSession } from "./authService.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
-  await verificarAutenticacion();
+  // Usar getSession para evitar múltiples fetch
+  await getSession();
 
   // Toggle sidebar en móvil
   const menuToggle = document.getElementById("menuToggle");
   const aside = document.getElementById("aside-root");
   const mainContent = document.querySelector(".admin-main-content");
   let adminSidebar;
+
   // Cargar sidebar
   fetch("./components/aside-admin.html")
     .then((response) => response.text())
     .then((data) => {
       aside.innerHTML = data;
       adminSidebar = document.querySelector(".admin-sidebar");
+
       // Función para actualizar el estado activo
       const updateActiveLink = () => {
         const navLinks = document.querySelectorAll(".nav-link");
@@ -58,7 +61,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // Manejar logout
       document.getElementById("logoutBtn")?.addEventListener("click", () => {
-        // Aquí iría la lógica para cerrar sesión
         cerrarSesion();
       });
     })
@@ -70,7 +72,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (menuToggle) {
     menuToggle.addEventListener("click", function () {
       adminSidebar.classList.toggle("mobile-open");
-      // adminSidebar.classList.add("mobile-open");
       document
         .querySelector(".admin-sidebar-overlay")
         .classList.toggle("visible");
