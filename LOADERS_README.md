@@ -10,6 +10,17 @@ Este sistema proporciona una experiencia de usuario mejorada mostrando estados d
 - **Loaders de tabla**: Para operaciones CRUD en tablas
 - **Toasts de notificación**: Mensajes de éxito y error elegantes
 - **Validaciones mejoradas**: Con feedback visual inmediato
+- **Manejo correcto de datos**: Nombres y apellidos separados según la estructura de la BD
+
+## Correcciones Recientes
+
+### Manejo de Nombres y Apellidos
+- **Problema**: Los campos de nombres y apellidos se combinaban en un solo campo
+- **Solución**: Separación completa en frontend y backend
+- **Cambios realizados**:
+  - Frontend: Campos separados en formulario de edición
+  - Backend: Validación y actualización de nombres y apellidos por separado
+  - Datos de sesión: Estructura correcta con nombres y apellidos independientes
 
 ## Uso Básico
 
@@ -173,6 +184,54 @@ async function eliminarItem(id) {
 }
 ```
 
+### Actualización de Perfil (con nombres y apellidos separados)
+
+```javascript
+async function actualizarPerfil() {
+  const saveBtn = document.getElementById('save-profile-btn');
+  
+  try {
+    await withButtonLoader(
+      saveBtn,
+      async () => {
+        const datosPerfil = {
+          nombres: document.getElementById("input-nombres").value,
+          apellidos: document.getElementById("input-apellidos").value,
+          correo: document.getElementById("input-email").value,
+          telefono: document.getElementById("input-phone").value,
+          direccion: {
+            direccion_detallada: document.getElementById("input-address").value,
+            distrito: document.getElementById("input-city").value,
+            provincia: document.getElementById("input-province").value,
+            region: document.getElementById("input-region").value,
+          },
+        };
+
+        const response = await fetch("/api/auth/updateProfile.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(datosPerfil),
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+          showSuccessToast("Perfil actualizado exitosamente");
+          // Actualizar datos locales y recargar
+        } else {
+          showErrorToast("Error al actualizar perfil: " + result.error);
+        }
+        
+        return result;
+      },
+      "Guardando..."
+    );
+  } catch (error) {
+    showErrorToast("Error al guardar perfil");
+  }
+}
+```
+
 ## Estilos CSS
 
 Los estilos están incluidos en `styles/styles.css` y incluyen:
@@ -190,6 +249,8 @@ Los estilos están incluidos en `styles/styles.css` y incluyen:
 3. **Mensajes claros**: Usar textos descriptivos en los loaders
 4. **Consistencia**: Usar el mismo patrón en toda la aplicación
 5. **Accesibilidad**: Los loaders no interfieren con lectores de pantalla
+6. **Validación de datos**: Verificar que los campos requeridos estén completos
+7. **Estructura de datos**: Mantener consistencia entre frontend y backend
 
 ## Compatibilidad
 

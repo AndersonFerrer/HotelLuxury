@@ -36,30 +36,60 @@ const routes = {
 async function router() {
   const hash = location.hash.slice(1) || "dashboard";
   const route = routes[hash];
+  const container = document.getElementById("admin-content-container");
 
   if (!route) {
-    document.getElementById("admin-content-container").innerHTML =
-      "<p>Ruta no encontrada.</p>";
+    container.innerHTML = "<p>Ruta no encontrada.</p>";
     return;
   }
 
-  // 1. Cargar HTML
-  const html = await fetch(route.html).then((res) => res.text());
-  document.getElementById("admin-content-container").innerHTML = html;
-  document.getElementById("pageTitle").textContent =
-    hash.slice(0, 1).toUpperCase() + hash.slice(1);
-  // 2. Cargar CSS (si existe)
-  if (route.css) {
-    loadCSS(route.css);
-  }
+  // Mostrar indicador de carga
+  container.innerHTML = `
+    <div style="display: flex; justify-content: center; align-items: center; height: 200px;">
+      <div style="text-align: center;">
+        <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #d4af37; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+        <p style="color: #666;">Cargando ${hash}...</p>
+      </div>
+    </div>
+  `;
 
-  // 3. Cargar Script JS (si existe)
-  if (route.script) {
-    try {
-      await loadScriptAfterHTML(route.script); // Esperar a que el script se cargue
-    } catch (err) {
-      console.error("Error cargando el script:", err);
+  try {
+    // 1. Cargar HTML
+    const response = await fetch(route.html);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    const html = await response.text();
+    container.innerHTML = html;
+
+    // Actualizar título de la página
+    document.getElementById("pageTitle").textContent =
+      hash.slice(0, 1).toUpperCase() + hash.slice(1);
+
+    // 2. Cargar CSS (si existe)
+    if (route.css) {
+      loadCSS(route.css);
+    }
+
+    // 3. Cargar Script JS (si existe)
+    if (route.script) {
+      try {
+        await loadScriptAfterHTML(route.script); // Esperar a que el script se cargue
+      } catch (err) {
+        console.error("Error cargando el script:", err);
+      }
+    }
+  } catch (error) {
+    console.error("Error cargando la ruta:", error);
+    container.innerHTML = `
+      <div style="display: flex; justify-content: center; align-items: center; height: 200px;">
+        <div style="text-align: center; color: #ef4444;">
+          <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+          <p>Error al cargar la página</p>
+          <p style="font-size: 0.9rem; color: #666;">${error.message}</p>
+        </div>
+      </div>
+    `;
   }
 }
 

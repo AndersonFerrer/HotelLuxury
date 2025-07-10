@@ -10,13 +10,14 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="/styles/tablesAdmin.css" />
+    <link rel="stylesheet" href="/styles/loading.css" />
   </head>
   <body>
     <!-- Incluir el aside -->
     <div id="aside-root"></div>
 
     <!-- Contenido principal -->
-    <div class="admin-main-content">
+    <div class="admin-main-content content-loading">
       <!-- Header -->
       <header class="admin-header">
         <button id="menuToggle" class="mobile-menu-btn">
@@ -48,7 +49,7 @@
         // La protección se ejecuta después de que admin.js haya cargado completamente
         setTimeout(async () => {
           await inicializarProteccion('empleado');
-        }, 200);
+        }, 500);
       });
     </script>
   </body>

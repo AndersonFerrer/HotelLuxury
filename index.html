@@ -19,10 +19,13 @@
     <link rel="stylesheet" href="./styles/styles.css" />
     <link rel="stylesheet" href="./styles/footer.css" />
     <link rel="stylesheet" href="./styles/navbar.css" />
+    <link rel="stylesheet" href="./styles/loading.css" />
   </head>
   <body>
     <!-- Navbar -->
     <div id="navbar-root"></div>
+    <!-- Loading -->
+    <div class="content-loading"></div>
     <!-- Hero -->
     <section class="hero">
       <div class="hero-image"></div>
@@ -178,7 +181,7 @@
     <!-- Footer -->
     <div id="footer-root"></div>
     <!-- Al final del body -->
-    <script type="module" src="./load-component.js" defer></script>
+    <script type="module" src="./load-component.js"></script>
     <script type="module">
       import { 
         setSectionLoading, 
