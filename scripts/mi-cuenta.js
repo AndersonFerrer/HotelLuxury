@@ -1,4 +1,4 @@
-import { getSession, clearSessionCache } from "./authService.js";
+import { getSession, clearSessionCache, cerrarSesion } from "./authService.js";
 import {
   withButtonLoader,
   withLoadingModal,
@@ -366,24 +366,16 @@ document
       await withButtonLoader(
         logoutBtn,
         async () => {
-          const response = await fetch("/api/auth/logout.php", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+          const result = await cerrarSesion();
 
-          const data = await response.json();
-          if (data.success) {
+          if (result.success) {
             showSuccessToast("Sesión cerrada exitosamente");
-            setTimeout(() => {
-              window.location.href = "/auth.html";
-            }, 1000);
+            // La función cerrarSesion ya maneja la redirección automáticamente
           } else {
             showErrorToast("Error al cerrar sesión");
           }
 
-          return data;
+          return result;
         },
         "Cerrando sesión..."
       );

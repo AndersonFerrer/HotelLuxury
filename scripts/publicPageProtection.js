@@ -1,24 +1,20 @@
 // Script de protección para páginas públicas
 // Incluir este script en páginas públicas como index.html, contact.html, etc.
 
-import { verificarAutenticacion, getSession } from "./authService.js";
+import { getSession } from "./authService.js";
 
 // Función para inicializar protección en páginas públicas
 export const inicializarProteccionPublica = async () => {
   try {
     console.log("Inicializando protección de página pública...");
 
-    const resultado = await verificarAutenticacion();
+    // Para páginas públicas como index, solo verificamos la sesión
+    // pero NO redirigimos automáticamente
+    const data = await getSession();
 
-    // Si hay usuario autenticado, la función verificarAutenticacion ya maneja los redireccionamientos
-    if (resultado.success && resultado.usuario) {
-      console.log(
-        "Usuario autenticado en página pública:",
-        resultado.usuario.tipo
-      );
-
-      // Los redireccionamientos se manejan automáticamente en verificarAutenticacion
-      // según el tipo de usuario y la ruta actual
+    if (data && data.success && data.usuario) {
+      console.log("Usuario autenticado en página pública:", data.usuario.tipo);
+      // No redirigir - permitir que el usuario vea la página pública
     } else {
       console.log(
         "No hay usuario autenticado, permitiendo acceso a página pública"
@@ -28,7 +24,8 @@ export const inicializarProteccionPublica = async () => {
     return true;
   } catch (error) {
     console.error("Error al inicializar protección pública:", error);
-    return false;
+    // En caso de error, permitir acceso
+    return true;
   }
 };
 
@@ -37,7 +34,7 @@ export const verificarAccesoFuncionalidad = async (funcionalidad) => {
   try {
     const data = await getSession();
 
-    if (!data.success || !data.usuario) {
+    if (!data || !data.success || !data.usuario) {
       return {
         permitido: false,
         redirigir: "/auth.html",

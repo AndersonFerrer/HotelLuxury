@@ -78,9 +78,7 @@ function configurarEventosLogout() {
 
             if (result.success) {
               showSuccessToast("Sesión cerrada exitosamente");
-              setTimeout(() => {
-                window.location.href = "/";
-              }, 1000);
+              // La función cerrarSesion ya maneja la redirección automáticamente
             } else {
               showErrorToast("Error al cerrar sesión");
             }

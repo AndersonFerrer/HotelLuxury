@@ -393,5 +393,16 @@
     <div id="footer-root"></div>
     <script type="module" src="./load-component.js"></script>
     <script type="module" src="./scripts/auth.js"></script>
+    <script type="module">
+      // Protección específica para auth - evitar que usuarios autenticados accedan
+      import { inicializarProteccionAuth } from './scripts/authProtection.js';
+      
+      document.addEventListener('DOMContentLoaded', async () => {
+        // La protección se ejecuta después de que load-component.js haya cargado la sesión
+        setTimeout(async () => {
+          await inicializarProteccionAuth();
+        }, 200);
+      });
+    </script>
   </body>
 </html>

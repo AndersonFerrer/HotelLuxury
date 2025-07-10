@@ -71,7 +71,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const result = await iniciarSesion({
               correo,
               password,
-              returnOnly: true,
             });
 
             if (result.success) {

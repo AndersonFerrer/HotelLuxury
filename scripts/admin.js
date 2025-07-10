@@ -1,4 +1,9 @@
 import { cerrarSesion, getSession } from "./authService.js";
+import {
+  withButtonLoader,
+  showSuccessToast,
+  showErrorToast,
+} from "./loaderUtils.js";
 
 // Función para mostrar la pantalla de carga
 function showLoadingScreen() {
@@ -119,9 +124,33 @@ async function initializeAdmin() {
       window.addEventListener("hashchange", updateActiveLink);
 
       // Manejar logout
-      document.getElementById("logoutBtn")?.addEventListener("click", () => {
-        cerrarSesion();
-      });
+      document
+        .getElementById("logoutBtn")
+        ?.addEventListener("click", async (e) => {
+          e.preventDefault();
+
+          try {
+            await withButtonLoader(
+              e.target,
+              async () => {
+                const result = await cerrarSesion();
+
+                if (result.success) {
+                  showSuccessToast("Sesión cerrada exitosamente");
+                  // La función cerrarSesion ya maneja la redirección automáticamente
+                } else {
+                  showErrorToast("Error al cerrar sesión");
+                }
+
+                return result;
+              },
+              "Cerrando sesión..."
+            );
+          } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+            showErrorToast("Error al cerrar sesión");
+          }
+        });
     } catch (error) {
       console.error("Error al cargar el sidebar:", error);
     }

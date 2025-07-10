@@ -28,27 +28,24 @@ export function clearSessionCache() {
 // --- FIN CACHÉ DE SESIÓN ---
 
 export const iniciarSesion = async (credenciales) => {
-  const { returnOnly, ...data } = credenciales;
-  console.log(returnOnly, data);
-
   try {
     const response = await fetch("/api/auth/login.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      body: JSON.stringify(credenciales),
     });
 
     const result = await response.json();
 
-    if (returnOnly) return result;
-
     if (result.success) {
       clearSessionCache(); // Limpiar caché al iniciar sesión
-      console.log(result.usuario);
+      console.log(result.usuario, "inicie sesion");
+
+      // Redirigir según el tipo de usuario
       if (result.usuario.tipo === "empleado") {
-        window.location.href = "admin-page.html";
+        window.location.href = "/admin-page.html";
       } else if (result.usuario.tipo === "cliente") {
-        window.location.href = "/index.html";
+        window.location.href = "/";
       } else {
         throw new Error("Tipo de usuario no reconocido");
       }
@@ -58,9 +55,7 @@ export const iniciarSesion = async (credenciales) => {
 
     return result;
   } catch (error) {
-    if (returnOnly) return { success: false, error: error.message };
-    console.error(error);
-    throw error;
+    return { success: false, error: error.message };
   }
 };
 
@@ -82,13 +77,7 @@ export const registrarCliente = async (dataFormulario) => {
 
 // Configuración de rutas por tipo de usuario
 const RUTAS_CONFIG = {
-  publicas: [
-    "/auth.html",
-    "/index.html",
-    "/",
-    "/room-detail.html",
-    "/contact.html",
-  ],
+  publicas: ["/index.html", "/", "/room-detail.html", "/contact.html"],
   cliente: ["/mi-cuenta.html"],
   empleado: [
     "/admin-page.html",
@@ -139,13 +128,26 @@ export const verificarAutenticacion = async () => {
     const esPublica = esRutaPublica(rutaBase);
     const esRutaCliente = esRutaDeTipo(rutaBase, "cliente");
     const esRutaEmpleado = esRutaDeTipo(rutaBase, "empleado");
+    const esAuth = rutaBase === "/auth.html";
 
-    if (!data.success || !data.usuario) {
-      if (!esPublica) {
-        console.log("No autenticado en ruta privada, redirigiendo a login");
-        window.location.href = "/auth.html";
+    // Manejo especial para auth.html
+    if (esAuth) {
+      if (data.success && data.usuario) {
+        // Usuario autenticado intentando acceder a auth, redirigir según tipo
+        if (data.usuario.tipo === "empleado") {
+          window.location.href = "/admin-page.html";
+        } else {
+          window.location.href = "/";
+        }
         return data;
       }
+      // Usuario no autenticado, permitir acceso a auth
+      return data;
+    }
+
+    if (!data.success || !data.usuario) {
+      console.log("No autenticado en ruta privada, redirigiendo a login");
+      window.location.href = "/auth.html";
       return data;
     }
 
@@ -157,11 +159,6 @@ export const verificarAutenticacion = async () => {
         console.log(
           "Empleado intentando acceder a ruta de cliente, redirigiendo a admin"
         );
-        window.location.href = "/admin-page.html#dashboard";
-        return data;
-      }
-      if (esPublica) {
-        console.log("Empleado en ruta pública, redirigiendo a admin");
         window.location.href = "/admin-page.html#dashboard";
         return data;
       }
@@ -179,9 +176,6 @@ export const verificarAutenticacion = async () => {
         return data;
       }
       if (esRutaCliente) {
-        return data;
-      }
-      if (esPublica) {
         return data;
       }
     }
@@ -205,16 +199,32 @@ export const verificarAccesoRuta = async (rutaDestino) => {
   try {
     const data = await getSession();
 
-    if (!data.success || !data.usuario) {
-      return { permitido: false, redirigir: "/auth.html" };
-    }
-
-    const usuario = data.usuario;
     // Extraer la ruta base sin hashtag para comparación
     const rutaBase = rutaDestino.split("#")[0];
     const esPublica = esRutaPublica(rutaBase);
     const esRutaCliente = esRutaDeTipo(rutaBase, "cliente");
     const esRutaEmpleado = esRutaDeTipo(rutaBase, "empleado");
+    const esAuth = rutaBase === "/auth.html";
+
+    // Manejo especial para auth.html
+    if (esAuth) {
+      if (data.success && data.usuario) {
+        // Usuario autenticado no puede acceder a auth
+        if (data.usuario.tipo === "empleado") {
+          return { permitido: false, redirigir: "/admin-page.html" };
+        } else {
+          return { permitido: false, redirigir: "/" };
+        }
+      }
+      // Usuario no autenticado puede acceder a auth
+      return { permitido: true };
+    }
+
+    if (!data.success || !data.usuario) {
+      return { permitido: false, redirigir: "/auth.html" };
+    }
+
+    const usuario = data.usuario;
 
     if (esPublica) {
       return { permitido: true };
@@ -253,35 +263,16 @@ export const cerrarSesion = async () => {
     const result = await response.json();
     clearSessionCache(); // Limpiar caché al cerrar sesión
 
+    // Redirigir al index después de cerrar sesión
+    if (result.success) {
+      window.location.href = "/";
+    }
+
     return result;
   } catch (error) {
     console.error(error);
+    // Redirigir al index incluso si hay error
+    window.location.href = "/";
     return { success: false, error: error.message };
   }
-};
-
-export const iniciarSesionEmpleado = async (credenciales) => {
-  const { returnOnly, ...data } = credenciales;
-  return fetch("/api/auth/loginEmpleado.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (returnOnly) return data;
-      if (data.success) {
-        clearSessionCache(); // Limpiar caché al iniciar sesión
-        console.log("Inicio de sesión exitoso (empleado)", data.empleado);
-        alert(data.message);
-        window.location.href = "admin-page.html";
-      } else {
-        alert(data.error);
-      }
-      return data;
-    })
-    .catch((error) => {
-      if (returnOnly) return { success: false, error: error.message };
-      console.error(error);
-    });
 };
