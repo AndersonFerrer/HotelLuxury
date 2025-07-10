@@ -8,13 +8,14 @@
   <link rel="stylesheet" href="styles/navbar.css" />
   <link rel="stylesheet" href="styles/footer.css" />
   <link rel="stylesheet" href="styles/mi-cuenta.css" />
+  <link rel="stylesheet" href="styles/loading.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
   <!-- Navbar -->
   <div id="navbar-root"></div>
 
-  <div class="mi-cuenta-container">
+  <div class="mi-cuenta-container content-loading">
     <div class="mi-cuenta-content">
       <h1 class="mi-cuenta-title">Mi Cuenta</h1>
       <div class="mi-cuenta-grid">
@@ -67,9 +68,14 @@
               
               <div class="form-grid">
                 <div class="form-group">
-                  <label class="form-label">Nombre Completo</label>
-                  <p class="form-text" id="profile-name">Nombre Apellido</p>
-                  <input type="text" id="input-name" class="form-input hidden" />
+                  <label class="form-label">Nombres</label>
+                  <p class="form-text" id="profile-nombres">Nombres</p>
+                  <input type="text" id="input-nombres" class="form-input hidden" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Apellidos</label>
+                  <p class="form-text" id="profile-apellidos">Apellidos</p>
+                  <input type="text" id="input-apellidos" class="form-input hidden" />
                 </div>
                 <div class="form-group">
                   <label class="form-label">Correo Electrónico</label>

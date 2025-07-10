@@ -8,7 +8,8 @@ import {
 
 // --- Datos del usuario y reservas ---
 let userData = {
-  name: "Cargando...",
+  nombres: "Cargando...",
+  apellidos: "Cargando...",
   email: "cargando@ejemplo.com",
   phone: "+1 234 567 890",
   address: "Calle Principal 123",
@@ -24,7 +25,8 @@ async function cargarDatosUsuario() {
   try {
     const data = await getSession();
     if (data.success && data.usuario) {
-      userData.name = `${data.usuario.nombres} ${data.usuario.apellidos}`;
+      userData.nombres = data.usuario.nombres;
+      userData.apellidos = data.usuario.apellidos;
       userData.email = data.usuario.correo;
       userData.phone = data.usuario.telefono || "+1 234 567 890";
 
@@ -33,8 +35,8 @@ async function cargarDatosUsuario() {
         userData.address =
           data.usuario.direccion.direccion_detallada || "Calle Principal 123";
         userData.city = data.usuario.direccion.distrito || "Ciudad";
-        userData.country = data.usuario.direccion.provincia || "País";
-        userData.zipCode = data.usuario.direccion.region || "12345";
+        userData.province = data.usuario.direccion.provincia || "Provincia";
+        userData.region = data.usuario.direccion.region || "Región";
       }
 
       mostrarDatosPerfil();
@@ -107,15 +109,18 @@ sidebarBtns.forEach((btn) => {
 
 // --- Perfil: mostrar datos y editar ---
 function mostrarDatosPerfil() {
-  document.getElementById("profile-name").textContent = userData.name;
+  document.getElementById("profile-nombres").textContent = userData.nombres;
+  document.getElementById("profile-apellidos").textContent = userData.apellidos;
   document.getElementById("profile-email").textContent = userData.email;
   document.getElementById("profile-phone").textContent = userData.phone;
   document.getElementById("profile-address").textContent = userData.address;
   document.getElementById("profile-city").textContent = userData.city;
-  document.getElementById("profile-province").textContent = userData.country;
-  document.getElementById("profile-region").textContent = userData.zipCode;
+  document.getElementById("profile-province").textContent = userData.province;
+  document.getElementById("profile-region").textContent = userData.region;
   // Sidebar
-  document.getElementById("sidebar-username").textContent = userData.name;
+  document.getElementById(
+    "sidebar-username"
+  ).textContent = `${userData.nombres} ${userData.apellidos}`;
   document.getElementById("sidebar-email").textContent = userData.email;
 }
 
@@ -124,9 +129,12 @@ function activarEdicionPerfil() {
   document.getElementById("edit-profile-btn").classList.add("hidden");
   document.getElementById("edit-profile-actions").classList.remove("hidden");
   // Inputs
-  document.getElementById("profile-name").classList.add("hidden");
-  document.getElementById("input-name").classList.remove("hidden");
-  document.getElementById("input-name").value = userData.name;
+  document.getElementById("profile-nombres").classList.add("hidden");
+  document.getElementById("input-nombres").classList.remove("hidden");
+  document.getElementById("input-nombres").value = userData.nombres;
+  document.getElementById("profile-apellidos").classList.add("hidden");
+  document.getElementById("input-apellidos").classList.remove("hidden");
+  document.getElementById("input-apellidos").value = userData.apellidos;
   document.getElementById("profile-email").classList.add("hidden");
   document.getElementById("input-email").classList.remove("hidden");
   document.getElementById("input-email").value = userData.email;
@@ -141,18 +149,20 @@ function activarEdicionPerfil() {
   document.getElementById("input-city").value = userData.city;
   document.getElementById("profile-province").classList.add("hidden");
   document.getElementById("input-province").classList.remove("hidden");
-  document.getElementById("input-province").value = userData.country;
+  document.getElementById("input-province").value = userData.province;
   document.getElementById("profile-region").classList.add("hidden");
   document.getElementById("input-region").classList.remove("hidden");
-  document.getElementById("input-region").value = userData.zipCode;
+  document.getElementById("input-region").value = userData.region;
 }
 
 function cancelarEdicionPerfil() {
   document.getElementById("edit-profile-btn").classList.remove("hidden");
   document.getElementById("edit-profile-actions").classList.add("hidden");
   // Ocultar inputs
-  document.getElementById("profile-name").classList.remove("hidden");
-  document.getElementById("input-name").classList.add("hidden");
+  document.getElementById("profile-nombres").classList.remove("hidden");
+  document.getElementById("input-nombres").classList.add("hidden");
+  document.getElementById("profile-apellidos").classList.remove("hidden");
+  document.getElementById("input-apellidos").classList.add("hidden");
   document.getElementById("profile-email").classList.remove("hidden");
   document.getElementById("input-email").classList.add("hidden");
   document.getElementById("profile-phone").classList.remove("hidden");
@@ -173,7 +183,8 @@ async function guardarPerfil() {
 
   try {
     // Obtener valores de los inputs
-    const nombres = document.getElementById("input-name").value;
+    const nombres = document.getElementById("input-nombres").value;
+    const apellidos = document.getElementById("input-apellidos").value;
     const email = document.getElementById("input-email").value;
     const phone = document.getElementById("input-phone").value;
     const address = document.getElementById("input-address").value;
@@ -182,15 +193,15 @@ async function guardarPerfil() {
     const region = document.getElementById("input-region").value;
 
     // Validar campos requeridos
-    if (!nombres || !email) {
-      showErrorToast("Nombre y correo electrónico son requeridos");
+    if (!nombres || !apellidos || !email) {
+      showErrorToast("Nombres, apellidos y correo electrónico son requeridos");
       return;
     }
 
     // Preparar datos para enviar
     const datosPerfil = {
       nombres: nombres,
-      apellidos: nombres.split(" ").slice(1).join(" ") || "",
+      apellidos: apellidos,
       correo: email,
       telefono: phone,
       direccion: {
@@ -219,7 +230,8 @@ async function guardarPerfil() {
           showSuccessToast("Perfil actualizado exitosamente");
 
           // Actualizar datos locales
-          userData.name = nombres;
+          userData.nombres = nombres;
+          userData.apellidos = apellidos;
           userData.email = email;
           userData.phone = phone;
           userData.address = address;
