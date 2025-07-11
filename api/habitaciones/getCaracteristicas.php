@@ -23,7 +23,7 @@ try {
     }
 
     $service = new TiposCaracteristicasService($conn);
-    $resultado = $service->obtenerTiposHabitacion();
+    $resultado = $service->obtenerCaracteristicas();
     
     if ($resultado['success']) {
         enviarJSON($resultado);
@@ -37,4 +37,4 @@ try {
         'error' => $e->getMessage()
     ], $e->getCode() ?: 500);
 }
-?>
+?> 

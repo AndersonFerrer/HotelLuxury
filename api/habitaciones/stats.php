@@ -1,41 +1,39 @@
 <?php
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../utils.php';
-require_once 'HabitacionService.php';
+require_once 'TiposCaracteristicasService.php';
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header('Content-Type: application/json');
 
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
 if (ob_get_length()) ob_clean();
 
 try {
-    $sql = "SELECT 
-            COUNT(*) as total,
-            SUM(CASE WHEN estado = 'Disponible' THEN 1 ELSE 0 END) as disponibles,
-            SUM(CASE WHEN estado = 'Ocupado' THEN 1 ELSE 0 END) as ocupadas,
-            SUM(CASE WHEN estado = 'Mantenimiento' THEN 1 ELSE 0 END) as mantenimiento
-            FROM Habitacion";
+    // Verificar autenticación de empleado
+    session_start();
+    if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'empleado') {
+        throw new Exception("Acceso denegado. Solo empleados pueden acceder a esta funcionalidad.", 403);
+    }
+
+    $service = new TiposCaracteristicasService($conn);
+    $resultado = $service->obtenerEstadisticas();
     
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $stats = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    // Calcular porcentaje de ocupación
-    $stats['porcentaje_ocupacion'] = $stats['total'] > 0 
-        ? round(($stats['ocupadas'] / $stats['total']) * 100) 
-        : 0;
-    
-    enviarJSON([
-        'success' => true,
-        'data' => $stats
-    ]);
-    
+    if ($resultado['success']) {
+        enviarJSON($resultado);
+    } else {
+        enviarJSON($resultado, 400);
+    }
 } catch (Exception $e) {
     enviarJSON([
         'success' => false,
         'error' => $e->getMessage()
-    ], 500);
+    ], $e->getCode() ?: 500);
 }
 ?>
