@@ -1,0 +1,209 @@
+<!-- Stats cards -->
+<div class="stats-grid">
+  <!-- Tarjeta 1: Tipos de Habitación -->
+  <div class="stat-card border-info">
+    <div class="stat-content">
+      <span class="stat-label">Tipos de Habitación</span>
+      <span id="total-tipos" class="stat-value">0</span>
+    </div>
+  </div>
+
+  <!-- Tarjeta 2: Características -->
+  <div class="stat-card border-success">
+    <div class="stat-content">
+      <span class="stat-label">Características</span>
+      <span id="total-caracteristicas" class="stat-value">0</span>
+    </div>
+  </div>
+
+  <!-- Tarjeta 3: Precio Promedio -->
+  <div class="stat-card border-warning">
+    <div class="stat-content">
+      <span class="stat-label">Precio Promedio</span>
+      <span id="precio-promedio" class="stat-value">$0</span>
+    </div>
+  </div>
+
+  <!-- Tarjeta 4: Total Habitaciones -->
+  <div class="stat-card border-danger">
+    <div class="stat-content">
+      <span class="stat-label">Total Habitaciones</span>
+      <span id="total-habitaciones" class="stat-value">0</span>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs Container -->
+<div class="tabs-container">
+  <div class="tabs-header">
+    <button class="tab-btn active" data-tab="tipos">
+      <i class="fas fa-bed"></i>
+      Tipos de Habitación
+    </button>
+    <button class="tab-btn" data-tab="caracteristicas">
+      <i class="fas fa-tags"></i>
+      Características
+    </button>
+  </div>
+
+  <!-- Tab Tipos de Habitación -->
+  <div class="tab-content active" id="tab-tipos">
+    <div class="section-container">
+      <div class="section-header">
+        <div>
+          <h2>Tipos de Habitación</h2>
+          <p>Gestiona los diferentes tipos de habitaciones y sus precios</p>
+        </div>
+        <button class="btn btn-primary" id="btn-nuevo-tipo">
+          <i class="fas fa-plus"></i>
+          Nuevo Tipo
+        </button>
+      </div>
+
+      <div class="table-wrapper">
+        <div class="search-container">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-tipos" placeholder="Buscar tipos de habitación...">
+          </div>
+        </div>
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Precio/Noche</th>
+              <th>Habitaciones</th>
+              <th>Características</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="table-tipos">
+            <!-- Los datos se cargarán dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Características -->
+  <div class="tab-content" id="tab-caracteristicas">
+    <div class="section-container">
+      <div class="section-header">
+        <div>
+          <h2>Características de Habitaciones</h2>
+          <p>Gestiona las características disponibles para las habitaciones</p>
+        </div>
+        <button class="btn btn-primary" id="btn-nueva-caracteristica">
+          <i class="fas fa-plus"></i>
+          Nueva Característica
+        </button>
+      </div>
+
+      <div class="table-wrapper">
+        <div class="search-container">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-caracteristicas" placeholder="Buscar características...">
+          </div>
+        </div>
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Habitaciones con esta característica</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="table-caracteristicas">
+            <!-- Los datos se cargarán dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Nuevo/Editar Tipo de Habitación -->
+<div class="admin-modal" id="modal-tipo">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-tipo-titulo">Nuevo Tipo de Habitación</h3>
+      <button class="modal-close" id="cerrar-modal-tipo">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <form id="form-tipo">
+      <div class="form-group">
+        <label for="nombre-tipo">Nombre del Tipo</label>
+        <input type="text" id="nombre-tipo" name="nombre" required placeholder="Ej: Suite Junior">
+      </div>
+      <div class="form-group">
+        <label for="precio-tipo">Precio por Noche</label>
+        <input type="number" id="precio-tipo" name="precio" step="0.01" required placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label for="descripcion-tipo">Descripción</label>
+        <textarea id="descripcion-tipo" name="descripcion" rows="4" placeholder="Descripción detallada del tipo de habitación..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Características Incluidas</label>
+        <div class="caracteristicas-grid" id="caracteristicas-tipo">
+          <!-- Las características se cargarán dinámicamente -->
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="cancelar-tipo">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="guardar-tipo">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Nuevo/Editar Característica -->
+<div class="admin-modal" id="modal-caracteristica">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-caracteristica-titulo">Nueva Característica</h3>
+      <button class="modal-close" id="cerrar-modal-caracteristica">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <form id="form-caracteristica">
+      <div class="form-group">
+        <label for="nombre-caracteristica">Nombre de la Característica</label>
+        <input type="text" id="nombre-caracteristica" name="nombre" required placeholder="Ej: Sauna Privada">
+      </div>
+      <div class="form-group">
+        <label for="descripcion-caracteristica">Descripción</label>
+        <textarea id="descripcion-caracteristica" name="descripcion" rows="4" placeholder="Descripción detallada de la característica..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="cancelar-caracteristica">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="guardar-caracteristica">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Confirmación Eliminar -->
+<div class="admin-modal" id="modal-confirmar">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-confirmar-titulo">Confirmar Eliminación</h3>
+      <button class="modal-close" id="cerrar-modal-confirmar">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p id="modal-confirmar-mensaje">¿Estás seguro de que deseas eliminar este elemento?</p>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-outline" id="cancelar-eliminar">Cancelar</button>
+      <button type="button" class="btn btn-danger" id="confirmar-eliminar">Eliminar</button>
+    </div>
+  </div>
+</div> 

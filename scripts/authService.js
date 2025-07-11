@@ -84,6 +84,7 @@ const RUTAS_CONFIG = {
     "/admin-page.html#dashboard",
     "/admin-page.html#reservas",
     "/admin-page.html#habitaciones",
+    "/admin-page.html#tipos-caracteristicas",
     "/admin-page.html#clientes",
     "/admin-page.html#empleados",
     "/admin-page.html#pagos",

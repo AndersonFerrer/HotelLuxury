@@ -11,6 +11,11 @@ const routes = {
     css: "styles/habitacionesAdmin.css",
     script: "scripts/habitacionesAdmin.js",
   },
+  "tipos-caracteristicas": {
+    html: "pagesAdmin/tipos-caracteristicas.html",
+    css: "styles/tiposCaracteristicasAdmin.css",
+    script: "scripts/tiposCaracteristicasAdmin.js",
+  },
   pagos: {
     html: "pagesAdmin/pagos.html",
     //css: "styles/pagosAdmin.css",

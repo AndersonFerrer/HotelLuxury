@@ -1,0 +1,322 @@
+/* Estilos específicos para la página de Tipos y Características */
+
+/* Tabs Container */
+.tabs-container {
+  margin-top: 2rem;
+}
+
+.tabs-header {
+  display: flex;
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 2rem;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab-btn:hover {
+  color: #d4af37;
+}
+
+.tab-btn.active {
+  color: #d4af37;
+  border-bottom-color: #d4af37;
+}
+
+.tab-btn i {
+  font-size: 1.1rem;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Search Container */
+.search-container {
+  margin-bottom: 1.5rem;
+}
+
+.search-box {
+  position: relative;
+  max-width: 400px;
+}
+
+.search-box i {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: border-color 0.3s ease;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+/* Características Grid en Modal */
+.caracteristicas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: #f9fafb;
+}
+
+.caracteristica-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.caracteristica-item:hover {
+  border-color: #d4af37;
+  background-color: #fefce8;
+}
+
+.caracteristica-item input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: #d4af37;
+}
+
+.caracteristica-item label {
+  font-size: 0.875rem;
+  color: #374151;
+  cursor: pointer;
+  flex: 1;
+}
+
+/* Modal específico para tipos y características */
+.admin-modal .modal-content {
+  max-width: 600px;
+  width: 90%;
+}
+
+.admin-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1.5rem;
+}
+
+.admin-modal .modal-header h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.modal-close i {
+  font-size: 1.25rem;
+}
+
+/* Formularios en modales */
+.admin-modal .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.admin-modal .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.admin-modal .form-group input,
+.admin-modal .form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: border-color 0.3s ease;
+}
+
+.admin-modal .form-group input:focus,
+.admin-modal .form-group textarea:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.admin-modal .form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Badges para características */
+.caracteristicas-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background-color: #f0f9ff;
+  color: #0369a1;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.caracteristicas-badge i {
+  font-size: 0.625rem;
+}
+
+/* Precio display */
+.precio-display {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #d4af37;
+  font-weight: 600;
+}
+
+.precio-display i {
+  font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tabs-header {
+    flex-direction: column;
+  }
+  
+  .tab-btn {
+    justify-content: center;
+    border-bottom: none;
+    border-right: 2px solid transparent;
+    margin-bottom: 0;
+    margin-right: -2px;
+  }
+  
+  .tab-btn.active {
+    border-bottom-color: transparent;
+    border-right-color: #d4af37;
+  }
+  
+  .caracteristicas-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-modal .modal-content {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+  
+  .modal-actions .btn {
+    width: 100%;
+  }
+}
+
+/* Estados de carga */
+.table-loading {
+  position: relative;
+  min-height: 200px;
+}
+
+.table-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f4f6;
+  border-top: 4px solid #d4af37;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Estados vacíos */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #d1d5db;
+}
+
+.empty-state h3 {
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.875rem;
+} 
