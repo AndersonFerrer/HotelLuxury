@@ -8,42 +8,28 @@ header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
 if (ob_get_length()) ob_clean();
 
 try {
-    // Verificar autenticación de empleado
-    session_start();
-    if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'empleado') {
-        throw new Exception("Acceso denegado. Solo empleados pueden acceder a esta funcionalidad.", 403);
-    }
-
-    // Solo permitir método POST
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Método no permitido", 405);
     }
 
-    // Obtener datos del cuerpo de la solicitud
+    $id = $_GET['id'] ?? null;
+    if (!$id) {
+        throw new Exception("ID del tipo de habitación es requerido", 400);
+    }
+
     $input = json_decode(file_get_contents('php://input'), true);
-    
-    // Validar datos
     if (json_last_error() !== JSON_ERROR_NONE) {
         throw new Exception("JSON inválido: " . json_last_error_msg());
     }
 
-    if (empty($input['nombre']) || !isset($input['precio'])) {
-        throw new Exception("Nombre y precio son requeridos", 400);
-    }
-
     $service = new TiposCaracteristicasService($conn);
-    $resultado = $service->crearTipoHabitacion($input);
+    $resultado = $service->actualizarTipoHabitacion($id, $input);
 
     if ($resultado['success']) {
-        enviarJSON($resultado, 201);
+        enviarJSON($resultado);
     } else {
         enviarJSON($resultado, 400);
     }
