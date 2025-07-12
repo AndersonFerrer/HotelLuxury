@@ -163,46 +163,50 @@ function cambiarTab(tabId) {
 // Funciones de carga de datos
 async function cargarTiposHabitacion() {
   try {
-    const response = await fetch("/api/habitaciones/getTipoHabitaciones.php");
-    const data = await response.json();
+    const response = await fetch(
+      "/api/tipoHabitaciones/getTipoHabitaciones.php"
+    );
+    const result = await response.json();
 
-    if (data.success) {
-      tiposHabitacion = data.tipos || [];
+    if (result.success) {
+      window.tiposHabitacion = result.tipos;
+      renderizarTiposHabitacion();
     } else {
-      throw new Error(data.error || "Error al cargar tipos de habitación");
+      showErrorToast("Error al cargar tipos de habitación: " + result.error);
     }
   } catch (error) {
-    console.error("Error al cargar tipos de habitación:", error);
-    tiposHabitacion = [];
+    showErrorToast("Error de conexión al cargar tipos de habitación");
   }
 }
 
 async function cargarCaracteristicas() {
   try {
-    const response = await fetch("/api/habitaciones/getCaracteristicas.php");
-    const data = await response.json();
+    const response = await fetch("/api/caracteristicas/getCaracteristicas.php");
+    const result = await response.json();
 
-    if (data.success) {
-      caracteristicas = data.caracteristicas || [];
+    if (result.success) {
+      window.caracteristicas = result.caracteristicas;
+      renderizarCaracteristicas();
     } else {
-      throw new Error(data.error || "Error al cargar características");
+      showErrorToast("Error al cargar características: " + result.error);
     }
   } catch (error) {
-    console.error("Error al cargar características:", error);
-    caracteristicas = [];
+    showErrorToast("Error de conexión al cargar características");
   }
 }
 
 async function cargarEstadisticas() {
   try {
-    const response = await fetch("/api/habitaciones/stats.php");
-    const data = await response.json();
+    const response = await fetch("/api/tipoHabitaciones/stats.php");
+    const result = await response.json();
 
-    if (data.success) {
-      actualizarEstadisticas(data.stats);
+    if (result.success) {
+      actualizarEstadisticas(result.stats);
+    } else {
+      showErrorToast("Error al cargar estadísticas: " + result.error);
     }
   } catch (error) {
-    console.error("Error al cargar estadísticas:", error);
+    showErrorToast("Error de conexión al cargar estadísticas");
   }
 }
 
@@ -456,20 +460,23 @@ async function manejarSubmitTipo(e) {
   const formData = new FormData(e.target);
   const datos = {
     nombre: formData.get("nombre"),
-    precio: parseFloat(formData.get("precio")),
     descripcion: formData.get("descripcion"),
-    caracteristicas: Array.from(formData.getAll("caracteristicas[]")).map(
-      (id) => parseInt(id)
+    precio: parseFloat(formData.get("precio")),
+    aforo: parseInt(formData.get("aforo")),
+    caracteristicas: Array.from(formData.getAll("caracteristicas")).map((id) =>
+      parseInt(id)
     ),
   };
 
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+
   try {
     await withButtonLoader(
-      e.target.querySelector('button[type="submit"]'),
+      submitBtn,
       async () => {
-        const url = modoEdicion
-          ? `/api/habitaciones/updateTipo.php?id=${tipoSeleccionado.id_tipo_habitacion}`
-          : "/api/habitaciones/insertTipo.php";
+        const url = window.tipoEditando
+          ? `/api/tipoHabitaciones/updateTipo.php?id=${window.tipoEditando}`
+          : "/api/tipoHabitaciones/insertTipo.php";
 
         const response = await fetch(url, {
           method: "POST",
@@ -480,24 +487,19 @@ async function manejarSubmitTipo(e) {
         const result = await response.json();
 
         if (result.success) {
-          showSuccessToast(
-            modoEdicion
-              ? "Tipo actualizado exitosamente"
-              : "Tipo creado exitosamente"
-          );
+          showSuccessToast(result.message);
           cerrarModalTipo();
           await recargarDatos();
         } else {
-          throw new Error(result.error || "Error al procesar la solicitud");
+          throw new Error(result.error);
         }
 
         return result;
       },
-      modoEdicion ? "Actualizando..." : "Creando..."
+      window.tipoEditando ? "Actualizando..." : "Creando..."
     );
   } catch (error) {
-    console.error("Error al procesar tipo:", error);
-    showErrorToast(error.message);
+    showErrorToast("Error al guardar tipo: " + error.message);
   }
 }
 
@@ -510,13 +512,15 @@ async function manejarSubmitCaracteristica(e) {
     descripcion: formData.get("descripcion"),
   };
 
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+
   try {
     await withButtonLoader(
-      e.target.querySelector('button[type="submit"]'),
+      submitBtn,
       async () => {
-        const url = modoEdicion
-          ? `/api/habitaciones/updateCaracteristica.php?id=${caracteristicaSeleccionada.id_caracteristica}`
-          : "/api/habitaciones/insertCaracteristica.php";
+        const url = window.caracteristicaEditando
+          ? `/api/caracteristicas/updateCaracteristica.php?id=${window.caracteristicaEditando}`
+          : "/api/caracteristicas/insertCaracteristica.php";
 
         const response = await fetch(url, {
           method: "POST",
@@ -527,24 +531,19 @@ async function manejarSubmitCaracteristica(e) {
         const result = await response.json();
 
         if (result.success) {
-          showSuccessToast(
-            modoEdicion
-              ? "Característica actualizada exitosamente"
-              : "Característica creada exitosamente"
-          );
+          showSuccessToast(result.message);
           cerrarModalCaracteristica();
           await recargarDatos();
         } else {
-          throw new Error(result.error || "Error al procesar la solicitud");
+          throw new Error(result.error);
         }
 
         return result;
       },
-      modoEdicion ? "Actualizando..." : "Creando..."
+      window.caracteristicaEditando ? "Actualizando..." : "Creando..."
     );
   } catch (error) {
-    console.error("Error al procesar característica:", error);
-    showErrorToast(error.message);
+    showErrorToast("Error al guardar característica: " + error.message);
   }
 }
 
@@ -611,67 +610,53 @@ async function confirmarEliminacion() {
 
 async function eliminarTipoConfirmado(id) {
   try {
-    await withButtonLoader(
-      elementos.confirmarEliminar,
-      async () => {
-        const response = await fetch(
-          `/api/habitaciones/deleteTipo.php?id=${id}`,
-          {
-            method: "DELETE",
-          }
-        );
-
-        const result = await response.json();
-
-        if (result.success) {
-          showSuccessToast("Tipo eliminado exitosamente");
-          cerrarModalConfirmar();
-          await recargarDatos();
-        } else {
-          throw new Error(result.error || "Error al eliminar el tipo");
+    await withLoadingModal(async () => {
+      const response = await fetch(
+        `/api/tipoHabitaciones/deleteTipo.php?id=${id}`,
+        {
+          method: "DELETE",
         }
+      );
 
-        return result;
-      },
-      "Eliminando..."
-    );
+      const result = await response.json();
+
+      if (result.success) {
+        showSuccessToast(result.message);
+        await recargarDatos();
+      } else {
+        throw new Error(result.error);
+      }
+
+      return result;
+    }, "Eliminando tipo de habitación...");
   } catch (error) {
-    console.error("Error al eliminar tipo:", error);
-    showErrorToast(error.message);
+    showErrorToast("Error al eliminar tipo: " + error.message);
   }
 }
 
 async function eliminarCaracteristicaConfirmada(id) {
   try {
-    await withButtonLoader(
-      elementos.confirmarEliminar,
-      async () => {
-        const response = await fetch(
-          `/api/habitaciones/deleteCaracteristica.php?id=${id}`,
-          {
-            method: "DELETE",
-          }
-        );
-
-        const result = await response.json();
-
-        if (result.success) {
-          showSuccessToast("Característica eliminada exitosamente");
-          cerrarModalConfirmar();
-          await recargarDatos();
-        } else {
-          throw new Error(
-            result.error || "Error al eliminar la característica"
-          );
+    await withLoadingModal(async () => {
+      const response = await fetch(
+        `/api/caracteristicas/deleteCaracteristica.php?id=${id}`,
+        {
+          method: "DELETE",
         }
+      );
 
-        return result;
-      },
-      "Eliminando..."
-    );
+      const result = await response.json();
+
+      if (result.success) {
+        showSuccessToast(result.message);
+        await recargarDatos();
+      } else {
+        throw new Error(result.error);
+      }
+
+      return result;
+    }, "Eliminando característica...");
   } catch (error) {
-    console.error("Error al eliminar característica:", error);
-    showErrorToast(error.message);
+    showErrorToast("Error al eliminar característica: " + error.message);
   }
 }
 

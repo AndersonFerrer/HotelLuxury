@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../utils.php';
-require_once 'HabitacionService.php';
+require_once 'TiposCaracteristicasService.php';
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, OPTIONS");
@@ -15,8 +15,8 @@ try {
         throw new Exception("Método no permitido", 405);
     }
 
-    $service = new HabitacionService($conn);
-    $resultado = $service->obtenerEstadisticasHabitaciones();
+    $service = new TiposCaracteristicasService($conn);
+    $resultado = $service->obtenerEstadisticas();
 
     if ($resultado['success']) {
         enviarJSON($resultado);
@@ -30,4 +30,4 @@ try {
         'error' => $e->getMessage()
     ], $e->getCode() ?: 500);
 }
-?>
+?> 

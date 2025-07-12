@@ -13,8 +13,8 @@ async function fetchRoomStats() {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const { data } = await response.json();
-    updateDashboardStats(data);
+    const { stats } = await response.json();
+    updateDashboardStats(stats);
   } catch (error) {
     console.error("Error al obtener estadísticas:", error);
     showErrorToast("Error al cargar estadísticas");
@@ -101,7 +101,9 @@ let tipos_habitaciones = [];
 
 async function fetchTiposHabitaciones() {
   try {
-    const response = await fetch("api/habitaciones/getTipoHabitaciones.php");
+    const response = await fetch(
+      "api/tipoHabitaciones/getTipoHabitaciones.php"
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -114,6 +116,7 @@ async function fetchTiposHabitaciones() {
 
 // Función para actualizar las estadísticas en el dashboard
 function updateDashboardStats(data) {
+  console.log(data, "data");
   // Verificar que los elementos existen antes de intentar acceder a ellos
   const totalRooms = document.getElementById("total-rooms");
   const availableRooms = document.getElementById("available-rooms");
