@@ -45,7 +45,7 @@ class TiposCaracteristicasService {
 
             return [
                 'success' => true,
-                'tipos' => $tipos,
+                'data' => $tipos,
                 'message' => 'Tipos de habitación obtenidos correctamente'
             ];
 
