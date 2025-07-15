@@ -116,7 +116,6 @@ async function fetchTiposHabitaciones() {
 
 // Función para actualizar las estadísticas en el dashboard
 function updateDashboardStats(data) {
-  console.log(data, "data");
   // Verificar que los elementos existen antes de intentar acceder a ellos
   const totalRooms = document.getElementById("total-rooms");
   const availableRooms = document.getElementById("available-rooms");
@@ -344,7 +343,7 @@ function generarModalVisualHabitacion(data) {
 }
 
 function generarFormularioEditarVisual(data) {
-  console.log(data);
+  console.log(data, tipos_habitaciones, "generarFormularioEditarVisual");
   // Estado
   const estados = ["Disponible", "Ocupado", "Mantenimiento"];
   // Tipos de habitación
@@ -430,16 +429,16 @@ btnAgregar.addEventListener("click", () => {
   modalActions.querySelector(".btn-confirmar-agregar").onclick = async (e) => {
     e.preventDefault();
     const numero = document.getElementById("numero-habitacion").value;
-    const tipo = document.getElementById("tipo-habitacion").value;
-    if (!numero || !tipo) {
-      alert("Por favor, completa todos los campos");
+    const id_tipo_habitacion = document.getElementById("tipo-habitacion").value;
+    if (!numero || !id_tipo_habitacion) {
+      showErrorToast("Por favor, completa todos los campos");
       return;
     }
     try {
       const response = await fetch("api/habitaciones/insert.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ numero, tipo }),
+        body: JSON.stringify({ numero, id_tipo_habitacion }),
       });
       const data = await response.json();
       if (!response.ok || !data.success) {
@@ -448,10 +447,10 @@ btnAgregar.addEventListener("click", () => {
       await fetchRoomsAll();
       await fetchRoomStats();
       modal.close();
-      alert("Habitación agregada con éxito");
+      showSuccessToast("Habitación agregada con éxito");
     } catch (error) {
       console.error("Error:", error);
-      alert("Error al agregar habitación: " + error.message);
+      showErrorToast("Error al agregar habitación: " + error.message);
     }
   };
 });

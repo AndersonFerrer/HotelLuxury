@@ -20,13 +20,13 @@ try {
         throw new Exception("JSON inválido: " . json_last_error_msg());
     }
 
-    if (empty($input['id']) || empty($input['numero']) || empty($input['estado']) || empty($input['id_tipo_habitacion'])) {
-        throw new Exception("Todos los campos son requeridos: id, numero, estado, id_tipo_habitacion", 400);
+    if (empty($input['id_habitacion']) || empty($input['numero']) || empty($input['estado']) || empty($input['id_tipo_habitacion'])) {
+        throw new Exception("Todos los campos son requeridos: id_habitacion, numero, estado, id_tipo_habitacion", 400);
     }
 
     $service = new HabitacionService($conn);
     $resultado = $service->actualizarHabitacion(
-        $input['id'],
+        $input['id_habitacion'],
         $input['numero'],
         $input['estado'],
         $input['id_tipo_habitacion']
