@@ -79,10 +79,6 @@ async function inicializarTiposCaracteristicas() {
 
     // Configurar eventos
     configurarEventos();
-
-    // Renderizar datos
-    renderizarTiposHabitacion();
-    renderizarCaracteristicas();
   } catch (error) {
     console.error("Error al inicializar tipos y características:", error);
     showErrorToast("Error al cargar los datos");
@@ -169,8 +165,7 @@ async function cargarTiposHabitacion() {
     const result = await response.json();
 
     if (result.success) {
-      window.tiposHabitacion = result.tipos;
-      renderizarTiposHabitacion();
+      renderizarTiposHabitacion(result.data);
     } else {
       showErrorToast("Error al cargar tipos de habitación: " + result.error);
     }
@@ -185,8 +180,7 @@ async function cargarCaracteristicas() {
     const result = await response.json();
 
     if (result.success) {
-      window.caracteristicas = result.caracteristicas;
-      renderizarCaracteristicas();
+      renderizarCaracteristicas(result.caracteristicas);
     } else {
       showErrorToast("Error al cargar características: " + result.error);
     }
@@ -218,7 +212,8 @@ function actualizarEstadisticas(stats) {
 }
 
 // Funciones de renderizado
-function renderizarTiposHabitacion() {
+function renderizarTiposHabitacion(tiposHabitacion) {
+  console.log(tiposHabitacion, "tiposHabitacion");
   if (tiposHabitacion.length === 0) {
     elementos.tableTipos.innerHTML = `
       <tr>
@@ -244,8 +239,7 @@ function renderizarTiposHabitacion() {
       </td>
       <td>
         <div class="precio-display">
-          <i class="fas fa-dollar-sign"></i>
-          <span>${parseFloat(tipo.precio_noche).toFixed(2)}</span>
+          <span>S/. ${parseFloat(tipo.precio_noche).toFixed(2)}</span>
         </div>
       </td>
       <td>
@@ -284,7 +278,7 @@ function renderizarTiposHabitacion() {
     .join("");
 }
 
-function renderizarCaracteristicas() {
+function renderizarCaracteristicas(caracteristicas) {
   if (caracteristicas.length === 0) {
     elementos.tableCaracteristicas.innerHTML = `
       <tr>
