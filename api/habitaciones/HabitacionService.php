@@ -40,42 +40,6 @@ class HabitacionService {
     }
 
     /**
-     * Obtiene el detalle completo de una habitación individual (por id de habitación)
-     */
-    public function obtenerDetalleHabitacionPorId($id_habitacion) {
-        try {
-            $sql = "SELECT h.id_habitacion, h.numero, h.estado, h.id_tipo_habitacion, th.nombre AS tipo_nombre, th.descripcion AS tipo_descripcion, th.precio_noche, th.aforo
-                    FROM Habitacion h
-                    INNER JOIN TipoHabitacion th ON h.id_tipo_habitacion = th.id_tipo_habitacion
-                    WHERE h.id_habitacion = ?";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$id_habitacion]);
-            $habitacion = $stmt->fetch(PDO::FETCH_ASSOC);
-            if (!$habitacion) {
-                return [ 'success' => false, 'error' => 'Habitación no encontrada' ];
-            }
-            // Características
-            $sqlCar = "SELECT cth.nombre FROM TipoHabitacionCaracteristica thc
-                        INNER JOIN Caracteristica cth ON thc.id_caracteristica = cth.id_caracteristica
-                        WHERE thc.id_tipo_habitacion = ?";
-            $stmtCar = $this->conn->prepare($sqlCar);
-            $stmtCar->execute([$habitacion['id_tipo_habitacion']]);
-            $caracteristicas = $stmtCar->fetchAll(PDO::FETCH_COLUMN);
-            $habitacion['caracteristicas'] = $caracteristicas;
-            // Imágenes
-            $habitacion['imagenes'] = $this->obtenerImagenesHabitacion($habitacion['id_tipo_habitacion']);
-            return [
-                'success' => true,
-                'data' => $habitacion,
-                'message' => 'Detalle de habitación obtenida.'
-            ];
-        } catch (PDOException $e) {
-            error_log("Error al obtener detalle de habitación: " . $e->getMessage());
-            return [ 'success' => false, 'error' => 'Error al obtener detalle de habitación' ];
-        }
-    }
-
-    /**
      * Obtiene todas las habitaciones para el panel de administración
      */
     public function getAllHabitaciones() {
@@ -223,30 +187,6 @@ class HabitacionService {
             return [
                 "success" => false,
                 "message" => "Error al eliminar habitación",
-                "error" => $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Obtiene todos los tipos de habitaciones
-     */
-    public function obtenerTiposHabitaciones() {
-        try {
-            $sql = "SELECT id_tipo_habitacion, nombre, precio_noche FROM TipoHabitacion";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute();
-            $tiposHabitaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            return [
-                "success" => true,
-                "data" => $tiposHabitaciones,
-                "message" => "Tipos de habitaciones obtenidos."
-            ];
-        } catch (PDOException $e) {
-            return [
-                "success" => false,
-                "message" => "Error al obtener tipos de habitaciones",
                 "error" => $e->getMessage()
             ];
         }
