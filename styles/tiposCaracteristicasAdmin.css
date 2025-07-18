@@ -137,6 +137,18 @@
   margin-bottom: 1.5rem;
 }
 
+.admin-modal {
+  align-items: center !important;
+  justify-content: center !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+}
+.admin-modal .modal-content {
+  margin: 0 auto !important;
+}
+
 .admin-modal .modal-header h3 {
   margin: 0;
   color: #111827;
@@ -319,4 +331,49 @@
 .empty-state p {
   margin: 0;
   font-size: 0.875rem;
+} 
+
+/* Modal reutilizable */
+.admin-modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  justify-content: center;
+  align-items: center;
+}
+.admin-modal.active {
+  display: flex;
+}
+.admin-modal .modal-content {
+  background: #fff;
+  border-radius: 10px;
+  min-width: 320px;
+  max-width: 95vw;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  position: relative;
+  animation: modalIn 0.2s;
+}
+@keyframes modalIn {
+  from { transform: translateY(-40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
 } 
