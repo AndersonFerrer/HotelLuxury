@@ -1,0 +1,96 @@
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card border-info">
+            <div>
+                <span class="stat-label">Total Huéspedes</span>
+                <span class="stat-value" id="total-huespedes">0</span>
+            </div>
+        </div>
+        <div class="stat-card border-success">
+            <div>
+                <span class="stat-label">En Hotel</span>
+                <span id="en-hotel" class="stat-value">0</span>
+            </div>
+        </div>
+        <div class="stat-card border-primary">
+            <div>
+                <span class="stat-label">Reservas Activas</span>
+                <span id="reservas-activas" class="stat-value">0</span>
+            </div>
+        </div>
+        <div class="stat-card border-warning">
+            <div>
+                <span class="stat-label">Total Reservas</span>
+                <span id="total-reservas" class="stat-value">0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros y Acciones -->
+    <section class="table-container">
+        <div class="section-header">
+            <div>
+                <h2>Lista de Huéspedes</h2>
+                <p>
+                    Gestiona todos los huéspedes del hotel. Total:
+                    <span id="filtered-count">0</span> huéspedes
+                </p>
+            </div>
+
+            <button class="btn" id="btn-nuevo-huesped">+ Registrar Huésped</button>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-section">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="search-input" placeholder="Buscar por nombre, documento o email..." class="search-input">
+            </div>
+            <select id="status-filter" class="filter-select">
+                <option value="all">Todos los estados</option>
+                <option value="checkin">En Hotel</option>
+                <option value="checkout">Check-out</option>
+                <option value="reserva_activa">Reserva Activa</option>
+                <option value="reserva_pendiente">Pendiente</option>
+            </select>
+            <select id="document-type-filter" class="filter-select">
+                <option value="all">Todos los tipos</option>
+                <option value="1">DNI</option>
+                <option value="2">Pasaporte</option>
+                <option value="3">Carnet de Extranjería</option>
+            </select>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Huésped</th>
+                        <th>Documento</th>
+                        <th>Reserva Actual</th>
+                        <th>Estado</th>
+                        <th>Historial</th>
+                        <th>Última Estancia</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="huespedes-tbody">
+                    <!-- Los datos se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Modal para huéspedes -->
+    <dialog id="modal-huesped" class="modal-huesped">
+        <form method="dialog">
+            <h3 id="modal-titulo">Ver Huésped</h3>
+            <div id="modal-contenido">
+                <!-- Contenido dinámico -->
+            </div>
+            <div id="modal-actions" class="modal-actions">
+                <button type="button" class="btn-cancelar">Cancelar</button>
+            </div>
+        </form>
+    </dialog>

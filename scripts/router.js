@@ -29,8 +29,9 @@ const routes = {
     //css: "styles/configuracionAdmin.css",
   },
   clientes: {
-    html: "pagesAdmin/clientes.html",
-    //css: "styles/clientesAdmin.css",
+    html: "pagesAdmin/huespedes.html",
+    css: "styles/huespedesAdmin.css",
+    script: "scripts/huespedesAdmin.js",
   },
   reservas: {
     html: "pagesAdmin/reservas.html",
