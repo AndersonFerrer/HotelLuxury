@@ -15,7 +15,7 @@ try {
         throw new Exception("Se requiere parámetro 'id'", 400);
     }
     $habitacionService = new HabitacionService($conn);
-    $resultado = $habitacionService->obtenerDetalleTipoHabitacionPorId($_GET['id']);
+    $resultado = $habitacionService->obtenerDetalleHabitacionPorId($_GET['id']);
     if ($resultado['success']) {
         enviarJSON($resultado);
     } else {
