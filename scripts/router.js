@@ -12,7 +12,7 @@ const routes = {
     script: "scripts/habitacionesAdmin.js",
   },
   "tipos-caracteristicas": {
-    html: "pagesAdmin/tipos-caracteristicas.html",
+    html: "pagesAdmin/tiposcaracteristicas.html",
     css: "styles/tiposCaracteristicasAdmin.css",
     script: "scripts/tiposCaracteristicasAdmin.js",
   },

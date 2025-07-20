@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tipos y Características de Habitación</title>
+    <link rel="stylesheet" href="../styles/huespedesAdmin.css">
+    <link rel="stylesheet" href="../styles/tiposcaracteristicasAdmin.css">
+    <script type="module" src="../scripts/loaderUtils.js"></script>
+    <script defer src="../scripts/tiposcaracteristicasAdmin.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <section class="table-container">
+        <div class="section-header">
+            <div>
+                <h2>Tipos de Habitación</h2>
+                <p>Gestiona los tipos de habitación del hotel.</p>
+            </div>
+            <button class="btn" id="btn-nuevo-tipo">+ Nuevo Tipo</button>
+        </div>
+        <div class="filters-section">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="search-tipo" placeholder="Buscar tipo de habitación..." class="search-input">
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio/Noche</th>
+                        <th># Habitaciones</th>
+                        <th>Características</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tipos-tbody">
+                    <!-- Datos dinámicos -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="table-container">
+        <div class="section-header">
+            <div>
+                <h2>Características de Habitación</h2>
+                <p>Gestiona las características disponibles para las habitaciones.</p>
+            </div>
+            <button class="btn" id="btn-nueva-caracteristica">+ Nueva Característica</button>
+        </div>
+        <div class="filters-section">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="search-caracteristica" placeholder="Buscar característica..." class="search-input">
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th># Habitaciones</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="caracteristicas-tbody">
+                    <!-- Datos dinámicos -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Modal para Tipos de Habitación -->
+    <dialog id="modal-tipo" class="modal-tipo">
+        <form method="dialog">
+            <h3 id="modal-titulo-tipo">Tipo de Habitación</h3>
+            <div id="modal-contenido-tipo">
+                <!-- Contenido dinámico -->
+            </div>
+            <div id="modal-actions-tipo" class="modal-actions">
+                <button type="button" class="btn-cancelar">Cancelar</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Modal para Características -->
+    <dialog id="modal-caracteristica" class="modal-caracteristica">
+        <form method="dialog">
+            <h3 id="modal-titulo-caracteristica">Característica</h3>
+            <div id="modal-contenido-caracteristica">
+                <!-- Contenido dinámico -->
+            </div>
+            <div id="modal-actions-caracteristica" class="modal-actions">
+                <button type="button" class="btn-cancelar">Cancelar</button>
+            </div>
+        </form>
+    </dialog>
+</body>
+</html>
