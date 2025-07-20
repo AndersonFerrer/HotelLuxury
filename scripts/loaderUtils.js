@@ -211,7 +211,7 @@ function showToast(message, type = "info", duration = 3000) {
       position: fixed;
       top: 20px;
       right: 20px;
-      z-index: 10000;
+      z-index: 9999999999;
       display: flex;
       flex-direction: column;
       gap: 10px;
