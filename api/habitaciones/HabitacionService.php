@@ -377,5 +377,42 @@ class HabitacionService {
             return [ 'success' => false, 'error' => 'Error al obtener detalle de habitación' ];
         }
     }
+    public function obtenerDetalleTipoConDisponibles($id_tipo_habitacion) {
+        try {
+            // Detalle del tipo de habitación
+            $sqlTipo = "SELECT id_tipo_habitacion, nombre, descripcion, precio_noche, aforo FROM TipoHabitacion WHERE id_tipo_habitacion = ?";
+            $stmtTipo = $this->conn->prepare($sqlTipo);
+            $stmtTipo->execute([$id_tipo_habitacion]);
+            $tipo = $stmtTipo->fetch(PDO::FETCH_ASSOC);
+            if (!$tipo) {
+                return [ 'success' => false, 'error' => 'Tipo de habitación no encontrado' ];
+            }
+            // Características
+            $sqlCar = "SELECT cth.nombre FROM TipoHabitacionCaracteristica thc
+                        INNER JOIN Caracteristica cth ON thc.id_caracteristica = cth.id_caracteristica
+                        WHERE thc.id_tipo_habitacion = ?";
+            $stmtCar = $this->conn->prepare($sqlCar);
+            $stmtCar->execute([$id_tipo_habitacion]);
+            $caracteristicas = $stmtCar->fetchAll(PDO::FETCH_COLUMN);
+            $tipo['caracteristicas'] = $caracteristicas;
+            // Imágenes
+            $tipo['imagenes'] = $this->obtenerImagenesHabitacion($id_tipo_habitacion);
+            // Habitaciones disponibles
+            $sqlHab = "SELECT id_habitacion, numero, estado FROM Habitacion WHERE id_tipo_habitacion = ? AND estado = 'Disponible' ORDER BY numero ASC";
+            $stmtHab = $this->conn->prepare($sqlHab);
+            $stmtHab->execute([$id_tipo_habitacion]);
+            $habitaciones = $stmtHab->fetchAll(PDO::FETCH_ASSOC);
+            return [
+                'success' => true,
+                'data' => [
+                    'tipo' => $tipo,
+                    'habitaciones_disponibles' => $habitaciones
+                ]
+            ];
+        } catch (PDOException $e) {
+            error_log("Error al obtener detalle de tipo de habitación: " . $e->getMessage());
+            return [ 'success' => false, 'error' => 'Error al obtener detalle de tipo de habitación' ];
+        }
+    }
 }
 ?>
