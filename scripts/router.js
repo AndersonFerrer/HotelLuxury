@@ -16,18 +16,10 @@ const routes = {
     css: "styles/tiposCaracteristicasAdmin.css",
     script: "scripts/tiposCaracteristicasAdmin.js",
   },
-  pagos: {
-    html: "pagesAdmin/pagos.html",
-    //css: "styles/pagosAdmin.css",
-  },
   empleados: {
     html: "pagesAdmin/empleados.html",
     css: "styles/empleadosAdmin.css",
     script: "scripts/empleadosAdmin.js",
-  },
-  configuracion: {
-    html: "pagesAdmin/configuracion.html",
-    //css: "styles/configuracionAdmin.css",
   },
   clientes: {
     html: "pagesAdmin/huespedes.html",
