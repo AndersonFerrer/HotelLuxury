@@ -80,7 +80,9 @@ function updateTableRooms(data) {
             habitacion.estado
           )}">${habitacion.estado}</span></td>
           <td class="habitacion-precio">S/. ${habitacion.precio_noche}</td>
-          <td>-</td>
+          <td>${habitacion.huesped_nombres ?? "-"} ${
+      habitacion.huesped_apellidos ?? "-"
+    }</td>
           <td class="acciones">
             <button class="action-btn info" title="Ver">
               <i class="fas fa-eye"></i>

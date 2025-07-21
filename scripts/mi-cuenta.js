@@ -314,7 +314,7 @@ function mostrarReservas() {
             </div>
             <div class="reserva-meta">
               <p class="reserva-id">Reserva #${booking.id}</p>
-              <p class="reserva-price">$${booking.total}</p>
+              <p class="reserva-price">S/. ${booking.total}</p>
               <div class="reserva-status">${getStatusBadge(
                 booking.status
               )}</div>
