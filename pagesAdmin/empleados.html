@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Empleados</title>
+  <link rel="stylesheet" href="../styles/empleadosAdmin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <section class="table-container">
+    <div class="section-header">
+      <div>
+        <h2>Lista de Empleados</h2>
+        <p>
+          Gestiona todos los empleados del hotel. Total:
+          <span id="filtered-empleados-count">0</span> empleados
+        </p>
+      </div>
+      <button class="btn" id="btn-nuevo-empleado">+ Registrar Empleado</button>
+    </div>
+    <!-- Filtros -->
+    <div class="filters-section">
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="search-empleado-input" placeholder="Buscar por nombre, documento o email..." class="search-input">
+      </div>
+    </div>
+    <!-- Tabla -->
+    <div class="table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Empleado</th>
+            <th>Documento</th>
+            <th>Cargo</th>
+            <th>Teléfono</th>
+            <th>Fecha Ingreso</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="empleados-tbody">
+          <!-- Los datos se cargarán dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <!-- Modal para empleados -->
+  <dialog id="modal-empleado" class="modal-empleado">
+    <form method="dialog">
+      <h3 id="modal-empleado-titulo">Ver Empleado</h3>
+      <div id="modal-empleado-contenido">
+        <!-- Contenido dinámico -->
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancelar">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal Agregar Empleado -->
+  <dialog id="modal-agregar-empleado" class="modal-empleado">
+    <form id="form-agregar-empleado" autocomplete="off">
+      <h3>Registrar Nuevo Empleado</h3>
+      <div id="modal-agregar-empleado-contenido">
+        <div class="form-section">
+          <h4>Información Personal</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="agregar-nombres">Nombres *</label>
+              <input type="text" id="agregar-nombres" name="nombres" required placeholder="Nombres completos" />
+            </div>
+            <div class="form-group">
+              <label for="agregar-apellidos">Apellidos *</label>
+              <input type="text" id="agregar-apellidos" name="apellidos" required placeholder="Apellidos completos" />
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <h4>Documento de Identidad</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="agregar-tipo-documento">Tipo de Documento *</label>
+              <select id="agregar-tipo-documento" name="tipo_documento" required>
+                <option value="">Seleccionar tipo</option>
+                <option value="1">DNI</option>
+                <option value="2">Pasaporte</option>
+                <option value="3">Carnet de Extranjería</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="agregar-numero-documento">Número de Documento *</label>
+              <input type="text" id="agregar-numero-documento" name="numero_documento" required placeholder="Número de documento" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="agregar-fecha-nacimiento">Fecha de Nacimiento</label>
+              <input type="date" id="agregar-fecha-nacimiento" name="fecha_nacimiento" placeholder="dd/mm/aaaa" />
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <h4>Información de Contacto</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="agregar-correo">Correo Electrónico *</label>
+              <input type="email" id="agregar-correo" name="correo" required placeholder="correo@ejemplo.com" />
+            </div>
+            <div class="form-group">
+              <label for="agregar-telefono">Teléfono</label>
+              <input type="tel" id="agregar-telefono" name="telefono" placeholder="+51 987654321" />
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <h4>Dirección</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="agregar-region">Región/Departamento</label>
+              <input type="text" id="agregar-region" name="region" placeholder="Lima" />
+            </div>
+            <div class="form-group">
+              <label for="agregar-provincia">Provincia</label>
+              <input type="text" id="agregar-provincia" name="provincia" placeholder="Lima" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="agregar-distrito">Distrito</label>
+              <input type="text" id="agregar-distrito" name="distrito" placeholder="Miraflores" />
+            </div>
+            <div class="form-group">
+              <label for="agregar-direccion">Dirección Detallada</label>
+              <input type="text" id="agregar-direccion" name="direccion" placeholder="Av. Larco 123, Dpto. 4B" />
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <h4>Puesto y Seguridad</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="agregar-cargo">Cargo *</label>
+              <select id="agregar-cargo" name="cargo" required>
+  <option value="">Seleccionar puesto</option>
+  <option value="1">Recepcionista</option>
+  <option value="2">Administrador</option>
+</select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="agregar-password">Contraseña *</label>
+              <div style="position:relative;">
+                <input type="password" id="agregar-password" name="password" required minlength="8" placeholder="Mínimo 8 caracteres" />
+                <button type="button" class="toggle-password" tabindex="-1" style="position:absolute;top:50%;right:12px;transform:translateY(-50%);background:none;border:none;cursor:pointer;">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="agregar-password2">Confirmar Contraseña *</label>
+              <div style="position:relative;">
+                <input type="password" id="agregar-password2" name="password2" required minlength="8" placeholder="Repetir contraseña" />
+                <button type="button" class="toggle-password" tabindex="-1" style="position:absolute;top:50%;right:12px;transform:translateY(-50%);background:none;border:none;cursor:pointer;">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancelar">Cancelar</button>
+        <button type="submit" class="btn-confirmar-agregar">Registrar</button>
+      </div>
+    </form>
+  </dialog>
+  <script src="../scripts/empleadosAdmin.js"></script>
+</body>
+</html>
