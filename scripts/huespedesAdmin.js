@@ -34,39 +34,73 @@ function getInitials(nombres, apellidos) {
 }
 
 function getStatusBadge(status) {
+  // Normalizamos el estado para que sea case-insensitive y sin espacios
+  const normalized = status ? status.toString().trim().toLowerCase() : '';
   const statusConfig = {
+    pendiente: {
+      class: "status-pendiente",
+      icon: "fas fa-hourglass-half",
+      text: "Pendiente",
+      color: "#fbbf24"
+    },
+    confirmada: {
+      class: "status-confirmada",
+      icon: "fas fa-check-circle",
+      text: "Confirmada",
+      color: "#10b981"
+    },
+    activa: {
+      class: "status-activa",
+      icon: "fas fa-play-circle",
+      text: "Activa",
+      color: "#3b82f6"
+    },
+    completada: {
+      class: "status-completada",
+      icon: "fas fa-flag-checkered",
+      text: "Completada",
+      color: "#6366f1"
+    },
+    cancelada: {
+      class: "status-cancelada",
+      icon: "fas fa-times-circle",
+      text: "Cancelada",
+      color: "#ef4444"
+    },
     checkin: {
       class: "status-checkin",
       icon: "fas fa-user-check",
       text: "En Hotel",
+      color: "#10b981"
     },
     checkout: {
       class: "status-checkout",
       icon: "fas fa-clock",
       text: "Check-out",
+      color: "#6b7280"
     },
     reserva_activa: {
-      class: "status-reserva-activa",
-      icon: "fas fa-calendar",
-      text: "Reserva Activa",
+      class: "status-activa",
+      icon: "fas fa-play-circle",
+      text: "Activa",
+      color: "#3b82f6"
     },
     reserva_pendiente: {
-      class: "status-reserva-pendiente",
-      icon: "fas fa-clock",
+      class: "status-pendiente",
+      icon: "fas fa-hourglass-half",
       text: "Pendiente",
-    },
+      color: "#fbbf24"
+    }
   };
-
-  const config = statusConfig[status] || {
-    class: "status-checkout",
-    icon: "fas fa-question",
+  const config = statusConfig[normalized] || {
+    class: "status-desconocido",
+    icon: "fas fa-question-circle",
     text: status,
+    color: "#9ca3af"
   };
-
-  return `<span class="status-badge ${config.class}">
-        <i class="${config.icon}"></i>
-        ${config.text}
-    </span>`;
+  return `<span class="status-badge ${config.class}" style="background: ${config.color}22; color: ${config.color}; border-radius: 16px; padding: 0.25em 0.7em; font-weight: 500; display: inline-flex; align-items: center; gap: 0.4em; font-size: 0.97em;">
+    <i class="${config.icon}" style="margin-right: 0.3em;"></i> ${config.text}
+  </span>`;
 }
 
 function getDocumentTypeName(id) {
@@ -75,21 +109,11 @@ function getDocumentTypeName(id) {
 }
 
 // Funciones de estadísticas
-function updateStats() {
-  const total = huespedes.length;
-  const enHotel = huespedes.filter((g) => g.estado_actual === "checkin").length;
-  const reservasActivas = huespedes.filter(
-    (g) => g.estado_actual === "reserva_activa"
-  ).length;
-  const totalReservas = huespedes.reduce(
-    (sum, g) => sum + g.historial_reservas,
-    0
-  );
-
-  document.getElementById("total-huespedes").textContent = total;
-  document.getElementById("en-hotel").textContent = enHotel;
-  document.getElementById("reservas-activas").textContent = reservasActivas;
-  document.getElementById("total-reservas").textContent = totalReservas;
+function updateStats(stats) {
+  document.getElementById("total-huespedes").textContent = stats.total_huespedes ?? 0;
+  document.getElementById("en-hotel").textContent = stats.en_hotel ?? 0;
+  document.getElementById("reservas-activas").textContent = stats.reservas_activas ?? 0;
+  document.getElementById("total-reservas").textContent = stats.total_reservas ?? 0;
 }
 
 // Funciones de filtrado
@@ -129,13 +153,10 @@ function updateFilteredCount() {
 // Funciones para cargar datos (simulando backend)
 async function fetchHuespedesStats() {
   try {
-    // Aquí iría la llamada al backend
-    // const response = await fetch("api/huespedes/stats.php");
-    // const { stats } = await response.json();
-    // updateStats(stats);
-
-    // Por ahora usamos datos estáticos
-    updateStats();
+    const response = await fetch("api/huespedes/stats.php");
+    const data = await response.json();
+    if (!data.success) throw new Error(data.error || "Error al cargar estadísticas");
+    updateStats(data);
   } catch (error) {
     console.error("Error al obtener estadísticas:", error);
     showErrorToast("Error al cargar estadísticas");
@@ -225,7 +246,7 @@ function updateTableHuespedes(data) {
             </div>
           </div>
         </td>
-        <td>${getStatusBadge(guest.estado_actual)}</td>
+        <td>${getStatusBadge(guest.reserva && guest.reserva.estado ? guest.reserva.estado : guest.estado_actual)}</td>
         <td>
           <div class="historial-info">
             <div class="historial-number">${guest.historial_reservas}</div>
@@ -385,7 +406,7 @@ function generarModalVisualHuesped(huesped) {
           <div class="detail-item">
             <span class="detail-label">Estado:</span>
             <span class="detail-value">${getStatusBadge(
-              huesped.estado_actual
+              huesped.reserva && huesped.reserva.estado ? huesped.reserva.estado : huesped.estado_actual
             )}</span>
           </div>
           <div class="detail-item">
