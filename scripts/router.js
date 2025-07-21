@@ -22,7 +22,8 @@ const routes = {
   },
   empleados: {
     html: "pagesAdmin/empleados.html",
-    //css: "styles/empleadosAdmin.css",
+    css: "styles/empleadosAdmin.css",
+    script: "scripts/empleadosAdmin.js",
   },
   configuracion: {
     html: "pagesAdmin/configuracion.html",
