@@ -13,178 +13,7 @@ const tiposDocumento = [
   { id_tipo_documento: 3, nombre: "Carnet de Extranjería" },
 ];
 
-const huespedes = [
-  {
-    id_huesped: 1,
-    nombres: "Juan Carlos",
-    apellidos: "Pérez González",
-    id_tipo_documento: 1,
-    numero_documento: "12345678",
-    reserva: {
-      id_reserva: 1,
-      fecha_checkin: "2024-02-01",
-      fecha_checkout: "2024-02-05",
-      estado: "completada",
-      habitacion: {
-        numero: "101",
-        tipo: "Habitación Estándar",
-      },
-      total: 480.0,
-    },
-    cliente: {
-      persona: {
-        telefono: "+51 987654321",
-        correo: "juan.perez@email.com",
-        fecha_nacimiento: "1985-03-15",
-        direccion: {
-          region: "Lima",
-          provincia: "Lima",
-          distrito: "Miraflores",
-          direccion_detallada: "Av. Larco 123",
-        },
-      },
-    },
-    historial_reservas: 3,
-    ultima_estancia: "2024-02-05",
-    estado_actual: "checkout",
-  },
-  {
-    id_huesped: 2,
-    nombres: "María Elena",
-    apellidos: "López Martínez",
-    id_tipo_documento: 1,
-    numero_documento: "23456789",
-    reserva: {
-      id_reserva: 2,
-      fecha_checkin: "2024-02-10",
-      fecha_checkout: "2024-02-15",
-      estado: "confirmada",
-      habitacion: {
-        numero: "201",
-        tipo: "Suite Deluxe",
-      },
-      total: 1250.0,
-    },
-    cliente: {
-      persona: {
-        telefono: "+51 976543210",
-        correo: "maria.lopez@email.com",
-        fecha_nacimiento: "1990-07-22",
-        direccion: {
-          region: "Lima",
-          provincia: "Lima",
-          distrito: "San Isidro",
-          direccion_detallada: "Calle Las Flores 456",
-        },
-      },
-    },
-    historial_reservas: 1,
-    ultima_estancia: null,
-    estado_actual: "reserva_activa",
-  },
-  {
-    id_huesped: 3,
-    nombres: "Carlos Alberto",
-    apellidos: "Rodríguez Silva",
-    id_tipo_documento: 1,
-    numero_documento: "34567890",
-    reserva: {
-      id_reserva: 3,
-      fecha_checkin: "2024-01-25",
-      fecha_checkout: "2024-01-30",
-      estado: "completada",
-      habitacion: {
-        numero: "301",
-        tipo: "Suite Presidencial",
-      },
-      total: 2250.0,
-    },
-    cliente: {
-      persona: {
-        telefono: "+51 965432109",
-        correo: "carlos.rodriguez@email.com",
-        fecha_nacimiento: "1982-11-08",
-        direccion: {
-          region: "Lima",
-          provincia: "Lima",
-          distrito: "Surco",
-          direccion_detallada: "Jr. Los Pinos 789",
-        },
-      },
-    },
-    historial_reservas: 5,
-    ultima_estancia: "2024-01-30",
-    estado_actual: "checkout",
-  },
-  {
-    id_huesped: 4,
-    nombres: "Ana Patricia",
-    apellidos: "Silva Vega",
-    id_tipo_documento: 2,
-    numero_documento: "AB123456",
-    reserva: {
-      id_reserva: 4,
-      fecha_checkin: "2024-02-20",
-      fecha_checkout: "2024-02-25",
-      estado: "pendiente",
-      habitacion: {
-        numero: "102",
-        tipo: "Habitación Estándar",
-      },
-      total: 600.0,
-    },
-    cliente: {
-      persona: {
-        telefono: "+1 555-0123",
-        correo: "ana.silva@email.com",
-        fecha_nacimiento: "1988-05-12",
-        direccion: {
-          region: "Lima",
-          provincia: "Lima",
-          distrito: "Barranco",
-          direccion_detallada: "Av. Grau 321",
-        },
-      },
-    },
-    historial_reservas: 2,
-    ultima_estancia: "2023-12-15",
-    estado_actual: "reserva_pendiente",
-  },
-  {
-    id_huesped: 5,
-    nombres: "Roberto",
-    apellidos: "Sánchez Morales",
-    id_tipo_documento: 1,
-    numero_documento: "45678901",
-    reserva: {
-      id_reserva: 5,
-      fecha_checkin: "2024-02-08",
-      fecha_checkout: "2024-02-12",
-      estado: "en_curso",
-      habitacion: {
-        numero: "202",
-        tipo: "Suite Deluxe",
-      },
-      total: 1000.0,
-    },
-    cliente: {
-      persona: {
-        telefono: "+51 954321098",
-        correo: "roberto.sanchez@email.com",
-        fecha_nacimiento: "1975-09-30",
-        direccion: {
-          region: "Lima",
-          provincia: "Lima",
-          distrito: "La Molina",
-          direccion_detallada: "Calle Los Olivos 654",
-        },
-      },
-    },
-    historial_reservas: 7,
-    ultima_estancia: "2024-02-12",
-    estado_actual: "checkin",
-  },
-];
+let huespedes = [];
 
 // Variables globales
 let filteredGuests = [...huespedes];
@@ -318,14 +147,14 @@ async function fetchHuespedesAll() {
 
   try {
     setTableLoading(table);
-
-    // Aquí iría la llamada al backend
-    // const response = await fetch("api/huespedes/getAll.php");
-    // const { data } = await response.json();
-    // updateTableHuespedes(data);
-
-    // Por ahora usamos datos estáticos
-    updateTableHuespedes(huespedes);
+    const response = await fetch("api/huespedes/getAll.php");
+    const result = await response.json();
+    if (!result.success)
+      throw new Error(result.error || "Error al obtener huéspedes");
+    updateTableHuespedes(result.data);
+    huespedes = result.data;
+    filteredGuests = [...result.data];
+    updateFilteredCount();
   } catch (error) {
     console.error("Error al obtener huéspedes:", error);
     showErrorToast("Error al cargar huéspedes");
@@ -411,14 +240,8 @@ function updateTableHuespedes(data) {
           }
         </td>
         <td class="acciones">
-          <button class="action-btn info" title="Ver detalles">
+          <button class="action-btn info" title="Ver">
             <i class="fas fa-eye"></i>
-          </button>
-          <button class="action-btn warning" title="Editar">
-            <i class="fas fa-pen"></i>
-          </button>
-          <button class="action-btn danger" title="Eliminar">
-            <i class="fas fa-trash"></i>
           </button>
         </td>
       </tr>
@@ -446,6 +269,24 @@ await fetchHuespedesAll();
 
 // Funciones para generar contenido del modal
 function generarModalVisualHuesped(huesped) {
+  console.log(huesped);
+  // Buscar detalles extendidos de la habitación si existen
+  let habitacionExtra = null;
+  if (
+    window.tipos_habitaciones &&
+    huesped.reserva &&
+    huesped.reserva.habitacion
+  ) {
+    const tipoId =
+      huesped.reserva.habitacion.id_tipo_habitacion ||
+      huesped.reserva.habitacion.tipo_habitacion ||
+      huesped.reserva.habitacion.tipo;
+    habitacionExtra = window.tipos_habitaciones.find(
+      (t) =>
+        t.id_tipo_habitacion == tipoId ||
+        t.nombre == huesped.reserva.habitacion.tipo
+    );
+  }
   return `
     <div style="padding:0.5rem 0;">
       <div class="guest-details-grid">
@@ -500,6 +341,33 @@ function generarModalVisualHuesped(huesped) {
     huesped.reserva.habitacion.tipo
   }</span>
           </div>
+          ${
+            habitacionExtra
+              ? `
+          <div class="detail-item">
+            <i class="fas fa-cube"></i>
+            <span class="detail-label">Tipo:</span>
+            <span class="detail-value">${habitacionExtra.nombre}</span>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-coins"></i>
+            <span class="detail-label">Precio por noche:</span>
+            <span class="detail-value">S/. ${
+              habitacionExtra.precio_noche
+            }</span>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-list"></i>
+            <span class="detail-label">Características:</span>
+            <span class="detail-value">${
+              habitacionExtra.caracteristicas
+                ? habitacionExtra.caracteristicas.join(", ")
+                : "N/A"
+            }</span>
+          </div>
+          `
+              : ""
+          }
           <div class="detail-item">
             <i class="fas fa-calendar-check"></i>
             <span class="detail-label">Check-in:</span>
@@ -522,7 +390,7 @@ function generarModalVisualHuesped(huesped) {
           </div>
           <div class="detail-item">
             <span class="detail-label">Total:</span>
-            <span class="detail-value"><strong style="color: #d4af37;">$${huesped.reserva.total.toFixed(
+            <span class="detail-value"><strong style="color: #d4af37;">S/. ${huesped.reserva.total.toFixed(
               2
             )}</strong></span>
           </div>
@@ -563,65 +431,6 @@ function generarModalVisualHuesped(huesped) {
         </div>
       </div>
     </div>
-  `;
-}
-
-function generarFormularioEditarHuesped(huesped) {
-  const tipoOptions = tiposDocumento
-    .map(
-      (tipo) =>
-        `<option value="${tipo.id_tipo_documento}" ${
-          tipo.id_tipo_documento === huesped.id_tipo_documento ? "selected" : ""
-        }>${tipo.nombre}</option>`
-    )
-    .join("");
-
-  const estados = [
-    "checkin",
-    "checkout",
-    "reserva_activa",
-    "reserva_pendiente",
-  ];
-  const estadoOptions = estados
-    .map(
-      (est) =>
-        `<option value="${est}" ${
-          est === huesped.estado_actual ? "selected" : ""
-        }>${est.replace("_", " ")}</option>`
-    )
-    .join("");
-
-  return `
-    <form id="form-editar-huesped" style="min-width:320px;max-width:500px;margin:auto;">
-      <div class="form-row">
-        <div class="form-group">
-          <label for="edit-nombres"><strong>Nombres</strong></label>
-          <input id="edit-nombres" class="form-input" type="text" value="${huesped.nombres}" style="width:100%;margin-bottom:1rem;" required />
-        </div>
-        <div class="form-group">
-          <label for="edit-apellidos"><strong>Apellidos</strong></label>
-          <input id="edit-apellidos" class="form-input" type="text" value="${huesped.apellidos}" style="width:100%;margin-bottom:1rem;" required />
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="edit-tipo-documento"><strong>Tipo de Documento</strong></label>
-          <select id="edit-tipo-documento" class="form-input" style="width:100%;margin-bottom:1rem;" required>
-            ${tipoOptions}
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="edit-numero-documento"><strong>Número de Documento</strong></label>
-          <input id="edit-numero-documento" class="form-input" type="text" value="${huesped.numero_documento}" style="width:100%;margin-bottom:1rem;" required />
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="edit-estado"><strong>Estado Actual</strong></label>
-        <select id="edit-estado" class="form-input" style="width:100%;margin-bottom:1rem;" required>
-          ${estadoOptions}
-        </select>
-      </div>
-    </form>
   `;
 }
 
@@ -674,8 +483,6 @@ function generarFormularioAgregarHuesped() {
 function configurarEventosFilas() {
   document.querySelectorAll(".huesped-fila").forEach((fila) => {
     const verBtn = fila.querySelector(".action-btn.info");
-    const editarBtn = fila.querySelector(".action-btn.warning");
-    const eliminarBtn = fila.querySelector(".action-btn.danger");
 
     verBtn.addEventListener("click", () => {
       const idHuesped = fila.querySelector(".huesped-id")?.textContent;
@@ -692,146 +499,6 @@ function configurarEventosFilas() {
         Cancelar
       </button>`;
       modalActions.querySelector(".btn-cancelar").onclick = () => modal.close();
-    });
-
-    editarBtn.addEventListener("click", () => {
-      const idHuesped = fila.querySelector(".huesped-id")?.textContent;
-      const huesped = huespedes.find(
-        (g) => g.id_huesped === parseInt(idHuesped)
-      );
-      if (!huesped) return;
-
-      modalTitulo.textContent = `Editar Huésped - ${huesped.nombres} ${huesped.apellidos}`;
-      modalContenido.innerHTML = generarFormularioEditarHuesped(huesped);
-      modal.showModal();
-      modalActions.innerHTML = `
-        <button type="button" class="btn-cancelar">
-          <i class="fas fa-times"></i>
-          Cancelar
-        </button>
-        <button type="submit" id="btn-guardar-editar" class="btn-confirmar">
-          <i class="fas fa-save"></i>
-          Guardar Cambios
-        </button>
-      `;
-      modalActions.querySelector(".btn-cancelar").onclick = () => modal.close();
-      modalActions.querySelector("#btn-guardar-editar").onclick =
-        async function (e) {
-          e.preventDefault();
-          const saveBtn = this;
-
-          try {
-            await withButtonLoader(
-              saveBtn,
-              async () => {
-                const nombres = document.getElementById("edit-nombres").value;
-                const apellidos =
-                  document.getElementById("edit-apellidos").value;
-                const id_tipo_documento = document.getElementById(
-                  "edit-tipo-documento"
-                ).value;
-                const numero_documento = document.getElementById(
-                  "edit-numero-documento"
-                ).value;
-                const estado_actual =
-                  document.getElementById("edit-estado").value;
-
-                const payload = {
-                  id_huesped: huesped.id_huesped,
-                  nombres,
-                  apellidos,
-                  id_tipo_documento,
-                  numero_documento,
-                  estado_actual,
-                };
-
-                // Aquí iría la llamada al backend
-                console.log("Actualizando huésped:", payload);
-
-                // Simular actualización
-                const index = huespedes.findIndex(
-                  (h) => h.id_huesped === huesped.id_huesped
-                );
-                if (index !== -1) {
-                  huespedes[index] = { ...huespedes[index], ...payload };
-                }
-
-                await fetchHuespedesAll();
-                await fetchHuespedesStats();
-                modal.close();
-                showSuccessToast("Huésped actualizado correctamente");
-
-                return { success: true };
-              },
-              "Guardando..."
-            );
-          } catch (err) {
-            showErrorToast("Error al actualizar: " + err.message);
-          }
-        };
-    });
-
-    eliminarBtn.addEventListener("click", () => {
-      const idHuesped = fila.querySelector(".huesped-id")?.textContent;
-      const nombre = fila.querySelector(".guest-name")?.textContent;
-      const huesped = huespedes.find(
-        (g) => g.id_huesped === parseInt(idHuesped)
-      );
-
-      modalTitulo.textContent = "Eliminar Huésped";
-      modalContenido.innerHTML = `<p>¿Estás seguro de que deseas eliminar al huésped <strong>${nombre}</strong>?</p>`;
-      modal.showModal();
-      modalActions.innerHTML = `
-        <button type="button" class="btn-cancelar">
-          <i class="fas fa-times"></i>
-          Cancelar
-        </button>
-        <button class="btn-confirmar-eliminar" data-id_huesped="${huesped?.id_huesped}">
-          <i class="fas fa-trash"></i>
-          Sí, eliminar
-        </button>
-      `;
-      modalActions.querySelector(".btn-cancelar").onclick = () => modal.close();
-      modalActions.querySelector(".btn-confirmar-eliminar").onclick =
-        async () => {
-          const deleteBtn = modalActions.querySelector(
-            ".btn-confirmar-eliminar"
-          );
-
-          if (!huesped?.id_huesped) {
-            showErrorToast("No se pudo obtener el ID del huésped");
-            return;
-          }
-
-          try {
-            await withButtonLoader(
-              deleteBtn,
-              async () => {
-                // Aquí iría la llamada al backend
-                console.log("Eliminando huésped:", huesped.id_huesped);
-
-                // Simular eliminación
-                const index = huespedes.findIndex(
-                  (h) => h.id_huesped === huesped.id_huesped
-                );
-                if (index !== -1) {
-                  huespedes.splice(index, 1);
-                }
-
-                await fetchHuespedesAll();
-                await fetchHuespedesStats();
-                modal.close();
-                showSuccessToast("Huésped eliminado con éxito");
-
-                return { success: true };
-              },
-              "Eliminando..."
-            );
-          } catch (error) {
-            console.error("Error:", error);
-            showErrorToast("Error al eliminar huésped: " + error.message);
-          }
-        };
     });
   });
 }
