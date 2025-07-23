@@ -44,13 +44,23 @@ class EmpleadoService {
             // Validar datos requeridos
             $required = [
                 'nombres','apellidos','id_tipo_documento','numero_documento','telefono','correo','password',
-                'region','provincia','distrito','direccion_detallada','id_puesto'
+                'region','provincia','distrito','direccion_detallada','id_puesto','fecha_nacimiento'
             ];
             foreach ($required as $field) {
                 if (empty($datos[$field])) {
                     throw new Exception("El campo $field es requerido");
                 }
             }
+            
+            // Validar que el empleado sea mayor de 18 años
+            $fechaNacimiento = new DateTime($datos['fecha_nacimiento']);
+            $hoy = new DateTime();
+            $edad = $hoy->diff($fechaNacimiento)->y;
+            
+            if ($edad < 18) {
+                throw new Exception("El empleado debe ser mayor de 18 años");
+            }
+            
             // Verificar unicidad de correo y documento
             $stmt = $this->conn->prepare("SELECT id_persona FROM Persona WHERE correo = ?");
             $stmt->execute([$datos['correo']]);

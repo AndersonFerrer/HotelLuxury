@@ -18,7 +18,7 @@ try {
             JOIN Habitacion h ON th.id_tipo_habitacion = h.id_tipo_habitacion
             WHERE h.estado = 'Disponible'
             ORDER BY th.precio_noche ASC
-            LIMIT 4;";
+            LIMIT 5;";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $habitaciones = $stmt->fetchAll();
