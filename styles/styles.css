@@ -599,3 +599,64 @@ img {
   animation: spin 1s linear infinite;
   z-index: 6;
 }
+
+/* Estilos mejorados para botones con loader */
+.btn.loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+/* Mostrar texto junto con el spinner */
+.btn.loading-with-text {
+  color: inherit !important;
+}
+
+/* Posiciones del spinner */
+.btn.loading[data-spinner-position="center"]::after {
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.btn.loading[data-spinner-position="left"]::after {
+  left: 15px;
+  transform: translateY(-50%);
+}
+
+.btn.loading[data-spinner-position="right"]::after {
+  right: 15px;
+  left: auto;
+  transform: translateY(-50%);
+}
+
+/* Tamaños del spinner */
+.btn.loading[data-spinner-size="small"]::after {
+  width: 12px;
+  height: 12px;
+  border-width: 1.5px;
+}
+
+.btn.loading[data-spinner-size="medium"]::after {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.btn.loading[data-spinner-size="large"]::after {
+  width: 20px;
+  height: 20px;
+  border-width: 2.5px;
+}
+
+/* Spinner con color personalizado */
+.btn.loading::after {
+  border-top-color: var(--spinner-color, currentColor);
+}
+
+/* Estado de éxito */
+.btn.success {
+  background-color: #10b981;
+  border-color: #10b981;
+  color: white;
+}

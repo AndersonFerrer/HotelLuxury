@@ -41,39 +41,90 @@ export function hideLoadingModal() {
 /**
  * Convierte un botón en estado de carga
  * @param {HTMLElement} button - Elemento botón
- * @param {string} originalText - Texto original del botón
+ * @param {string} loadingText - Texto a mostrar durante la carga (null para ocultar texto)
+ * @param {Object} options - Opciones adicionales
+ * @param {boolean} options.showSpinner - Mostrar spinner (default: true)
+ * @param {boolean} options.showText - Mostrar texto durante carga (default: false)
+ * @param {string} options.spinnerPosition - Posición del spinner ('left', 'right', 'center') (default: 'center')
+ * @param {string} options.spinnerSize - Tamaño del spinner ('small', 'medium', 'large') (default: 'medium')
+ * @param {string} options.spinnerColor - Color del spinner (default: currentColor)
  */
-export function setButtonLoading(button, originalText = null) {
+export function setButtonLoading(button, loadingText = null, options = {}) {
   if (!button) return;
 
-  // Guardar texto original si no se proporciona
-  if (!originalText) {
-    originalText = button.textContent || button.innerText;
-  }
+  // Opciones por defecto
+  const defaultOptions = {
+    showSpinner: true,
+    showText: false,
+    spinnerPosition: 'center',
+    spinnerSize: 'medium',
+    spinnerColor: null // Usa el color actual por defecto
+  };
 
-  // Guardar texto original en data attribute
+  // Combinar opciones
+  const settings = { ...defaultOptions, ...options };
+
+  // Guardar texto original
+  const originalText = button.textContent || button.innerText;
   button.setAttribute("data-original-text", originalText);
+
+  // Guardar estado original
+  button.setAttribute("data-original-width", button.offsetWidth + 'px');
+  button.style.minWidth = button.offsetWidth + 'px';
 
   // Aplicar estado de carga
   button.classList.add("loading");
   button.disabled = true;
+
+  // Aplicar clases según opciones
+  if (settings.spinnerPosition) {
+    button.setAttribute("data-spinner-position", settings.spinnerPosition);
+  }
+
+  if (settings.spinnerSize) {
+    button.setAttribute("data-spinner-size", settings.spinnerSize);
+  }
+
+  if (settings.spinnerColor) {
+    button.style.setProperty('--spinner-color', settings.spinnerColor);
+  }
+
+  // Mostrar texto durante carga si se especifica
+  if (settings.showText && loadingText) {
+    button.classList.add("loading-with-text");
+    button.textContent = loadingText;
+  }
 }
 
 /**
  * Restaura un botón desde estado de carga
  * @param {HTMLElement} button - Elemento botón
+ * @param {string} newText - Texto nuevo opcional (si no se proporciona, se restaura el original)
  */
-export function setButtonNormal(button) {
+export function setButtonNormal(button, newText = null) {
   if (!button) return;
 
   // Remover estado de carga
   button.classList.remove("loading");
+  button.classList.remove("loading-with-text");
   button.disabled = false;
 
-  // Restaurar texto original
-  const originalText = button.getAttribute("data-original-text");
-  if (originalText) {
-    button.textContent = originalText;
+  // Restaurar ancho original
+  button.style.minWidth = '';
+
+  // Limpiar atributos de datos
+  button.removeAttribute("data-spinner-position");
+  button.removeAttribute("data-spinner-size");
+  button.style.removeProperty('--spinner-color');
+
+  // Restaurar texto original o establecer nuevo texto
+  if (newText) {
+    button.textContent = newText;
+  } else {
+    const originalText = button.getAttribute("data-original-text");
+    if (originalText) {
+      button.textContent = originalText;
+    }
   }
 }
 
@@ -81,20 +132,63 @@ export function setButtonNormal(button) {
  * Wrapper para funciones async con loader en botón
  * @param {HTMLElement} button - Botón a mostrar loader
  * @param {Function} asyncFunction - Función async a ejecutar
- * @param {string} loadingText - Texto opcional para mostrar durante carga
+ * @param {Object} options - Opciones para el loader
+ * @param {string} options.loadingText - Texto durante carga
+ * @param {boolean} options.showSpinner - Mostrar spinner
+ * @param {boolean} options.showText - Mostrar texto durante carga
+ * @param {string} options.spinnerPosition - Posición del spinner
+ * @param {string} options.spinnerSize - Tamaño del spinner
+ * @param {string} options.spinnerColor - Color del spinner
+ * @param {string} options.successText - Texto a mostrar al completar con éxito
+ * @param {number} options.successDuration - Duración del texto de éxito antes de restaurar
  * @returns {Promise} - Resultado de la función async
  */
 export async function withButtonLoader(
   button,
   asyncFunction,
-  loadingText = null
+  options = {}
 ) {
+  const {
+    loadingText = null,
+    showSpinner = true,
+    showText = false,
+    spinnerPosition = 'center',
+    spinnerSize = 'medium',
+    spinnerColor = null,
+    successText = null,
+    successDuration = 1500
+  } = options;
+
   try {
-    setButtonLoading(button, loadingText);
+    setButtonLoading(button, loadingText, {
+      showSpinner,
+      showText,
+      spinnerPosition,
+      spinnerSize,
+      spinnerColor
+    });
+    
     const result = await asyncFunction();
+    
+    // Mostrar texto de éxito si se especifica
+    if (successText) {
+      setButtonNormal(button, successText);
+      button.classList.add("success");
+      
+      // Restaurar estado normal después de la duración
+      if (successDuration > 0) {
+        await new Promise(resolve => setTimeout(resolve, successDuration));
+        button.classList.remove("success");
+        setButtonNormal(button);
+      }
+    } else {
+      setButtonNormal(button);
+    }
+    
     return result;
-  } finally {
+  } catch (error) {
     setButtonNormal(button);
+    throw error;
   }
 }
 
